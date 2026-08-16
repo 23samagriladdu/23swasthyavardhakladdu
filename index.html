@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>23 स्वास्थ्यवर्धक सामान | एनर्जी लड्डू</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">23 <span>स्वास्थ्यवर्धक सामान</span></div>
+  <a class="call-btn" href="tel:9643185255">📞 9643185255</a>
+</header>
+
+<main>
+<section class="hero">
+  <div>
+    <p class="eyebrow">100% प्राकृतिक सामग्री • स्वादिष्ट • पौष्टिक</p>
+    <h1>एनर्जी लड्डू<br><span>(मिश्रित)</span></h1>
+    <p class="hero-text">23 चुनिंदा ड्रायफ्रूट्स और सीड्स से तैयार स्वादिष्ट लड्डू। ऑनलाइन ऑर्डर करें और घर तक डिलीवरी पाएं।</p>
+    <div class="hero-actions">
+      <a class="primary-btn" href="#order">ऑर्डर करें</a>
+      <a class="secondary-btn" href="https://wa.me/919643185255" target="_blank">WhatsApp</a>
+    </div>
+  </div>
+  <div class="hero-image-wrap"><img src="images/laddu-main.png" alt="एनर्जी लड्डू"></div>
+</section>
+
+<section class="ingredients">
+<h2>23 स्वास्थ्यवर्धक सामग्री</h2>
+<div class="chips">
+<span>बादाम</span><span>काजू</span><span>अखरोट</span><span>किशमिश</span><span>पिस्ता</span>
+<span>खजूर</span><span>नारियल बुरादा</span><span>चिलगोजा</span><span>चिरौंजी</span>
+<span>मुनक्का</span><span>गुलाब</span><span>मूंगफली</span><span>तिल</span><span>काली किशमिश</span>
+</div>
+</section>
+
+<section class="products">
+<h2>हमारे लड्डू पैक</h2>
+<div id="productGrid" class="product-grid"></div>
+<p class="delivery-note">🚚 डिलीवरी चार्ज: <strong>₹300</strong> प्रति ऑर्डर</p>
+</section>
+
+<section class="order-section" id="order">
+<div class="order-copy">
+<p class="eyebrow">Online Order</p>
+<h2>घर बैठे ऑर्डर करें</h2>
+<p>अपनी जानकारी भरें। आप UPI से भुगतान कर सकते हैं या Cash on Delivery चुन सकते हैं।</p>
+<div class="contact-box">📱 <strong>9643185255</strong><br>कॉल या WhatsApp करें</div>
+</div>
+
+<form id="orderForm" class="order-form">
+<label>नाम<input id="name" required placeholder="अपना नाम"></label>
+<label>मोबाइल<input id="phone" required inputmode="numeric" pattern="[0-9]{10}" placeholder="10 अंकों का मोबाइल"></label>
+<label class="full">पूरा पता<textarea id="address" required placeholder="घर/दुकान, गली, शहर"></textarea></label>
+<label>पिनकोड<input id="pincode" required inputmode="numeric" pattern="[0-9]{6}" placeholder="6 अंकों का पिनकोड"></label>
+<label>पैक<select id="product" required></select></label>
+<label>मात्रा (Kg)<input id="qty" type="number" min="1" max="50" value="1" required></label>
+<label>Payment Method<select id="paymentMethod">
+<option value="UPI">UPI / Online Payment</option>
+<option value="COD">Cash on Delivery</option>
+</select></label>
+
+<div id="upiBox" class="payment-box full">
+  <strong>UPI Payment</strong>
+  <p>UPI ID: <span id="upiId">लोड हो रहा है...</span></p>
+  <div id="qr"></div>
+  <button type="button" class="pay-btn" id="payBtn">📲 UPI App खोलें / Pay करें</button>
+  <label>Payment UTR / Reference No. (यदि भुगतान किया है)
+    <input id="utr" placeholder="जैसे 123456789012"></label>
+</div>
+
+<div class="total">
+<span>उत्पाद</span><strong id="productTotal">₹0</strong>
+<span>डिलीवरी</span><strong>₹300</strong>
+<span>कुल</span><strong id="grandTotal">₹300</strong>
+</div>
+
+<button class="whatsapp-btn" type="submit">✅ Order Confirm करें</button>
+<p class="small">UPI payment verification admin द्वारा की जाएगी। COD में भुगतान डिलीवरी के समय होगा।</p>
+</form>
+</section>
+
+<section class="gallery">
+<h2>उत्पाद की झलक</h2>
+<div class="gallery-grid">
+<img src="images/product-poster-hindi.png" alt="हिंदी उत्पाद पोस्टर">
+<img src="images/product-poster-english.png" alt="English product poster">
+</div>
+</section>
+</main>
+
+<footer><strong>23 स्वास्थ्यवर्धक सामान</strong><span>स्वस्थ शरीर • खुशहाल जीवन</span><span>📞 9643185255</span><a href="/admin">Admin</a></footer>
+
+<div id="successModal" class="modal hidden">
+<div class="modal-card">
+<h2>🎉 Order Confirmed</h2>
+<p id="successText"></p>
+<button onclick="closeModal()">ठीक है</button>
+<a id="successWa" target="_blank">WhatsApp पर Order भेजें</a>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+let config = null;
+const delivery = 300;
+const product = document.getElementById('product');
+const qty = document.getElementById('qty');
+const productTotal = document.getElementById('productTotal');
+const grandTotal = document.getElementById('grandTotal');
+const paymentMethod = document.getElementById('paymentMethod');
+const upiBox = document.getElementById('upiBox');
+
+function money(n){return '₹'+Number(n).toLocaleString('en-IN')}
+function price(){return Number(product.options[product.selectedIndex]?.dataset.price || 0)}
+function updateTotal(){
+  const total=price()*Number(qty.value||0);
+  productTotal.textContent=money(total);
+  grandTotal.textContent=money(total+delivery);
+  renderUPI();
+}
+function renderUPI(){
+  if(!config) return;
+  upiBox.style.display=paymentMethod.value==='UPI'?'block':'none';
+  if(paymentMethod.value!=='UPI') return;
+  const amount=price()*Number(qty.value||0)+delivery;
+  document.getElementById('upiId').textContent=config.upiId;
+  const qr=document.getElementById('qr'); qr.innerHTML='';
+  if(config.upiId && !config.upiId.startsWith('YOUR-')){
+    const url=`upi://pay?pa=${encodeURIComponent(config.upiId)}&pn=${encodeURIComponent(config.upiName)}&am=${amount.toFixed(2)}&cu=INR`;
+    new QRCode(qr,{text:url,width:170,height:170});
+    document.getElementById('payBtn').onclick=()=>{window.location.href=url};
+  } else {
+    qr.innerHTML='<div class="qr-placeholder">Admin panel में UPI ID सेट करें।</div>';
+    document.getElementById('payBtn').onclick=()=>alert('पहले .env में अपनी UPI ID डालें।');
+  }
+}
+async function init(){
+  config=await fetch('/api/config').then(r=>r.json());
+  product.innerHTML='<option value="">पैक चुनें</option>'+config.products.map(p=>`<option value="${p.id}" data-price="${p.price}">${p.name} — ${money(p.price)}/Kg</option>`).join('');
+  product.value=config.products[1].id;
+  updateTotal();
+}
+product.addEventListener('change',updateTotal); qty.addEventListener('input',updateTotal); paymentMethod.addEventListener('change',renderUPI);
+document.getElementById('orderForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const body={
+    name:document.getElementById('name').value.trim(),
+    phone:document.getElementById('phone').value.trim(),
+    address:document.getElementById('address').value.trim(),
+    pincode:document.getElementById('pincode').value.trim(),
+    productId:product.value,
+    quantity:Number(qty.value),
+    paymentMethod:paymentMethod.value,
+    utr:document.getElementById('utr').value.trim()
+  };
+  const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const data=await r.json();
+  if(!r.ok){alert(data.error||'Order error');return;}
+  document.getElementById('successText').innerHTML=`आपका Order No. <strong>${data.orderNo}</strong> है।<br>कुल राशि: <strong>${money(data.total)}</strong><br>${data.message}`;
+  const wa=`नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। Order No: ${data.orderNo}. नाम: ${body.name}, मोबाइल: ${body.phone}, पैक: ${product.options[product.selectedIndex].text}, मात्रा: ${body.quantity} Kg, पता: ${body.address}, पिनकोड: ${body.pincode}, कुल: ${money(data.total)}, Payment: ${body.paymentMethod}, UTR: ${body.utr||'N/A'}`;
+  document.getElementById('successWa').href='https://wa.me/919643185255?text='+encodeURIComponent(wa);
+  document.getElementById('successModal').classList.remove('hidden');
+  e.target.reset(); product.value=config.products[1].id; qty.value=1; updateTotal();
+});
+function closeModal(){document.getElementById('successModal').classList.add('hidden')}
+init();
+</script>
+</body>
+</html>
