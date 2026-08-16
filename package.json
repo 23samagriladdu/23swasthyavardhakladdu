@@ -1,0 +1,17 @@
+{
+  "name": "23-swasthyavardhak-laddu-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Online ordering, UPI payment, order database and admin panel for 23 Swasthyavardhak Laddu",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  }
+}
