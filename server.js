@@ -226,13 +226,6 @@ app.get("/api/config", (req, res) => {
 let shiprocketToken = "";
 let shiprocketTokenCreatedAt = 0;
 
-
-/*
-   Shiprocket token validity is 10 days.
-
-   We refresh before 9 days to avoid using an expired token.
-*/
-
 async function getShiprocketToken() {
 
   if (!SHIPROCKET_API_EMAIL || !SHIPROCKET_API_PASSWORD) {
@@ -244,14 +237,18 @@ async function getShiprocketToken() {
   const TOKEN_VALIDITY =
     9 * 24 * 60 * 60 * 1000;
 
-  const tokenStillValid =
+  if (
     shiprocketToken &&
-    Date.now() - shiprocketTokenCreatedAt < TOKEN_VALIDITY;
-
-  if (tokenStillValid) {
+    Date.now() - shiprocketTokenCreatedAt < TOKEN_VALIDITY
+  ) {
     return shiprocketToken;
   }
 
+  console.log("Shiprocket: Trying API login...");
+  console.log(
+    "Shiprocket API email:",
+    SHIPROCKET_API_EMAIL
+  );
 
   const response = await fetch(
     "https://apiv2.shiprocket.in/v1/external/auth/login",
@@ -269,26 +266,42 @@ async function getShiprocketToken() {
     }
   );
 
-
   const data = await response.json();
 
+  console.log(
+    "Shiprocket login HTTP status:",
+    response.status
+  );
+
+  /*
+     SECURITY:
+     Password/token को कभी log नहीं करेंगे।
+  */
 
   if (!response.ok || !data.token) {
 
     console.error(
       "Shiprocket login failed:",
-      data
+      {
+        status: response.status,
+        message: data.message || "",
+        error: data.error || ""
+      }
     );
 
     throw new Error(
       data.message ||
-      "Shiprocket authentication failed."
+      data.error ||
+      `Shiprocket login failed with HTTP ${response.status}`
     );
   }
 
-
   shiprocketToken = data.token;
   shiprocketTokenCreatedAt = Date.now();
+
+  console.log(
+    "Shiprocket login successful. Token received."
+  );
 
   return shiprocketToken;
 }
@@ -300,25 +313,33 @@ async function getShiprocketToken() {
 
 async function createShiprocketOrder(order) {
 
-  const token = await getShiprocketToken();
+  const token =
+    await getShiprocketToken();
 
-
-  /*
-     Shiprocket requires destination city/state.
-     इसलिए website से city/state लेना जरूरी है।
-  */
 
   if (!order.city || !order.state) {
 
     throw new Error(
-      "Customer city/state missing. Website order form must send city and state."
+      "Customer city/state missing."
     );
   }
 
 
-  const shiprocketPayload = {
+  /*
+     IMPORTANT:
 
-    order_id: order.order_no,
+     SHIPROCKET_CHANNEL_ID खाली रहने पर
+     channel_id request में नहीं भेजेंगे।
+
+     Shiprocket documentation के अनुसार
+     adhoc order में channel_id optional है।
+     Default Custom channel इस्तेमाल होगा।
+  */
+
+  const payload = {
+
+    order_id:
+      String(order.order_no),
 
     order_date:
       new Date(order.created_at)
@@ -331,14 +352,17 @@ async function createShiprocketOrder(order) {
 
 
     /*
-       If channel ID is supplied, the order can be
-       assigned to that channel.
+       channel_id केवल तभी भेजें जब Render
+       Environment Variable में valid numeric ID हो।
     */
-    ...(SHIPROCKET_CHANNEL_ID
+
+    ...(SHIPROCKET_CHANNEL_ID &&
+      /^\d+$/.test(
+        String(SHIPROCKET_CHANNEL_ID)
+      )
       ? {
-          channel_id: Number(
-            SHIPROCKET_CHANNEL_ID
-          )
+          channel_id:
+            Number(SHIPROCKET_CHANNEL_ID)
         }
       : {}),
 
@@ -357,19 +381,20 @@ async function createShiprocketOrder(order) {
       order.city,
 
     billing_pincode:
-      order.pincode,
+      Number(order.pincode),
 
     billing_state:
       order.state,
 
     billing_country:
-      order.country || "India",
+      "India",
 
     billing_phone:
       order.phone,
 
 
-    shipping_is_billing: true,
+    shipping_is_billing:
+      true,
 
 
     shipping_customer_name:
@@ -382,13 +407,13 @@ async function createShiprocketOrder(order) {
       order.city,
 
     shipping_pincode:
-      order.pincode,
+      Number(order.pincode),
 
     shipping_state:
       order.state,
 
     shipping_country:
-      order.country || "India",
+      "India",
 
     shipping_phone:
       order.phone,
@@ -396,31 +421,31 @@ async function createShiprocketOrder(order) {
 
     order_items: [
       {
-        name: order.product,
+        name:
+          order.product,
 
         sku:
           order.sku ||
           "23-LADOO",
 
         units:
-          order.quantity,
+          Number(order.quantity),
 
         selling_price:
-          order.price,
+          Number(order.price),
 
-        discount: 0,
+        discount:
+          0,
 
-        tax: 0,
+        tax:
+          0,
 
-        hsn: ""
+        hsn:
+          ""
       }
     ],
 
 
-    /*
-       Website UPI payment = Prepaid
-       COD order = COD
-    */
     payment_method:
       order.payment_method === "UPI"
         ? "Prepaid"
@@ -428,74 +453,113 @@ async function createShiprocketOrder(order) {
 
 
     shipping_charges:
-      order.delivery,
+      Number(order.delivery),
 
-    giftwrap_charges: 0,
+    giftwrap_charges:
+      0,
 
-    transaction_charges: 0,
+    transaction_charges:
+      0,
 
-    total_discount: 0,
+    total_discount:
+      0,
 
 
-    /*
-       IMPORTANT:
-       Shiprocket sub_total should be product subtotal,
-       not total including shipping.
-    */
     sub_total:
-      order.price * order.quantity,
+      Number(order.price) *
+      Number(order.quantity),
 
 
     length:
-      PACKAGE_LENGTH,
+      Number(PACKAGE_LENGTH),
 
     breadth:
-      PACKAGE_BREADTH,
+      Number(PACKAGE_BREADTH),
 
     height:
-      PACKAGE_HEIGHT,
+      Number(PACKAGE_HEIGHT),
 
     weight:
-      PACKAGE_WEIGHT
+      Number(PACKAGE_WEIGHT)
   };
 
+
+  console.log(
+    "========================================"
+  );
 
   console.log(
     "Sending order to Shiprocket:",
     order.order_no
   );
 
-
-  const response = await fetch(
-    "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
-    {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-
-        Authorization:
-          `Bearer ${token}`
-      },
-
-      body:
-        JSON.stringify(
-          shiprocketPayload
-        )
-    }
+  console.log(
+    "Shiprocket pickup location:",
+    SHIPROCKET_PICKUP_LOCATION
   );
+
+  console.log(
+    "Shiprocket channel ID:",
+    SHIPROCKET_CHANNEL_ID
+      ? SHIPROCKET_CHANNEL_ID
+      : "NOT SET - using Default Custom channel"
+  );
+
+
+  const response =
+    await fetch(
+      "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+
+          Authorization:
+            `Bearer ${token}`
+        },
+
+        body:
+          JSON.stringify(payload)
+      }
+    );
 
 
   const data =
     await response.json();
 
 
+  console.log(
+    "Shiprocket order API HTTP status:",
+    response.status
+  );
+
+
   if (!response.ok) {
 
     console.error(
-      "Shiprocket order creation failed:",
+      "========================================"
+    );
+
+    console.error(
+      "SHIPROCKET ORDER API FAILED"
+    );
+
+    console.error(
+      "HTTP STATUS:",
+      response.status
+    );
+
+    console.error(
+      "RESPONSE:",
       data
     );
+
+    console.error(
+      "========================================"
+    );
+
 
     throw new Error(
       data.message ||
@@ -506,18 +570,16 @@ async function createShiprocketOrder(order) {
 
 
   console.log(
-    "Shiprocket order created:",
+    "Shiprocket order created successfully:"
+  );
+
+  console.log(
     data
   );
 
 
   return data;
 }
-
-
-/* =========================================================
-   WEBSITE ORDER API
-   ========================================================= */
 
 app.post("/api/orders", async (req, res) => {
 
