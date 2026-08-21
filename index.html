@@ -54,8 +54,25 @@
 <form id="orderForm" class="order-form">
 <label>नाम<input id="name" required placeholder="अपना नाम"></label>
 <label>मोबाइल<input id="phone" required inputmode="numeric" pattern="[0-9]{10}" placeholder="10 अंकों का मोबाइल"></label>
-<label class="full">पूरा पता<textarea id="address" required placeholder="घर/दुकान, गली, शहर"></textarea></label>
-<label>पिनकोड<input id="pincode" required inputmode="numeric" pattern="[0-9]{6}" placeholder="6 अंकों का पिनकोड"></label>
+<label class="full">
+  पूरा पता
+  <textarea id="address" required placeholder="घर/दुकान, गली, मोहल्ला"></textarea>
+</label>
+
+<label>
+  शहर
+  <input id="city" required placeholder="शहर का नाम">
+</label>
+
+<label>
+  राज्य
+  <input id="state" required placeholder="राज्य का नाम">
+</label>
+
+<label>
+  पिनकोड
+  <input id="pincode" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6 अंकों का पिनकोड">
+</label>
 <label>पैक<select id="product" required></select></label>
 <label>मात्रा (Kg)<input id="qty" type="number" min="1" max="50" value="1" required></label>
 <label>Payment Method<select id="paymentMethod">
@@ -159,7 +176,9 @@ document.getElementById('orderForm').addEventListener('submit',async e=>{
     name:document.getElementById('name').value.trim(),
     phone:document.getElementById('phone').value.trim(),
     address:document.getElementById('address').value.trim(),
-    pincode:document.getElementById('pincode').value.trim(),
+city:document.getElementById('city').value.trim(),
+state:document.getElementById('state').value.trim(),
+pincode:document.getElementById('pincode').value.trim(),
     productId:product.value,
     quantity:Number(qty.value),
     paymentMethod:paymentMethod.value,
@@ -169,7 +188,7 @@ document.getElementById('orderForm').addEventListener('submit',async e=>{
   const data=await r.json();
   if(!r.ok){alert(data.error||'Order error');return;}
   document.getElementById('successText').innerHTML=`आपका Order No. <strong>${data.orderNo}</strong> है।<br>कुल राशि: <strong>${money(data.total)}</strong><br>${data.message}`;
-  const wa=`नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। Order No: ${data.orderNo}. नाम: ${body.name}, मोबाइल: ${body.phone}, पैक: ${product.options[product.selectedIndex].text}, मात्रा: ${body.quantity} Kg, पता: ${body.address}, पिनकोड: ${body.pincode}, कुल: ${money(data.total)}, Payment: ${body.paymentMethod}, UTR: ${body.utr||'N/A'}`;
+  const wa=`नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। Order No: ${data.orderNo}. नाम: ${body.name}, मोबाइल: ${body.phone}, पैक: ${product.options[product.selectedIndex].text}, मात्रा: ${body.quantity} Kg, पता: ${body.address}, शहर: ${body.city}, राज्य: ${body.state}, पिनकोड: ${body.pincode}, कुल: ${money(data.total)}, Payment: ${body.paymentMethod}, UTR: ${body.utr||'N/A'}`;
   document.getElementById('successWa').href='https://wa.me/919643185255?text='+encodeURIComponent(wa);
   document.getElementById('successModal').classList.remove('hidden');
   e.target.reset(); product.value=config.products[1].id; qty.value=1; updateTotal();
