@@ -401,6 +401,97 @@
 
 
 <!-- =====================================================
+     CUSTOMER ORDER HISTORY
+===================================================== -->
+
+<section
+  class="order-section"
+  id="order-history">
+
+<div class="order-copy">
+
+<p class="eyebrow">
+  Order History
+</p>
+
+<h2>
+  📦 अपना Order History देखें
+</h2>
+
+<p>
+  अपना registered mobile number डालकर
+  अपने सभी orders की जानकारी देखें।
+</p>
+
+<div class="contact-box">
+  🔐 आपकी order जानकारी केवल उसी mobile number
+  से दिखाई जाएगी जिससे order किया गया था।
+</div>
+
+</div>
+
+
+<form
+  id="historyForm"
+  class="order-form">
+
+
+<label class="full">
+
+  📱 Registered Mobile Number
+
+  <input
+    id="historyPhone"
+    required
+    inputmode="numeric"
+    pattern="[0-9]{10}"
+    maxlength="10"
+    placeholder="Order वाला 10 अंकों का mobile number">
+
+</label>
+
+
+<button
+  class="whatsapp-btn"
+  type="submit">
+
+  🔍 Order History देखें
+
+</button>
+
+
+<p
+  id="historyMessage"
+  class="small">
+</p>
+
+</form>
+
+</section>
+
+
+<!-- =====================================================
+     ORDER HISTORY RESULT
+===================================================== -->
+
+<section
+  id="historyResult"
+  class="products"
+  style="display:none;">
+
+<h2>
+  📋 आपके Orders
+</h2>
+
+<div
+  id="historyList"
+  class="product-grid">
+</div>
+
+</section>
+
+
+<!-- =====================================================
      CUSTOMER CANCELLATION
 ===================================================== -->
 
@@ -1102,6 +1193,399 @@ document
 
 
 /* =====================================================
+   CUSTOMER ORDER HISTORY
+===================================================== */
+
+document
+  .getElementById(
+    "historyForm"
+  )
+  .addEventListener(
+    "submit",
+    async e => {
+
+      e.preventDefault();
+
+
+      const historyPhone =
+        document
+          .getElementById(
+            "historyPhone"
+          )
+          .value
+          .trim();
+
+
+      const historyMessage =
+        document
+          .getElementById(
+            "historyMessage"
+          );
+
+
+      const historyResult =
+        document
+          .getElementById(
+            "historyResult"
+          );
+
+
+      const historyList =
+        document
+          .getElementById(
+            "historyList"
+          );
+
+
+      if (
+        !/^[0-9]{10}$/.test(
+          historyPhone
+        )
+      ) {
+
+        historyMessage.textContent =
+          "कृपया सही 10 अंकों का mobile number डालें।";
+
+        return;
+
+      }
+
+
+      historyMessage.textContent =
+        "📦 Order History लोड हो रही है...";
+
+
+      historyResult.style.display =
+        "none";
+
+      historyList.innerHTML =
+        "";
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/orders/history?phone=" +
+            encodeURIComponent(
+              historyPhone
+            )
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          historyMessage.textContent =
+            data.error ||
+            "Order History नहीं मिली।";
+
+          return;
+
+        }
+
+
+        if (
+          !data.orders ||
+          data.orders.length === 0
+        ) {
+
+          historyMessage.textContent =
+            "इस mobile number से कोई order नहीं मिला।";
+
+          return;
+
+        }
+
+
+        historyMessage.textContent =
+          `✅ ${data.orders.length} order मिले।`;
+
+
+        historyResult.style.display =
+          "block";
+
+
+        historyList.innerHTML =
+          data.orders
+            .map(
+              order => {
+
+                const cancelAllowed =
+                  order.cancelEligible === true;
+
+
+                return `
+
+                <div class="product-card order-history-card">
+
+                  <h3>
+                    📦 Order No.
+                    ${escapeHtml(
+                      order.orderNo
+                    )}
+                  </h3>
+
+
+                  <p>
+                    <strong>
+                      Product:
+                    </strong>
+
+                    ${escapeHtml(
+                      order.product ||
+                      "23 स्वास्थ्यवर्धक लड्डू"
+                    )}
+                  </p>
+
+
+                  <p>
+                    <strong>
+                      Quantity:
+                    </strong>
+
+                    ${escapeHtml(
+                      String(
+                        order.quantity || 0
+                      )
+                    )}
+                    Kg
+                  </p>
+
+
+                  <p>
+                    <strong>
+                      Total:
+                    </strong>
+
+                    ${money(
+                      order.total || 0
+                    )}
+                  </p>
+
+
+                  <p>
+                    <strong>
+                      Payment Status:
+                    </strong>
+
+                    <span class="status-badge">
+                      ${escapeHtml(
+                        order.paymentStatus ||
+                        "Pending"
+                      )}
+                    </span>
+                  </p>
+
+
+                  <p>
+                    <strong>
+                      Order Status:
+                    </strong>
+
+                    <span class="status-badge">
+                      ${escapeHtml(
+                        order.orderStatus ||
+                        "Pending"
+                      )}
+                    </span>
+                  </p>
+
+
+                  ${
+                    order.awb
+                      ? `
+                        <p>
+                          <strong>
+                            🚚 AWB:
+                          </strong>
+
+                          ${escapeHtml(
+                            order.awb
+                          )}
+                        </p>
+                      `
+                      : ""
+                  }
+
+
+                  ${
+                    order.shiprocketStatus
+                      ? `
+                        <p>
+                          <strong>
+                            🚚 Shiprocket Status:
+                          </strong>
+
+                          ${escapeHtml(
+                            order.shiprocketStatus
+                          )}
+                        </p>
+                      `
+                      : ""
+                  }
+
+
+                  ${
+                    cancelAllowed
+                      ? `
+                        <button
+                          type="button"
+                          class="whatsapp-btn history-cancel-btn"
+                          onclick="cancelFromHistory(
+                            '${escapeJs(
+                              order.orderNo
+                            )}',
+                            '${escapeJs(
+                              historyPhone
+                            )}'
+                          )">
+
+                          ❌ Order Cancel करें
+
+                        </button>
+                      `
+                      : `
+                        <p class="small">
+                          🔒 यह order अब cancellation के लिए eligible नहीं है।
+                        </p>
+                      `
+                  }
+
+                </div>
+
+                `;
+
+              }
+            )
+            .join("");
+
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        historyMessage.textContent =
+          "Server से connection नहीं हो सका।";
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   CANCEL FROM ORDER HISTORY
+===================================================== */
+
+async function cancelFromHistory(
+  orderNo,
+  phone
+) {
+
+  const confirmed =
+    window.confirm(
+      `क्या आप Order ${orderNo} को cancel करना चाहते हैं?`
+    );
+
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  const reason =
+    window.prompt(
+      "Cancellation reason लिखें (optional):"
+    ) || "";
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/orders/cancel",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              orderNo,
+              phone,
+              reason
+            })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      alert(
+        data.error ||
+        "Order cancel नहीं हुआ।"
+      );
+
+      return;
+
+    }
+
+
+    alert(
+      "✅ " +
+      (
+        data.message ||
+        "Order successfully cancelled."
+      )
+    );
+
+
+    /*
+      Cancellation के बाद उसी mobile number
+      की history दोबारा load करें।
+    */
+
+    const historyForm =
+      document.getElementById(
+        "historyForm"
+      );
+
+
+    historyForm.dispatchEvent(
+      new Event("submit")
+    );
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+    alert(
+      "Server से connection नहीं हो सका।"
+    );
+
+  }
+
+}
+
+
+/* =====================================================
    CUSTOMER CANCEL FORM
 ===================================================== */
 
@@ -1208,10 +1692,14 @@ document
 
 
         cancelMessage.innerHTML =
-          `✅ <strong>${data.message}</strong>
+          `✅ <strong>${escapeHtml(
+            data.message
+          )}</strong>
            <br>
            Order No:
-           <strong>${data.orderNo}</strong>`;
+           <strong>${escapeHtml(
+             data.orderNo
+           )}</strong>`;
 
 
         document
@@ -1234,6 +1722,64 @@ document
 
     }
   );
+
+
+/* =====================================================
+   SECURITY / HTML ESCAPE
+===================================================== */
+
+function escapeHtml(value) {
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+function escapeJs(value) {
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /\\/g,
+      "\\\\"
+    )
+    .replace(
+      /'/g,
+      "\\'"
+    )
+    .replace(
+      /\r/g,
+      "\\r"
+    )
+    .replace(
+      /\n/g,
+      "\\n"
+    );
+
+}
 
 
 /* =====================================================
