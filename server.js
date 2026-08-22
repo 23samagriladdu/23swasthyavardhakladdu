@@ -242,7 +242,7 @@ app.use(
 
 /* =========================================================
    SESSION
-========================================================= */
+   ========================================================= */
 
 app.set("trust proxy", 1);
 
@@ -264,6 +264,7 @@ app.use(
     }
   })
 );
+
 
 /* =========================================================
    PRODUCTS
@@ -338,12 +339,6 @@ function splitCustomerName(fullName) {
   const firstName =
     parts.shift() || "Customer";
 
-  /*
-     Shiprocket में last name required है।
-     इसलिए single-name customer के लिए
-     "Customer" भेजेंगे।
-  */
-
   const lastName =
     parts.join(" ") || "Customer";
 
@@ -376,11 +371,6 @@ async function getShiprocketToken() {
   }
 
 
-  /*
-     Shiprocket token लगभग 10 days valid होता है।
-     हम 9 days बाद नया token लेंगे।
-  */
-
   const TOKEN_VALIDITY =
     9 * 24 * 60 * 60 * 1000;
 
@@ -398,11 +388,6 @@ async function getShiprocketToken() {
 
   console.log(
     "Shiprocket: Trying API login..."
-  );
-
-  console.log(
-    "Shiprocket API email:",
-    SHIPROCKET_API_EMAIL
   );
 
 
@@ -475,7 +460,7 @@ async function getShiprocketToken() {
 
 
   console.log(
-    "Shiprocket login successful. Token received."
+    "Shiprocket login successful."
   );
 
 
@@ -512,25 +497,10 @@ async function createShiprocketOrder(
     );
 
 
-  /*
-     IMPORTANT:
-
-     billing_customer_name
-     billing_last_name
-
-     दोनों भेजे जा रहे हैं।
-
-     इससे आपका पिछला:
-     billing_last_name validation.present
-     वाला 422 error नहीं आना चाहिए।
-  */
-
-
   const payload = {
 
     order_id:
       String(order.order_no),
-
 
     order_date:
       new Date(order.created_at)
@@ -538,15 +508,9 @@ async function createShiprocketOrder(
         .slice(0, 16)
         .replace("T", " "),
 
-
     pickup_location:
       SHIPROCKET_PICKUP_LOCATION,
 
-
-    /*
-       Channel ID तभी भेजेंगे जब
-       valid numeric ID दिया गया हो।
-    */
 
     ...(SHIPROCKET_CHANNEL_ID &&
     /^\d+$/.test(
@@ -567,9 +531,7 @@ async function createShiprocketOrder(
       "23 Swasthyavardhak Ladoo",
 
 
-    /* =========================
-       BILLING
-       ========================= */
+    /* BILLING */
 
     billing_customer_name:
       customerName.firstName,
@@ -596,9 +558,7 @@ async function createShiprocketOrder(
       String(order.phone),
 
 
-    /* =========================
-       SHIPPING
-       ========================= */
+    /* SHIPPING */
 
     shipping_is_billing:
       true,
@@ -628,9 +588,7 @@ async function createShiprocketOrder(
       String(order.phone),
 
 
-    /* =========================
-       PRODUCTS
-       ========================= */
+    /* PRODUCTS */
 
     order_items: [
 
@@ -666,15 +624,12 @@ async function createShiprocketOrder(
     ],
 
 
-    /* =========================
-       PAYMENT
-       ========================= */
+    /* PAYMENT */
 
     payment_method:
       order.payment_method === "UPI"
         ? "Prepaid"
         : "COD",
-
 
     shipping_charges:
       Number(
@@ -690,15 +645,12 @@ async function createShiprocketOrder(
     total_discount:
       0,
 
-
     sub_total:
       Number(order.price) *
       Number(order.quantity),
 
 
-    /* =========================
-       PACKAGE
-       ========================= */
+    /* PACKAGE */
 
     length:
       PACKAGE_LENGTH,
@@ -712,28 +664,6 @@ async function createShiprocketOrder(
     weight:
       PACKAGE_WEIGHT
   };
-
-
-  console.log(
-    "========================================"
-  );
-
-  console.log(
-    "Sending order to Shiprocket:",
-    order.order_no
-  );
-
-  console.log(
-    "Shiprocket pickup location:",
-    SHIPROCKET_PICKUP_LOCATION
-  );
-
-  console.log(
-    "Shiprocket channel ID:",
-    SHIPROCKET_CHANNEL_ID
-      ? SHIPROCKET_CHANNEL_ID
-      : "NOT SET - using Default Custom channel"
-  );
 
 
   const response =
@@ -782,27 +712,9 @@ async function createShiprocketOrder(
   if (!response.ok) {
 
     console.error(
-      "========================================"
-    );
-
-    console.error(
-      "SHIPROCKET ORDER API FAILED"
-    );
-
-    console.error(
-      "HTTP STATUS:",
-      response.status
-    );
-
-    console.error(
-      "RESPONSE:",
+      "SHIPROCKET ORDER API FAILED:",
       data
     );
-
-    console.error(
-      "========================================"
-    );
-
 
     throw new Error(
       data.message ||
@@ -813,11 +725,7 @@ async function createShiprocketOrder(
 
 
   console.log(
-    "Shiprocket order created successfully."
-  );
-
-  console.log(
-    "Shiprocket response:",
+    "Shiprocket order created:",
     data
   );
 
@@ -837,16 +745,10 @@ async function cancelShiprocketOrder(
   if (!shiprocketOrderId) {
 
     return {
-
-      success:
-        false,
-
-      skipped:
-        true,
-
+      success: false,
+      skipped: true,
       message:
         "Shiprocket order ID उपलब्ध नहीं है।"
-
     };
   }
 
@@ -906,13 +808,9 @@ async function cancelShiprocketOrder(
   ) {
 
     return {
-
-      success:
-        true,
-
+      success: true,
       message:
         "Shiprocket order cancelled."
-
     };
   }
 
@@ -938,12 +836,8 @@ async function cancelShiprocketOrder(
 
 
   return {
-
-    success:
-      true,
-
+    success: true,
     data
-
   };
 }
 
@@ -959,16 +853,10 @@ async function cancelShiprocketShipment(
   if (!awb) {
 
     return {
-
-      success:
-        false,
-
-      skipped:
-        true,
-
+      success: false,
+      skipped: true,
       message:
         "AWB उपलब्ध नहीं है।"
-
     };
   }
 
@@ -1010,13 +898,9 @@ async function cancelShiprocketShipment(
   ) {
 
     return {
-
-      success:
-        true,
-
+      success: true,
       message:
         "Shiprocket shipment cancellation request sent."
-
     };
   }
 
@@ -1042,12 +926,8 @@ async function cancelShiprocketShipment(
 
 
   return {
-
-    success:
-      true,
-
+    success: true,
     data
-
   };
 }
 
@@ -1098,10 +978,6 @@ app.post(
       const qty =
         Number(quantity);
 
-
-      /* =========================
-         VALIDATION
-         ========================= */
 
       if (
 
@@ -1158,11 +1034,6 @@ app.post(
         DELIVERY;
 
 
-      /*
-         Example:
-         23L378440773
-      */
-
       const orderNo =
         "23L" +
         Date.now()
@@ -1174,54 +1045,30 @@ app.post(
         new Date().toISOString();
 
 
-      /* =========================
-         SAVE LOCAL ORDER
-         ========================= */
-
       const stmt =
         db.prepare(`
 
           INSERT INTO orders
           (
-
             order_no,
-
             created_at,
-
             customer_name,
-
             phone,
-
             address,
-
             pincode,
-
             city,
-
             state,
-
             country,
-
             product,
-
             sku,
-
             price,
-
             quantity,
-
             delivery,
-
             total,
-
             payment_method,
-
             payment_status,
-
             utr,
-
             order_status
-
           )
 
           VALUES
@@ -1288,15 +1135,8 @@ app.post(
         );
 
 
-      /* =========================
-         SEND TO SHIPROCKET
-         ========================= */
-
       let shiprocketSuccess =
         false;
-
-      let shiprocketError =
-        "";
 
 
       try {
@@ -1372,7 +1212,7 @@ app.post(
 
       } catch (shipErr) {
 
-        shiprocketError =
+        const shiprocketError =
           String(
             shipErr.message ||
             shipErr
@@ -1409,14 +1249,9 @@ app.post(
       }
 
 
-      /* =========================
-         CUSTOMER RESPONSE
-         ========================= */
-
       res.json({
 
-        success:
-          true,
+        success: true,
 
         orderNo,
 
@@ -1463,6 +1298,428 @@ app.post(
 
         error:
           "ऑर्डर सेव नहीं हो सका।"
+
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   ⭐ CUSTOMER ORDER HISTORY
+   =========================================================
+   
+   Customer अपना registered mobile number डालकर
+   अपने सभी orders देख सकता है.
+
+   URL:
+   /api/orders/history?phone=9876543210
+   ========================================================= */
+
+app.get(
+  "/api/orders/history",
+  (req, res) => {
+
+    try {
+
+      const phone =
+        String(
+          req.query.phone || ""
+        ).replace(
+          /\D/g,
+          ""
+        );
+
+
+      if (
+        !/^\d{10}$/.test(phone)
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
+
+        });
+      }
+
+
+      const rows =
+        db.prepare(`
+
+          SELECT
+
+            order_no,
+
+            created_at,
+
+            customer_name,
+
+            phone,
+
+            address,
+
+            pincode,
+
+            city,
+
+            state,
+
+            product,
+
+            quantity,
+
+            price,
+
+            delivery,
+
+            total,
+
+            payment_method,
+
+            payment_status,
+
+            order_status,
+
+            shiprocket_awb,
+
+            shiprocket_status,
+
+            cancellation_reason,
+
+            cancelled_at
+
+          FROM orders
+
+          WHERE phone = ?
+
+          ORDER BY id DESC
+
+        `).all(phone);
+
+
+      /*
+         Customer को केवल जरूरी information
+         दिखाई जाएगी।
+         
+         Shiprocket internal order ID आदि
+         customer को नहीं भेजे जाएंगे।
+      */
+
+
+      const orders =
+        rows.map(order => ({
+
+          orderNo:
+            order.order_no,
+
+          createdAt:
+            order.created_at,
+
+          customerName:
+            order.customer_name,
+
+          product:
+            order.product,
+
+          quantity:
+            order.quantity,
+
+          price:
+            order.price,
+
+          delivery:
+            order.delivery,
+
+          total:
+            order.total,
+
+          paymentMethod:
+            order.payment_method,
+
+          paymentStatus:
+            order.payment_status,
+
+          orderStatus:
+            order.order_status,
+
+          awb:
+            order.shiprocket_awb || "",
+
+          shiprocketStatus:
+            order.shiprocket_status || "",
+
+          cancellationReason:
+            order.cancellation_reason || "",
+
+          cancelledAt:
+            order.cancelled_at || "",
+
+          canCancel:
+            ![
+              "shipped",
+              "delivered",
+              "cancelled"
+            ].includes(
+              order.order_status
+            )
+
+        }));
+
+
+      res.json({
+
+        success: true,
+
+        phone,
+
+        count:
+          orders.length,
+
+        orders
+
+      });
+
+
+    } catch (err) {
+
+      console.error(
+        "Order history error:",
+        err
+      );
+
+
+      res.status(500).json({
+
+        error:
+          "Order history load नहीं हो सकी।"
+
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   ⭐ CUSTOMER SINGLE ORDER DETAILS
+   =========================================================
+
+   Customer Order No + Mobile से
+   specific order देख सकता है.
+
+   POST /api/orders/details
+
+   Body:
+   {
+     orderNo: "23L123456789",
+     phone: "9876543210"
+   }
+
+   ========================================================= */
+
+app.post(
+  "/api/orders/details",
+  (req, res) => {
+
+    try {
+
+      const orderNo =
+        String(
+          req.body.orderNo || ""
+        ).trim();
+
+
+      const phone =
+        String(
+          req.body.phone || ""
+        ).replace(
+          /\D/g,
+          ""
+        );
+
+
+      if (
+
+        !orderNo ||
+
+        !/^\d{10}$/.test(phone)
+
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Order No. और सही Mobile Number डालें।"
+
+        });
+      }
+
+
+      const order =
+        db.prepare(`
+
+          SELECT
+
+            order_no,
+
+            created_at,
+
+            customer_name,
+
+            phone,
+
+            address,
+
+            pincode,
+
+            city,
+
+            state,
+
+            product,
+
+            quantity,
+
+            price,
+
+            delivery,
+
+            total,
+
+            payment_method,
+
+            payment_status,
+
+            order_status,
+
+            shiprocket_awb,
+
+            shiprocket_status,
+
+            cancellation_reason,
+
+            cancelled_at
+
+          FROM orders
+
+          WHERE order_no = ?
+
+          AND phone = ?
+
+          LIMIT 1
+
+        `).get(
+
+          orderNo,
+
+          phone
+
+        );
+
+
+      if (!order) {
+
+        return res.status(404).json({
+
+          error:
+            "Order No. और Mobile Number का मिलान नहीं हुआ।"
+
+        });
+      }
+
+
+      res.json({
+
+        success: true,
+
+        order: {
+
+          orderNo:
+            order.order_no,
+
+          createdAt:
+            order.created_at,
+
+          customerName:
+            order.customer_name,
+
+          phone:
+            order.phone,
+
+          address:
+            order.address,
+
+          pincode:
+            order.pincode,
+
+          city:
+            order.city,
+
+          state:
+            order.state,
+
+          product:
+            order.product,
+
+          quantity:
+            order.quantity,
+
+          price:
+            order.price,
+
+          delivery:
+            order.delivery,
+
+          total:
+            order.total,
+
+          paymentMethod:
+            order.payment_method,
+
+          paymentStatus:
+            order.payment_status,
+
+          orderStatus:
+            order.order_status,
+
+          awb:
+            order.shiprocket_awb || "",
+
+          shiprocketStatus:
+            order.shiprocket_status || "",
+
+          cancellationReason:
+            order.cancellation_reason || "",
+
+          cancelledAt:
+            order.cancelled_at || "",
+
+          canCancel:
+            ![
+              "shipped",
+              "delivered",
+              "cancelled"
+            ].includes(
+              order.order_status
+            )
+
+        }
+
+      });
+
+
+    } catch (err) {
+
+      console.error(
+        "Order details error:",
+        err
+      );
+
+
+      res.status(500).json({
+
+        error:
+          "Order details load नहीं हो सके।"
 
       });
     }
@@ -1572,11 +1829,6 @@ app.post(
       }
 
 
-      /*
-         Shipment shipped/delivered होने के बाद
-         customer cancellation allow नहीं करेंगे।
-      */
-
       const blockedStatuses = [
 
         "shipped",
@@ -1607,9 +1859,7 @@ app.post(
         [];
 
 
-      /* =========================
-         CANCEL SHIPMENT
-         ========================= */
+      /* CANCEL SHIPMENT */
 
       if (
         order.shiprocket_awb
@@ -1637,9 +1887,7 @@ app.post(
       }
 
 
-      /* =========================
-         CANCEL ORDER
-         ========================= */
+      /* CANCEL ORDER */
 
       if (
         order.shiprocket_order_id
@@ -1666,10 +1914,6 @@ app.post(
         }
       }
 
-
-      /* =========================
-         SHIPROCKET FAILURE
-         ========================= */
 
       if (
         shiprocketErrors.length > 0
@@ -1702,8 +1946,7 @@ app.post(
 
         return res.status(409).json({
 
-          success:
-            false,
+          success: false,
 
           error:
             "Shiprocket में cancellation पूरा नहीं हो सका। Order को cancelled नहीं किया गया।",
@@ -1714,10 +1957,6 @@ app.post(
         });
       }
 
-
-      /* =========================
-         LOCAL CANCEL
-         ========================= */
 
       const cancelledAt =
         new Date().toISOString();
@@ -1764,8 +2003,7 @@ app.post(
 
       res.json({
 
-        success:
-          true,
+        success: true,
 
         orderNo:
           order.order_no,
