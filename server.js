@@ -27,7 +27,7 @@ const DELIVERY = 300;
 
 /* =========================================================
    SHIPROCKET SETTINGS
-   ========================================================= */
+========================================================= */
 
 const SHIPROCKET_API_EMAIL =
   process.env.SHIPROCKET_API_EMAIL || "";
@@ -44,7 +44,7 @@ const SHIPROCKET_CHANNEL_ID =
 
 /* =========================================================
    PACKAGE SETTINGS
-   ========================================================= */
+========================================================= */
 
 const PACKAGE_LENGTH =
   Number(process.env.PACKAGE_LENGTH || 10);
@@ -61,7 +61,7 @@ const PACKAGE_WEIGHT =
 
 /* =========================================================
    DATABASE
-   ========================================================= */
+========================================================= */
 
 const db = new Database(
   path.join(__dirname, "orders.db")
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS orders (
 
 /* =========================================================
    DATABASE MIGRATION
-   ========================================================= */
+========================================================= */
 
 function addColumnIfMissing(
   tableName,
@@ -199,7 +199,7 @@ addColumnIfMissing(
 
 /* =========================================================
    MIDDLEWARE
-   ========================================================= */
+========================================================= */
 
 app.use(express.json());
 
@@ -231,35 +231,46 @@ app.use(
 
 
 /* =========================================================
+   STATIC FILES
+========================================================= */
+
+app.use(
+  express.static(
+    path.join(__dirname, "public")
+  )
+);
+
+app.use(
+  express.static(__dirname)
+);
+
+
+/* =========================================================
    PRODUCTS
-   ========================================================= */
+========================================================= */
 
 const products = [
   {
     id: "10-dryfruit",
-    name:
-      "10 सामग्री - Only Dryfruits",
+    name: "10 सामग्री - Only Dryfruits",
     price: 1600
   },
 
   {
     id: "23-seeds-dryfruit",
-    name:
-      "23 सामग्री - Seeds & Dryfruits",
+    name: "23 सामग्री - Seeds & Dryfruits",
     price: 1300
   },
 
   {
     id: "30-seeds-dryfruit",
-    name:
-      "30 सामग्री - Seeds & Dryfruits",
+    name: "30 सामग्री - Seeds & Dryfruits",
     price: 1600
   },
 
   {
     id: "10-seeds-dryfruit",
-    name:
-      "10 सामग्री - Seeds & Dryfruits",
+    name: "10 सामग्री - Seeds & Dryfruits",
     price: 600
   }
 ];
@@ -267,7 +278,7 @@ const products = [
 
 /* =========================================================
    CONFIG API
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/api/config",
@@ -279,28 +290,14 @@ app.get(
       delivery: DELIVERY,
       products
     });
+
   }
 );
 
 
 /* =========================================================
    CUSTOMER NAME HELPER
-   ========================================================= */
-
-/*
-   Shiprocket में first name और last name
-   दोनों जरूरी हो सकते हैं।
-
-   उदाहरण:
-
-   "Ramesh Kumar"
-   first name = Ramesh
-   last name  = Kumar
-
-   "Ramesh"
-   first name = Ramesh
-   last name  = Customer
-*/
+========================================================= */
 
 function splitCustomerName(fullName) {
 
@@ -327,7 +324,7 @@ function splitCustomerName(fullName) {
 
 /* =========================================================
    SHIPROCKET TOKEN
-   ========================================================= */
+========================================================= */
 
 let shiprocketToken = "";
 let shiprocketTokenCreatedAt = 0;
@@ -363,11 +360,6 @@ async function getShiprocketToken() {
 
   console.log(
     "Shiprocket: Trying API login..."
-  );
-
-  console.log(
-    "Shiprocket API email:",
-    SHIPROCKET_API_EMAIL
   );
 
 
@@ -411,18 +403,8 @@ async function getShiprocketToken() {
 
     console.error(
       "Shiprocket login failed:",
-      {
-        status:
-          response.status,
-
-        message:
-          data.message || "",
-
-        error:
-          data.error || ""
-      }
+      data
     );
-
 
     throw new Error(
       data.message ||
@@ -440,7 +422,7 @@ async function getShiprocketToken() {
 
 
   console.log(
-    "Shiprocket login successful. Token received."
+    "Shiprocket login successful."
   );
 
 
@@ -450,7 +432,7 @@ async function getShiprocketToken() {
 
 /* =========================================================
    CREATE ORDER IN SHIPROCKET
-   ========================================================= */
+========================================================= */
 
 async function createShiprocketOrder(order) {
 
@@ -469,13 +451,6 @@ async function createShiprocketOrder(order) {
   }
 
 
-  /*
-     IMPORTANT FIX:
-
-     Shiprocket billing_last_name
-     और shipping_last_name मांग रहा है।
-  */
-
   const customerName =
     splitCustomerName(
       order.customer_name
@@ -487,28 +462,19 @@ async function createShiprocketOrder(order) {
     order_id:
       String(order.order_no),
 
-
     order_date:
       new Date(order.created_at)
         .toISOString()
         .slice(0, 16)
         .replace("T", " "),
 
-
     pickup_location:
       SHIPROCKET_PICKUP_LOCATION,
 
 
-    /*
-       channel_id तभी भेजेंगे जब
-       Render में valid numeric ID दिया गया हो।
-    */
-
     ...(SHIPROCKET_CHANNEL_ID &&
       /^\d+$/.test(
-        String(
-          SHIPROCKET_CHANNEL_ID
-        )
+        String(SHIPROCKET_CHANNEL_ID)
       )
       ? {
           channel_id:
@@ -522,10 +488,6 @@ async function createShiprocketOrder(order) {
     company_name:
       "23 Swasthyavardhak Ladoo",
 
-
-    /* =====================================================
-       BILLING
-       ===================================================== */
 
     billing_customer_name:
       customerName.firstName,
@@ -552,13 +514,8 @@ async function createShiprocketOrder(order) {
       String(order.phone),
 
 
-    /* =====================================================
-       SHIPPING
-       ===================================================== */
-
     shipping_is_billing:
       true,
-
 
     shipping_customer_name:
       customerName.firstName,
@@ -584,10 +541,6 @@ async function createShiprocketOrder(order) {
     shipping_phone:
       String(order.phone),
 
-
-    /* =====================================================
-       PRODUCTS
-       ===================================================== */
 
     order_items: [
 
@@ -618,16 +571,11 @@ async function createShiprocketOrder(order) {
     ],
 
 
-    /* =====================================================
-       PAYMENT
-       ===================================================== */
-
     payment_method:
       order.payment_method ===
       "UPI"
         ? "Prepaid"
         : "COD",
-
 
     shipping_charges:
       Number(order.delivery),
@@ -641,15 +589,10 @@ async function createShiprocketOrder(order) {
     total_discount:
       0,
 
-
     sub_total:
       Number(order.price) *
       Number(order.quantity),
 
-
-    /* =====================================================
-       PACKAGE
-       ===================================================== */
 
     length:
       Number(PACKAGE_LENGTH),
@@ -666,40 +609,10 @@ async function createShiprocketOrder(order) {
 
 
   console.log(
-    "========================================"
-  );
-
-  console.log(
     "Sending order to Shiprocket:",
     order.order_no
   );
 
-  console.log(
-    "Shiprocket pickup location:",
-    SHIPROCKET_PICKUP_LOCATION
-  );
-
-  console.log(
-    "Shiprocket channel ID:",
-    SHIPROCKET_CHANNEL_ID
-      ? SHIPROCKET_CHANNEL_ID
-      : "NOT SET - using Default Custom channel"
-  );
-
-  console.log(
-    "Shiprocket customer first name:",
-    customerName.firstName
-  );
-
-  console.log(
-    "Shiprocket customer last name:",
-    customerName.lastName
-  );
-
-
-  /* =====================================================
-     SEND API REQUEST
-     ===================================================== */
 
   const response =
     await fetch(
@@ -735,27 +648,9 @@ async function createShiprocketOrder(order) {
   if (!response.ok) {
 
     console.error(
-      "========================================"
-    );
-
-    console.error(
-      "SHIPROCKET ORDER API FAILED"
-    );
-
-    console.error(
-      "HTTP STATUS:",
-      response.status
-    );
-
-    console.error(
-      "RESPONSE:",
+      "SHIPROCKET ORDER API FAILED:",
       data
     );
-
-    console.error(
-      "========================================"
-    );
-
 
     throw new Error(
       data.message ||
@@ -766,10 +661,7 @@ async function createShiprocketOrder(order) {
 
 
   console.log(
-    "Shiprocket order created successfully:"
-  );
-
-  console.log(
+    "Shiprocket order created:",
     data
   );
 
@@ -779,8 +671,8 @@ async function createShiprocketOrder(order) {
 
 
 /* =========================================================
-   CREATE WEBSITE ORDER
-   ========================================================= */
+   WEBSITE - CREATE ORDER
+========================================================= */
 
 app.post(
   "/api/orders",
@@ -812,10 +704,6 @@ app.post(
       const qty =
         Number(quantity);
 
-
-      /* ===================================================
-         VALIDATION
-         =================================================== */
 
       if (
         !name ||
@@ -868,10 +756,6 @@ app.post(
         new Date().toISOString();
 
 
-      /* ===================================================
-         SAVE ORDER
-         =================================================== */
-
       const stmt =
         db.prepare(`
 
@@ -891,6 +775,7 @@ app.post(
 
             product,
             sku,
+
             price,
             quantity,
 
@@ -920,6 +805,7 @@ app.post(
 
             ?,
             ?,
+
             ?,
             ?,
 
@@ -953,6 +839,7 @@ app.post(
 
           product.name,
           product.id,
+
           product.price,
           qty,
 
@@ -979,18 +866,15 @@ app.post(
         );
 
 
-      /* ===================================================
-         SHIPROCKET
-         =================================================== */
+      /* =====================================================
+         SEND ORDER TO SHIPROCKET
+      ===================================================== */
 
       let shiprocketSuccess =
         false;
 
       let shiprocketData =
         null;
-
-      let shiprocketError =
-        "";
 
 
       try {
@@ -1029,7 +913,7 @@ app.post(
             shiprocket_order_id = ?,
             shiprocket_shipment_id = ?,
             shiprocket_status = ?,
-            shiprocket_error = ?
+            shiprocket_error = ''
 
           WHERE id = ?
 
@@ -1041,24 +925,15 @@ app.post(
 
           "created",
 
-          "",
-
           result.lastInsertRowid
         );
 
 
       } catch (shipErr) {
 
-        shiprocketError =
-          String(
-            shipErr.message ||
-            shipErr
-          );
-
-
         console.error(
           "Shiprocket sync error:",
-          shiprocketError
+          shipErr
         );
 
 
@@ -1076,16 +951,15 @@ app.post(
 
           "failed",
 
-          shiprocketError,
+          String(
+            shipErr.message ||
+            shipErr
+          ),
 
           result.lastInsertRowid
         );
       }
 
-
-      /* ===================================================
-         CUSTOMER RESPONSE
-         =================================================== */
 
       res.json({
 
@@ -1110,20 +984,14 @@ app.post(
           shiprocketSuccess
 
             ? (
-
                 safePayment === "UPI"
 
                   ? "ऑर्डर सफलतापूर्वक सेव हो गया और Shiprocket में भेज दिया गया है। UPI payment के बाद UTR verify किया जाएगा।"
 
                   : "ऑर्डर सफलतापूर्वक सेव हो गया और Shiprocket में भेज दिया गया है।"
-
               )
 
-            : (
-
-                "ऑर्डर वेबसाइट पर सेव हो गया है, लेकिन Shiprocket में भेजने में समस्या आई।"
-
-              )
+            : "ऑर्डर वेबसाइट पर सेव हो गया है, लेकिन Shiprocket में भेजने में समस्या आई।"
       });
 
 
@@ -1147,8 +1015,329 @@ app.post(
 
 
 /* =========================================================
-   ADMIN AUTH
-   ========================================================= */
+   CUSTOMER - CHECK ORDER
+========================================================= */
+
+app.post(
+  "/api/orders/check",
+  (req, res) => {
+
+    try {
+
+      const {
+        orderNo,
+        phone
+      } = req.body;
+
+
+      if (
+        !orderNo ||
+        !phone ||
+        !/^\d{10}$/.test(
+          String(phone)
+        )
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Order Number और सही Mobile Number डालें।"
+
+        });
+      }
+
+
+      const order =
+        db.prepare(`
+
+          SELECT
+            order_no,
+            created_at,
+            customer_name,
+            phone,
+            product,
+            quantity,
+            total,
+            payment_method,
+            payment_status,
+            order_status,
+            shiprocket_status,
+            shiprocket_awb
+
+          FROM orders
+
+          WHERE order_no = ?
+          AND phone = ?
+
+        `).get(
+
+          String(orderNo).trim(),
+
+          String(phone)
+        );
+
+
+      if (!order) {
+
+        return res.status(404).json({
+
+          error:
+            "Order नहीं मिला। Order Number और Mobile Number जांचें।"
+
+        });
+      }
+
+
+      res.json({
+
+        success: true,
+
+        order
+
+      });
+
+
+    } catch (err) {
+
+      console.error(
+        "CHECK ORDER ERROR:",
+        err
+      );
+
+
+      res.status(500).json({
+
+        error:
+          "Order की जानकारी प्राप्त नहीं हो सकी।"
+
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER - CANCEL ORDER
+========================================================= */
+
+app.post(
+  "/api/orders/cancel",
+  (req, res) => {
+
+    try {
+
+      const {
+        orderNo,
+        phone
+      } = req.body;
+
+
+      /* ---------------------------------------------
+         VALIDATION
+      --------------------------------------------- */
+
+      if (
+        !orderNo ||
+        !phone ||
+        !/^\d{10}$/.test(
+          String(phone)
+        )
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Order Number और सही Mobile Number डालें।"
+
+        });
+      }
+
+
+      /* ---------------------------------------------
+         FIND ORDER
+         Order No + Mobile दोनों जरूरी हैं
+      --------------------------------------------- */
+
+      const order =
+        db.prepare(`
+
+          SELECT *
+
+          FROM orders
+
+          WHERE order_no = ?
+          AND phone = ?
+
+        `).get(
+
+          String(orderNo).trim(),
+
+          String(phone)
+        );
+
+
+      if (!order) {
+
+        return res.status(404).json({
+
+          error:
+            "Order नहीं मिला। कृपया Order Number और Mobile Number सही डालें।"
+
+        });
+      }
+
+
+      /* ---------------------------------------------
+         ALREADY CANCELLED
+      --------------------------------------------- */
+
+      if (
+        order.order_status ===
+        "cancelled"
+      ) {
+
+        return res.json({
+
+          success: true,
+
+          alreadyCancelled: true,
+
+          message:
+            "यह Order पहले से Cancelled है।"
+
+        });
+      }
+
+
+      /* ---------------------------------------------
+         CUSTOMER CANNOT CANCEL THESE
+      --------------------------------------------- */
+
+      const cannotCancel = [
+
+        "packed",
+        "shipped",
+        "delivered"
+
+      ];
+
+
+      if (
+        cannotCancel.includes(
+          order.order_status
+        )
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            `यह Order अब customer द्वारा cancel नहीं किया जा सकता क्योंकि इसका status "${order.order_status}" है।`
+
+        });
+      }
+
+
+      /* ---------------------------------------------
+         ONLY NEW / CONFIRMED CAN BE CANCELLED
+      --------------------------------------------- */
+
+      if (
+        ![
+          "new",
+          "confirmed"
+        ].includes(
+          order.order_status
+        )
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "यह Order अभी customer cancellation के लिए उपलब्ध नहीं है।"
+
+        });
+      }
+
+
+      /* ---------------------------------------------
+         CANCEL
+      --------------------------------------------- */
+
+      const result =
+        db.prepare(`
+
+          UPDATE orders
+
+          SET
+            order_status = 'cancelled'
+
+          WHERE id = ?
+
+          AND phone = ?
+
+          AND order_status IN
+            ('new', 'confirmed')
+
+        `).run(
+
+          order.id,
+
+          String(phone)
+        );
+
+
+      if (
+        result.changes !== 1
+      ) {
+
+        return res.status(409).json({
+
+          error:
+            "Order cancel नहीं हो सका। कृपया दोबारा कोशिश करें।"
+
+        });
+      }
+
+
+      /* ---------------------------------------------
+         RESPONSE
+      --------------------------------------------- */
+
+      res.json({
+
+        success: true,
+
+        orderNo:
+          order.order_no,
+
+        message:
+          "आपका Order successfully cancelled हो गया है।"
+
+      });
+
+
+    } catch (err) {
+
+      console.error(
+        "CUSTOMER CANCEL ERROR:",
+        err
+      );
+
+
+      res.status(500).json({
+
+        error:
+          "Order cancel नहीं हो सका।"
+
+      });
+    }
+  }
+);
+
+
+/* =========================================================
+   ADMIN AUTHENTICATION
+========================================================= */
 
 function requireAdmin(
   req,
@@ -1176,7 +1365,7 @@ function requireAdmin(
 
 /* =========================================================
    ADMIN LOGIN
-   ========================================================= */
+========================================================= */
 
 app.post(
   "/api/admin/login",
@@ -1200,7 +1389,9 @@ app.post(
 
 
       return res.json({
+
         success: true
+
       });
     }
 
@@ -1217,7 +1408,7 @@ app.post(
 
 /* =========================================================
    ADMIN LOGOUT
-   ========================================================= */
+========================================================= */
 
 app.post(
   "/api/admin/logout",
@@ -1227,7 +1418,9 @@ app.post(
       () => {
 
         res.json({
+
           success: true
+
         });
 
       }
@@ -1237,8 +1430,8 @@ app.post(
 
 
 /* =========================================================
-   ADMIN SESSION
-   ========================================================= */
+   ADMIN SESSION CHECK
+========================================================= */
 
 app.get(
   "/api/admin/me",
@@ -1258,8 +1451,8 @@ app.get(
 
 
 /* =========================================================
-   ADMIN ORDERS
-   ========================================================= */
+   ADMIN - ALL ORDERS
+========================================================= */
 
 app.get(
   "/api/admin/orders",
@@ -1267,9 +1460,15 @@ app.get(
   (req, res) => {
 
     const rows =
-      db.prepare(
-        "SELECT * FROM orders ORDER BY id DESC"
-      ).all();
+      db.prepare(`
+
+        SELECT *
+
+        FROM orders
+
+        ORDER BY id DESC
+
+      `).all();
 
 
     res.json(rows);
@@ -1278,8 +1477,8 @@ app.get(
 
 
 /* =========================================================
-   ADMIN UPDATE ORDER
-   ========================================================= */
+   ADMIN - UPDATE ORDER
+========================================================= */
 
 app.patch(
   "/api/admin/orders/:id",
@@ -1373,6 +1572,7 @@ app.patch(
       UPDATE orders
 
       SET
+
         order_status =
           COALESCE(
             ?,
@@ -1398,24 +1598,17 @@ app.patch(
 
 
     res.json({
+
       success: true
+
     });
   }
 );
 
 
 /* =========================================================
-   STATIC FILES
-   ========================================================= */
-
-app.use(
-  express.static(__dirname)
-);
-
-
-/* =========================================================
    HOME PAGE
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/",
@@ -1433,7 +1626,7 @@ app.get(
 
 /* =========================================================
    ADMIN PAGE
-   ========================================================= */
+========================================================= */
 
 app.get(
   "/admin",
@@ -1451,7 +1644,7 @@ app.get(
 
 /* =========================================================
    SERVER START
-   ========================================================= */
+========================================================= */
 
 app.listen(
   PORT,
@@ -1474,5 +1667,6 @@ app.listen(
         SHIPROCKET_PICKUP_LOCATION
       }`
     );
+
   }
 );
