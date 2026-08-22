@@ -240,11 +240,17 @@ app.use(
 );
 
 
+/* =========================================================
+   SESSION
+========================================================= */
+
+app.set("trust proxy", 1);
+
 app.use(
   session({
     secret:
       process.env.SESSION_SECRET ||
-      "CHANGE_THIS_SESSION_SECRET",
+      "23-Swasthyavardhak-Change-This-Secret",
 
     resave: false,
 
@@ -252,21 +258,12 @@ app.use(
 
     cookie: {
       httpOnly: true,
-
+      secure: true,
       sameSite: "lax",
-
-      /*
-         Render HTTPS पर secure cookie इस्तेमाल करेगा।
-      */
-      secure:
-        process.env.NODE_ENV === "production",
-
-      maxAge:
-        8 * 60 * 60 * 1000
+      maxAge: 8 * 60 * 60 * 1000
     }
   })
 );
-
 
 /* =========================================================
    PRODUCTS
