@@ -3,12 +3,209 @@
 <html lang="hi">
 
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>23 स्वास्थ्यवर्धक लड्डू</title>
+  <title>23 स्वास्थ्यवर्धक लड्डू</title>
 
-<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* =====================================================
+       CUSTOMER ORDER HISTORY / DETAILS
+    ===================================================== */
+
+    .history-section {
+      padding: 50px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .history-search {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      max-width: 650px;
+      margin: 25px auto;
+    }
+
+    .history-search input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .history-search button,
+    .history-card button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .history-search button {
+      background: #198754;
+      color: white;
+    }
+
+    .history-message {
+      text-align: center;
+      margin: 15px 0;
+      font-weight: 600;
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .history-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
+    }
+
+    .history-card h3 {
+      margin-top: 0;
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-row:last-child {
+      border-bottom: 0;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #eee;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .history-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .details-btn {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .cancel-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .disabled-btn {
+      background: #aaa;
+      color: white;
+      cursor: not-allowed !important;
+    }
+
+    .detail-box {
+      max-width: 800px;
+      margin: 25px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
+      display: none;
+    }
+
+    .detail-box h3 {
+      margin-top: 0;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .detail-item {
+      padding: 10px;
+      background: #f7f7f7;
+      border-radius: 8px;
+    }
+
+    @media(max-width: 650px) {
+      .history-search {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .65);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 500px;
+      width: 100%;
+      padding: 25px;
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    .modal-card button,
+    .modal-card a {
+      display: inline-block;
+      margin: 8px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .modal-card button {
+      background: #198754;
+      color: white;
+    }
+
+    .modal-card a {
+      background: #25d366;
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
@@ -19,9 +216,7 @@
     23 <span>स्वास्थ्यवर्धक सामान</span>
   </div>
 
-  <a
-    class="call-btn"
-    href="tel:9643185255">
+  <a class="call-btn" href="tel:9643185255">
     📞 9643185255
   </a>
 
@@ -57,16 +252,15 @@
 
     <div class="hero-actions">
 
-      <a
-        class="primary-btn"
-        href="#order">
+      <a class="primary-btn" href="#order">
         ऑर्डर करें
       </a>
 
       <a
         class="secondary-btn"
         href="https://wa.me/919643185255"
-        target="_blank">
+        target="_blank"
+        rel="noopener">
         WhatsApp
       </a>
 
@@ -128,10 +322,7 @@
   हमारे लड्डू पैक
 </h2>
 
-<div
-  id="productGrid"
-  class="product-grid">
-</div>
+<div id="productGrid" class="product-grid"></div>
 
 <p class="delivery-note">
   🚚 डिलीवरी चार्ज:
@@ -146,9 +337,7 @@
      ORDER SECTION
 ===================================================== -->
 
-<section
-  class="order-section"
-  id="order">
+<section class="order-section" id="order">
 
 <div class="order-copy">
 
@@ -174,10 +363,7 @@
 </div>
 
 
-<form
-  id="orderForm"
-  class="order-form">
-
+<form id="orderForm" class="order-form">
 
 <label>
   नाम
@@ -257,9 +443,10 @@
 
   पैक
 
-  <select
-    id="product"
-    required>
+  <select id="product" required>
+    <option value="">
+      लोड हो रहा है...
+    </option>
   </select>
 
 </label>
@@ -303,9 +490,7 @@
      UPI
 ===================================================== -->
 
-<div
-  id="upiBox"
-  class="payment-box full">
+<div id="upiBox" class="payment-box full">
 
 <strong>
   UPI Payment
@@ -404,89 +589,68 @@
      CUSTOMER ORDER HISTORY
 ===================================================== -->
 
-<section
-  class="order-section"
-  id="order-history">
+<section class="history-section" id="order-history">
 
-<div class="order-copy">
+  <p class="eyebrow">
+    My Orders
+  </p>
 
-<p class="eyebrow">
-  Order History
-</p>
+  <h2>
+    📦 मेरे Orders
+  </h2>
 
-<h2>
-  📦 अपना Order History देखें
-</h2>
-
-<p>
-  अपना registered mobile number डालकर
-  अपने सभी orders की जानकारी देखें।
-</p>
-
-<div class="contact-box">
-  🔐 आपकी order जानकारी केवल उसी mobile number
-  से दिखाई जाएगी जिससे order किया गया था।
-</div>
-
-</div>
+  <p>
+    अपने registered mobile number से अपने सभी orders देखें।
+  </p>
 
 
-<form
-  id="historyForm"
-  class="order-form">
+  <div class="history-search">
+
+    <input
+      id="historyPhone"
+      type="tel"
+      inputmode="numeric"
+      pattern="[0-9]{10}"
+      maxlength="10"
+      placeholder="Order वाला 10 अंकों का मोबाइल नंबर">
+
+    <button
+      type="button"
+      id="historyBtn">
+      🔍 Orders देखें
+    </button>
+
+  </div>
 
 
-<label class="full">
-
-  📱 Registered Mobile Number
-
-  <input
-    id="historyPhone"
-    required
-    inputmode="numeric"
-    pattern="[0-9]{10}"
-    maxlength="10"
-    placeholder="Order वाला 10 अंकों का mobile number">
-
-</label>
+  <p
+    id="historyMessage"
+    class="history-message">
+  </p>
 
 
-<button
-  class="whatsapp-btn"
-  type="submit">
-
-  🔍 Order History देखें
-
-</button>
+  <div
+    id="historyGrid"
+    class="history-grid">
+  </div>
 
 
-<p
-  id="historyMessage"
-  class="small">
-</p>
+  <!-- SINGLE ORDER DETAILS -->
 
-</form>
+  <div
+    id="detailBox"
+    class="detail-box">
 
-</section>
+    <h3>
+      📋 Order Details
+    </h3>
 
+    <div
+      id="detailContent"
+      class="detail-grid">
+    </div>
 
-<!-- =====================================================
-     ORDER HISTORY RESULT
-===================================================== -->
-
-<section
-  id="historyResult"
-  class="products"
-  style="display:none;">
-
-<h2>
-  📋 आपके Orders
-</h2>
-
-<div
-  id="historyList"
-  class="product-grid">
-</div>
+  </div>
 
 </section>
 
@@ -523,10 +687,7 @@
 </div>
 
 
-<form
-  id="cancelForm"
-  class="order-form">
-
+<form id="cancelForm" class="order-form">
 
 <label>
 
@@ -655,9 +816,7 @@
      SUCCESS MODAL
 ===================================================== -->
 
-<div
-  id="successModal"
-  class="modal hidden">
+<div id="successModal" class="modal hidden">
 
 <div class="modal-card">
 
@@ -678,7 +837,8 @@
 
 <a
   id="successWa"
-  target="_blank">
+  target="_blank"
+  rel="noopener">
 
   WhatsApp पर Order भेजें
 
@@ -704,35 +864,29 @@ let config = null;
 
 const delivery = 300;
 
+
 const product =
-  document.getElementById(
-    "product"
-  );
+  document.getElementById("product");
+
 
 const qty =
-  document.getElementById(
-    "qty"
-  );
+  document.getElementById("qty");
+
 
 const productTotal =
-  document.getElementById(
-    "productTotal"
-  );
+  document.getElementById("productTotal");
+
 
 const grandTotal =
-  document.getElementById(
-    "grandTotal"
-  );
+  document.getElementById("grandTotal");
+
 
 const paymentMethod =
-  document.getElementById(
-    "paymentMethod"
-  );
+  document.getElementById("paymentMethod");
+
 
 const upiBox =
-  document.getElementById(
-    "upiBox"
-  );
+  document.getElementById("upiBox");
 
 
 /* =====================================================
@@ -742,7 +896,7 @@ const upiBox =
 function money(n) {
 
   return "₹" +
-    Number(n)
+    Number(n || 0)
       .toLocaleString("en-IN");
 
 }
@@ -774,19 +928,111 @@ function updateTotal() {
 
   const total =
     price() *
-    Number(
-      qty.value || 0
-    );
+    Number(qty.value || 0);
+
 
   productTotal.textContent =
     money(total);
 
+
   grandTotal.textContent =
-    money(
-      total + delivery
-    );
+    money(total + delivery);
+
 
   renderUPI();
+
+}
+
+
+/* =====================================================
+   PRODUCT GRID
+===================================================== */
+
+function renderProducts() {
+
+  const grid =
+    document.getElementById(
+      "productGrid"
+    );
+
+
+  if (!config || !config.products) {
+    return;
+  }
+
+
+  grid.innerHTML =
+    config.products.map(p => `
+
+      <div class="product-card">
+
+        <h3>
+          ${escapeHtml(p.name)}
+        </h3>
+
+        <p>
+          <strong>
+            ${money(p.price)}
+          </strong>
+          / Kg
+        </p>
+
+        <button
+          type="button"
+          class="primary-btn"
+          onclick="selectProduct('${escapeJs(p.id)}')">
+
+          यह पैक चुनें
+
+        </button>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+/* =====================================================
+   SELECT PRODUCT
+===================================================== */
+
+function selectProduct(id) {
+
+  product.value = id;
+
+  updateTotal();
+
+  document
+    .getElementById("order")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value) {
+
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+function escapeJs(value) {
+
+  return String(value || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'");
 
 }
 
@@ -799,55 +1045,51 @@ function renderUPI() {
 
   if (!config) return;
 
+
   upiBox.style.display =
     paymentMethod.value === "UPI"
       ? "block"
       : "none";
 
+
   if (
-    paymentMethod.value !==
-    "UPI"
+    paymentMethod.value !== "UPI"
   ) {
+
     return;
+
   }
+
 
   const amount =
     price() *
-      Number(
-        qty.value || 0
-      ) +
+      Number(qty.value || 0) +
     delivery;
+
 
   document
     .getElementById("upiId")
     .textContent =
-      config.upiId;
+      config.upiId || "UPI ID उपलब्ध नहीं है";
 
 
   const qr =
-    document.getElementById(
-      "qr"
-    );
+    document.getElementById("qr");
+
 
   qr.innerHTML = "";
 
 
   if (
     config.upiId &&
-    !config.upiId.startsWith(
-      "YOUR-"
-    )
+    !config.upiId.startsWith("YOUR-")
   ) {
 
     const url =
       `upi://pay?pa=${
-        encodeURIComponent(
-          config.upiId
-        )
+        encodeURIComponent(config.upiId)
       }&pn=${
-        encodeURIComponent(
-          config.upiName
-        )
+        encodeURIComponent(config.upiName || "")
       }&am=${
         amount.toFixed(2)
       }&cu=INR`;
@@ -864,15 +1106,13 @@ function renderUPI() {
 
 
     document
-      .getElementById(
-        "payBtn"
-      )
+      .getElementById("payBtn")
       .onclick = () => {
 
-        window.location.href =
-          url;
+        window.location.href = url;
 
       };
+
 
   } else {
 
@@ -883,13 +1123,11 @@ function renderUPI() {
 
 
     document
-      .getElementById(
-        "payBtn"
-      )
+      .getElementById("payBtn")
       .onclick = () => {
 
         alert(
-          "पहले .env में अपनी UPI ID डालें।"
+          "पहले Render में UPI_ID environment variable सेट करें।"
         );
 
       };
@@ -908,9 +1146,13 @@ async function init() {
   try {
 
     const response =
-      await fetch(
-        "/api/config"
-      );
+      await fetch("/api/config");
+
+
+    if (!response.ok) {
+      throw new Error("Config API failed");
+    }
+
 
     config =
       await response.json();
@@ -923,9 +1165,9 @@ async function init() {
         .map(
           p =>
             `<option
-              value="${p.id}"
-              data-price="${p.price}">
-              ${p.name} — ${money(p.price)}/Kg
+              value="${escapeHtml(p.id)}"
+              data-price="${Number(p.price)}">
+              ${escapeHtml(p.name)} — ${money(p.price)}/Kg
             </option>`
         )
         .join("");
@@ -936,20 +1178,19 @@ async function init() {
     ) {
 
       product.value =
-        config
-          .products[1]
-          .id;
+        config.products[1].id;
 
     }
 
 
+    renderProducts();
+
     updateTotal();
+
 
   } catch (error) {
 
-    console.error(
-      error
-    );
+    console.error(error);
 
     alert(
       "Website configuration load नहीं हो सकी।"
@@ -969,10 +1210,12 @@ product.addEventListener(
   updateTotal
 );
 
+
 qty.addEventListener(
   "input",
   updateTotal
 );
+
 
 paymentMethod.addEventListener(
   "change",
@@ -985,9 +1228,7 @@ paymentMethod.addEventListener(
 ===================================================== */
 
 document
-  .getElementById(
-    "orderForm"
-  )
+  .getElementById("orderForm")
   .addEventListener(
     "submit",
     async e => {
@@ -999,49 +1240,37 @@ document
 
         name:
           document
-            .getElementById(
-              "name"
-            )
+            .getElementById("name")
             .value
             .trim(),
 
         phone:
           document
-            .getElementById(
-              "phone"
-            )
+            .getElementById("phone")
             .value
             .trim(),
 
         address:
           document
-            .getElementById(
-              "address"
-            )
+            .getElementById("address")
             .value
             .trim(),
 
         city:
           document
-            .getElementById(
-              "city"
-            )
+            .getElementById("city")
             .value
             .trim(),
 
         state:
           document
-            .getElementById(
-              "state"
-            )
+            .getElementById("state")
             .value
             .trim(),
 
         pincode:
           document
-            .getElementById(
-              "pincode"
-            )
+            .getElementById("pincode")
             .value
             .trim(),
 
@@ -1049,22 +1278,27 @@ document
           product.value,
 
         quantity:
-          Number(
-            qty.value
-          ),
+          Number(qty.value),
 
         paymentMethod:
           paymentMethod.value,
 
         utr:
           document
-            .getElementById(
-              "utr"
-            )
+            .getElementById("utr")
             .value
             .trim()
 
       };
+
+
+      if (!body.productId) {
+
+        alert("कृपया पैक चुनें।");
+
+        return;
+
+      }
 
 
       try {
@@ -1081,9 +1315,8 @@ document
               },
 
               body:
-                JSON.stringify(
-                  body
-                )
+                JSON.stringify(body)
+
             }
           );
 
@@ -1105,25 +1338,22 @@ document
 
 
         document
-          .getElementById(
-            "successText"
-          )
+          .getElementById("successText")
           .innerHTML =
 
           `आपका Order No.
-          <strong>${data.orderNo}</strong>
+          <strong>${escapeHtml(data.orderNo)}</strong>
           है।<br>
           कुल राशि:
           <strong>${money(data.total)}</strong>
           <br>
-          ${data.message}`;
+          ${escapeHtml(data.message || "")}`;
 
 
         const selectedProduct =
           product.options[
             product.selectedIndex
-          ]
-          ?.text || "";
+          ]?.text || "";
 
 
         const wa =
@@ -1143,44 +1373,42 @@ document
 
 
         document
-          .getElementById(
-            "successWa"
-          )
+          .getElementById("successWa")
           .href =
             "https://wa.me/919643185255?text=" +
-            encodeURIComponent(
-              wa
-            );
+            encodeURIComponent(wa);
 
 
         document
-          .getElementById(
-            "successModal"
-          )
+          .getElementById("successModal")
           .classList
-          .remove(
-            "hidden"
-          );
+          .remove("hidden");
 
 
         e.target.reset();
 
 
-        product.value =
-          config
-            .products[1]
-            .id;
+        if (
+          config &&
+          config.products.length > 1
+        ) {
+
+          product.value =
+            config.products[1].id;
+
+        }
+
 
         qty.value = 1;
 
+        paymentMethod.value = "UPI";
 
         updateTotal();
 
+
       } catch (error) {
 
-        console.error(
-          error
-        );
+        console.error(error);
 
         alert(
           "Server से connection नहीं हो सका।"
@@ -1197,281 +1425,22 @@ document
 ===================================================== */
 
 document
-  .getElementById(
-    "historyForm"
-  )
+  .getElementById("historyBtn")
   .addEventListener(
-    "submit",
-    async e => {
+    "click",
+    loadOrderHistory
+  );
 
-      e.preventDefault();
 
+document
+  .getElementById("historyPhone")
+  .addEventListener(
+    "keydown",
+    e => {
 
-      const historyPhone =
-        document
-          .getElementById(
-            "historyPhone"
-          )
-          .value
-          .trim();
+      if (e.key === "Enter") {
 
-
-      const historyMessage =
-        document
-          .getElementById(
-            "historyMessage"
-          );
-
-
-      const historyResult =
-        document
-          .getElementById(
-            "historyResult"
-          );
-
-
-      const historyList =
-        document
-          .getElementById(
-            "historyList"
-          );
-
-
-      if (
-        !/^[0-9]{10}$/.test(
-          historyPhone
-        )
-      ) {
-
-        historyMessage.textContent =
-          "कृपया सही 10 अंकों का mobile number डालें।";
-
-        return;
-
-      }
-
-
-      historyMessage.textContent =
-        "📦 Order History लोड हो रही है...";
-
-
-      historyResult.style.display =
-        "none";
-
-      historyList.innerHTML =
-        "";
-
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/orders/history?phone=" +
-            encodeURIComponent(
-              historyPhone
-            )
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          historyMessage.textContent =
-            data.error ||
-            "Order History नहीं मिली।";
-
-          return;
-
-        }
-
-
-        if (
-          !data.orders ||
-          data.orders.length === 0
-        ) {
-
-          historyMessage.textContent =
-            "इस mobile number से कोई order नहीं मिला।";
-
-          return;
-
-        }
-
-
-        historyMessage.textContent =
-          `✅ ${data.orders.length} order मिले।`;
-
-
-        historyResult.style.display =
-          "block";
-
-
-        historyList.innerHTML =
-          data.orders
-            .map(
-              order => {
-
-                const cancelAllowed =
-                  order.cancelEligible === true;
-
-
-                return `
-
-                <div class="product-card order-history-card">
-
-                  <h3>
-                    📦 Order No.
-                    ${escapeHtml(
-                      order.orderNo
-                    )}
-                  </h3>
-
-
-                  <p>
-                    <strong>
-                      Product:
-                    </strong>
-
-                    ${escapeHtml(
-                      order.product ||
-                      "23 स्वास्थ्यवर्धक लड्डू"
-                    )}
-                  </p>
-
-
-                  <p>
-                    <strong>
-                      Quantity:
-                    </strong>
-
-                    ${escapeHtml(
-                      String(
-                        order.quantity || 0
-                      )
-                    )}
-                    Kg
-                  </p>
-
-
-                  <p>
-                    <strong>
-                      Total:
-                    </strong>
-
-                    ${money(
-                      order.total || 0
-                    )}
-                  </p>
-
-
-                  <p>
-                    <strong>
-                      Payment Status:
-                    </strong>
-
-                    <span class="status-badge">
-                      ${escapeHtml(
-                        order.paymentStatus ||
-                        "Pending"
-                      )}
-                    </span>
-                  </p>
-
-
-                  <p>
-                    <strong>
-                      Order Status:
-                    </strong>
-
-                    <span class="status-badge">
-                      ${escapeHtml(
-                        order.orderStatus ||
-                        "Pending"
-                      )}
-                    </span>
-                  </p>
-
-
-                  ${
-                    order.awb
-                      ? `
-                        <p>
-                          <strong>
-                            🚚 AWB:
-                          </strong>
-
-                          ${escapeHtml(
-                            order.awb
-                          )}
-                        </p>
-                      `
-                      : ""
-                  }
-
-
-                  ${
-                    order.shiprocketStatus
-                      ? `
-                        <p>
-                          <strong>
-                            🚚 Shiprocket Status:
-                          </strong>
-
-                          ${escapeHtml(
-                            order.shiprocketStatus
-                          )}
-                        </p>
-                      `
-                      : ""
-                  }
-
-
-                  ${
-                    cancelAllowed
-                      ? `
-                        <button
-                          type="button"
-                          class="whatsapp-btn history-cancel-btn"
-                          onclick="cancelFromHistory(
-                            '${escapeJs(
-                              order.orderNo
-                            )}',
-                            '${escapeJs(
-                              historyPhone
-                            )}'
-                          )">
-
-                          ❌ Order Cancel करें
-
-                        </button>
-                      `
-                      : `
-                        <p class="small">
-                          🔒 यह order अब cancellation के लिए eligible नहीं है।
-                        </p>
-                      `
-                  }
-
-                </div>
-
-                `;
-
-              }
-            )
-            .join("");
-
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-        historyMessage.textContent =
-          "Server से connection नहीं हो सका।";
+        loadOrderHistory();
 
       }
 
@@ -1479,39 +1448,341 @@ document
   );
 
 
-/* =====================================================
-   CANCEL FROM ORDER HISTORY
-===================================================== */
+async function loadOrderHistory() {
 
-async function cancelFromHistory(
-  orderNo,
-  phone
-) {
+  const phone =
+    document
+      .getElementById("historyPhone")
+      .value
+      .replace(/\D/g, "");
 
-  const confirmed =
-    window.confirm(
-      `क्या आप Order ${orderNo} को cancel करना चाहते हैं?`
+
+  const message =
+    document.getElementById(
+      "historyMessage"
     );
 
 
-  if (!confirmed) {
+  const grid =
+    document.getElementById(
+      "historyGrid"
+    );
+
+
+  const detailBox =
+    document.getElementById(
+      "detailBox"
+    );
+
+
+  detailBox.style.display =
+    "none";
+
+
+  grid.innerHTML = "";
+
+
+  if (!/^\d{10}$/.test(phone)) {
+
+    message.textContent =
+      "कृपया 10 अंकों का सही मोबाइल नंबर डालें।";
 
     return;
 
   }
 
 
-  const reason =
-    window.prompt(
-      "Cancellation reason लिखें (optional):"
-    ) || "";
+  message.textContent =
+    "Orders load हो रहे हैं...";
 
 
   try {
 
     const response =
       await fetch(
-        "/api/orders/cancel",
+        `/api/orders/history?phone=${encodeURIComponent(phone)}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      message.textContent =
+        data.error ||
+        "Orders load नहीं हो सके।";
+
+      return;
+
+    }
+
+
+    if (
+      !data.orders ||
+      data.orders.length === 0
+    ) {
+
+      message.textContent =
+        "इस मोबाइल नंबर से कोई order नहीं मिला।";
+
+      return;
+
+    }
+
+
+    message.textContent =
+      `${data.count} Order मिले।`;
+
+
+    grid.innerHTML =
+      data.orders
+        .map(
+          order =>
+            createHistoryCard(
+              order,
+              phone
+            )
+        )
+        .join("");
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "Server से connection नहीं हो सका।";
+
+  }
+
+}
+
+
+/* =====================================================
+   HISTORY CARD
+===================================================== */
+
+function createHistoryCard(
+  order,
+  phone
+) {
+
+  const canCancel =
+    order.canCancel;
+
+
+  const status =
+    getStatusText(
+      order.orderStatus
+    );
+
+
+  const payment =
+    getPaymentStatusText(
+      order.paymentStatus
+    );
+
+
+  return `
+
+    <div class="history-card">
+
+      <h3>
+        📦 ${escapeHtml(order.orderNo)}
+      </h3>
+
+      <div class="history-row">
+        <span>Product</span>
+        <strong>
+          ${escapeHtml(order.product)}
+        </strong>
+      </div>
+
+      <div class="history-row">
+        <span>मात्रा</span>
+        <strong>
+          ${Number(order.quantity)} Kg
+        </strong>
+      </div>
+
+      <div class="history-row">
+        <span>कुल राशि</span>
+        <strong>
+          ${money(order.total)}
+        </strong>
+      </div>
+
+      <div class="history-row">
+        <span>Payment</span>
+        <strong>
+          ${escapeHtml(payment)}
+        </strong>
+      </div>
+
+      <div class="history-row">
+        <span>Order Status</span>
+        <strong class="status">
+          ${escapeHtml(status)}
+        </strong>
+      </div>
+
+      ${
+        order.awb
+          ? `
+            <div class="history-row">
+              <span>AWB</span>
+              <strong>
+                ${escapeHtml(order.awb)}
+              </strong>
+            </div>
+          `
+          : ""
+      }
+
+      <div class="history-actions">
+
+        <button
+          class="details-btn"
+          onclick="showOrderDetails(
+            '${escapeJs(order.orderNo)}',
+            '${escapeJs(phone)}'
+          )">
+
+          📋 Details
+
+        </button>
+
+
+        ${
+          canCancel
+            ? `
+              <button
+                class="cancel-btn"
+                onclick="cancelFromHistory(
+                  '${escapeJs(order.orderNo)}',
+                  '${escapeJs(phone)}'
+                )">
+
+                ❌ Cancel
+
+              </button>
+            `
+            : `
+              <button
+                class="disabled-btn"
+                disabled>
+
+                Cancellation बंद
+
+              </button>
+            `
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   STATUS TEXT
+===================================================== */
+
+function getStatusText(status) {
+
+  const map = {
+
+    new: "नया Order",
+
+    confirmed: "Confirmed",
+
+    packed: "Packed",
+
+    shipped: "Shipped",
+
+    delivered: "Delivered",
+
+    cancelled: "Cancelled"
+
+  };
+
+
+  return map[status] ||
+    status ||
+    "Unknown";
+
+}
+
+
+function getPaymentStatusText(status) {
+
+  const map = {
+
+    pending: "Payment Pending",
+
+    submitted: "UTR Submitted",
+
+    paid: "Paid",
+
+    failed: "Payment Failed",
+
+    refunded: "Refunded"
+
+  };
+
+
+  return map[status] ||
+    status ||
+    "Unknown";
+
+}
+
+
+/* =====================================================
+   SINGLE ORDER DETAILS
+===================================================== */
+
+async function showOrderDetails(
+  orderNo,
+  phone
+) {
+
+  const detailBox =
+    document.getElementById(
+      "detailBox"
+    );
+
+
+  const detailContent =
+    document.getElementById(
+      "detailContent"
+    );
+
+
+  detailBox.style.display =
+    "block";
+
+
+  detailContent.innerHTML =
+    "<p>Details load हो रहे हैं...</p>";
+
+
+  detailBox.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/orders/details",
         {
           method: "POST",
 
@@ -1523,9 +1794,9 @@ async function cancelFromHistory(
           body:
             JSON.stringify({
               orderNo,
-              phone,
-              reason
+              phone
             })
+
         }
       );
 
@@ -1536,51 +1807,235 @@ async function cancelFromHistory(
 
     if (!response.ok) {
 
-      alert(
-        data.error ||
-        "Order cancel नहीं हुआ।"
-      );
+      detailContent.innerHTML =
+        `<p>${escapeHtml(
+          data.error ||
+          "Order details नहीं मिली।"
+        )}</p>`;
 
       return;
 
     }
 
 
-    alert(
-      "✅ " +
-      (
-        data.message ||
-        "Order successfully cancelled."
-      )
-    );
+    const order =
+      data.order;
 
 
-    /*
-      Cancellation के बाद उसी mobile number
-      की history दोबारा load करें।
-    */
+    detailContent.innerHTML = `
 
-    const historyForm =
-      document.getElementById(
-        "historyForm"
-      );
+      <div class="detail-item">
+        <strong>Order No.</strong><br>
+        ${escapeHtml(order.orderNo)}
+      </div>
 
+      <div class="detail-item">
+        <strong>Date</strong><br>
+        ${formatDate(order.createdAt)}
+      </div>
 
-    historyForm.dispatchEvent(
-      new Event("submit")
-    );
+      <div class="detail-item">
+        <strong>Customer</strong><br>
+        ${escapeHtml(order.customerName)}
+      </div>
+
+      <div class="detail-item">
+        <strong>Mobile</strong><br>
+        ${escapeHtml(order.phone)}
+      </div>
+
+      <div class="detail-item">
+        <strong>Product</strong><br>
+        ${escapeHtml(order.product)}
+      </div>
+
+      <div class="detail-item">
+        <strong>Quantity</strong><br>
+        ${Number(order.quantity)} Kg
+      </div>
+
+      <div class="detail-item">
+        <strong>Product Price</strong><br>
+        ${money(order.price)}
+      </div>
+
+      <div class="detail-item">
+        <strong>Delivery</strong><br>
+        ${money(order.delivery)}
+      </div>
+
+      <div class="detail-item">
+        <strong>Total</strong><br>
+        <strong>${money(order.total)}</strong>
+      </div>
+
+      <div class="detail-item">
+        <strong>Payment</strong><br>
+        ${escapeHtml(
+          getPaymentStatusText(
+            order.paymentStatus
+          )
+        )}
+      </div>
+
+      <div class="detail-item">
+        <strong>Order Status</strong><br>
+        ${escapeHtml(
+          getStatusText(
+            order.orderStatus
+          )
+        )}
+      </div>
+
+      <div class="detail-item">
+        <strong>Address</strong><br>
+        ${escapeHtml(order.address)}
+      </div>
+
+      <div class="detail-item">
+        <strong>City</strong><br>
+        ${escapeHtml(order.city)}
+      </div>
+
+      <div class="detail-item">
+        <strong>State</strong><br>
+        ${escapeHtml(order.state)}
+      </div>
+
+      <div class="detail-item">
+        <strong>Pincode</strong><br>
+        ${escapeHtml(order.pincode)}
+      </div>
+
+      ${
+        order.awb
+          ? `
+            <div class="detail-item">
+              <strong>AWB</strong><br>
+              ${escapeHtml(order.awb)}
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        order.shiprocketStatus
+          ? `
+            <div class="detail-item">
+              <strong>Shipping Status</strong><br>
+              ${escapeHtml(order.shiprocketStatus)}
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        order.cancellationReason
+          ? `
+            <div class="detail-item">
+              <strong>Cancellation Reason</strong><br>
+              ${escapeHtml(order.cancellationReason)}
+            </div>
+          `
+          : ""
+      }
+
+      ${
+        order.canCancel
+          ? `
+            <div class="detail-item">
+              <strong>Cancellation</strong><br>
+              <button
+                class="cancel-btn"
+                onclick="cancelFromHistory(
+                  '${escapeJs(order.orderNo)}',
+                  '${escapeJs(order.phone)}'
+                )">
+
+                ❌ Order Cancel करें
+
+              </button>
+            </div>
+          `
+          : ""
+      }
+
+    `;
+
 
   } catch (error) {
 
-    console.error(
-      error
-    );
+    console.error(error);
 
-    alert(
-      "Server से connection नहीं हो सका।"
-    );
+    detailContent.innerHTML =
+      "<p>Server से connection नहीं हो सका।</p>";
 
   }
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(value) {
+
+  if (!value) return "-";
+
+
+  try {
+
+    return new Date(value)
+      .toLocaleString(
+        "en-IN",
+        {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }
+      );
+
+  } catch (_) {
+
+    return value;
+
+  }
+
+}
+
+
+/* =====================================================
+   CANCEL FROM HISTORY
+===================================================== */
+
+function cancelFromHistory(
+  orderNo,
+  phone
+) {
+
+  document
+    .getElementById(
+      "cancelOrderNo"
+    )
+    .value =
+      orderNo;
+
+
+  document
+    .getElementById(
+      "cancelPhone"
+    )
+    .value =
+      phone;
+
+
+  document
+    .getElementById(
+      "cancel-order"
+    )
+    .scrollIntoView({
+      behavior: "smooth"
+    });
 
 }
 
@@ -1590,9 +2045,7 @@ async function cancelFromHistory(
 ===================================================== */
 
 document
-  .getElementById(
-    "cancelForm"
-  )
+  .getElementById("cancelForm")
   .addEventListener(
     "submit",
     async e => {
@@ -1612,29 +2065,43 @@ document
 
       const orderNo =
         document
-          .getElementById(
-            "cancelOrderNo"
-          )
+          .getElementById("cancelOrderNo")
           .value
           .trim();
 
 
       const phone =
         document
-          .getElementById(
-            "cancelPhone"
-          )
+          .getElementById("cancelPhone")
           .value
-          .trim();
+          .replace(/\D/g, "");
 
 
       const reason =
         document
-          .getElementById(
-            "cancelReason"
-          )
+          .getElementById("cancelReason")
           .value
           .trim();
+
+
+      if (!orderNo) {
+
+        cancelMessage.textContent =
+          "Order No. डालें।";
+
+        return;
+
+      }
+
+
+      if (!/^\d{10}$/.test(phone)) {
+
+        cancelMessage.textContent =
+          "सही 10 अंकों का mobile number डालें।";
+
+        return;
+
+      }
 
 
       const confirmed =
@@ -1672,6 +2139,7 @@ document
                   phone,
                   reason
                 })
+
             }
           );
 
@@ -1703,17 +2171,33 @@ document
 
 
         document
-          .getElementById(
-            "cancelForm"
-          )
+          .getElementById("cancelForm")
           .reset();
+
+
+        const historyPhone =
+          document
+            .getElementById(
+              "historyPhone"
+            )
+            .value
+            .replace(/\D/g, "");
+
+
+        if (
+          /^\d{10}$/.test(
+            historyPhone
+          )
+        ) {
+
+          loadOrderHistory();
+
+        }
 
 
       } catch (error) {
 
-        console.error(
-          error
-        );
+        console.error(error);
 
         cancelMessage.textContent =
           "Server से connection नहीं हो सका।";
@@ -1725,77 +2209,15 @@ document
 
 
 /* =====================================================
-   SECURITY / HTML ESCAPE
-===================================================== */
-
-function escapeHtml(value) {
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-function escapeJs(value) {
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /\\/g,
-      "\\\\"
-    )
-    .replace(
-      /'/g,
-      "\\'"
-    )
-    .replace(
-      /\r/g,
-      "\\r"
-    )
-    .replace(
-      /\n/g,
-      "\\n"
-    );
-
-}
-
-
-/* =====================================================
    MODAL
 ===================================================== */
 
 function closeModal() {
 
   document
-    .getElementById(
-      "successModal"
-    )
+    .getElementById("successModal")
     .classList
-    .add(
-      "hidden"
-    );
+    .add("hidden");
 
 }
 
