@@ -1,23 +1,30 @@
 ```html
 <!doctype html>
 <html lang="hi">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>23 स्वास्थ्यवर्धक लड्डू</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header class="topbar">
+
   <div class="brand">
     23 <span>स्वास्थ्यवर्धक सामान</span>
   </div>
 
-  <a class="call-btn" href="tel:9643185255">
+  <a
+    class="call-btn"
+    href="tel:9643185255">
     📞 9643185255
   </a>
+
 </header>
 
 
@@ -37,25 +44,29 @@
 
     <h1>
       23<br>
-      <span>(एनर्जी लड्डू मिश्रित)</span>
+      <span>
+        (एनर्जी लड्डू मिश्रित)
+      </span>
     </h1>
 
     <p class="hero-text">
-      23 चुनिंदा ड्रायफ्रूट्स और सीड्स से तैयार स्वादिष्ट लड्डू।
-      ऑनलाइन ऑर्डर करें और घर तक डिलीवरी पाएं।
+      23 चुनिंदा ड्रायफ्रूट्स और सीड्स से तैयार
+      स्वादिष्ट लड्डू। ऑनलाइन ऑर्डर करें और
+      घर तक डिलीवरी पाएं।
     </p>
 
     <div class="hero-actions">
 
-      <a class="primary-btn" href="#order">
+      <a
+        class="primary-btn"
+        href="#order">
         ऑर्डर करें
       </a>
 
       <a
         class="secondary-btn"
         href="https://wa.me/919643185255"
-        target="_blank"
-      >
+        target="_blank">
         WhatsApp
       </a>
 
@@ -68,8 +79,7 @@
 
     <img
       src="laddu-main.png"
-      alt="23 स्वास्थ्यवर्धक लड्डू"
-    >
+      alt="23 स्वास्थ्यवर्धक लड्डू">
 
   </div>
 
@@ -82,7 +92,9 @@
 
 <section class="ingredients">
 
-<h2>23 स्वास्थ्यवर्धक सामग्री</h2>
+<h2>
+  23 स्वास्थ्यवर्धक सामग्री
+</h2>
 
 <div class="chips">
 
@@ -112,16 +124,19 @@
 
 <section class="products">
 
-<h2>हमारे लड्डू पैक</h2>
+<h2>
+  हमारे लड्डू पैक
+</h2>
 
 <div
   id="productGrid"
-  class="product-grid"
-></div>
+  class="product-grid">
+</div>
 
 <p class="delivery-note">
-🚚 डिलीवरी चार्ज:
-<strong>₹300</strong> प्रति ऑर्डर
+  🚚 डिलीवरी चार्ज:
+  <strong>₹300</strong>
+  प्रति ऑर्डर
 </p>
 
 </section>
@@ -133,32 +148,27 @@
 
 <section
   class="order-section"
-  id="order"
->
+  id="order">
 
 <div class="order-copy">
 
 <p class="eyebrow">
-Online Order
+  Online Order
 </p>
 
 <h2>
-घर बैठे ऑर्डर करें
+  घर बैठे ऑर्डर करें
 </h2>
 
 <p>
-अपनी जानकारी भरें। आप UPI से भुगतान कर सकते हैं
-या Cash on Delivery चुन सकते हैं।
+  अपनी जानकारी भरें। आप UPI से भुगतान कर सकते हैं
+  या Cash on Delivery चुन सकते हैं।
 </p>
 
 <div class="contact-box">
-
-📱 <strong>9643185255</strong>
-
-<br>
-
-कॉल या WhatsApp करें
-
+  📱 <strong>9643185255</strong>
+  <br>
+  कॉल या WhatsApp करें
 </div>
 
 </div>
@@ -166,139 +176,125 @@ Online Order
 
 <form
   id="orderForm"
-  class="order-form"
->
+  class="order-form">
 
 
 <label>
+  नाम
 
-नाम
-
-<input
-  id="name"
-  required
-  placeholder="अपना नाम"
->
-
+  <input
+    id="name"
+    required
+    placeholder="अपना नाम">
 </label>
 
 
 <label>
+  मोबाइल
 
-मोबाइल
-
-<input
-  id="phone"
-  required
-  inputmode="numeric"
-  pattern="[0-9]{10}"
-  maxlength="10"
-  placeholder="10 अंकों का मोबाइल"
->
-
+  <input
+    id="phone"
+    required
+    inputmode="numeric"
+    pattern="[0-9]{10}"
+    maxlength="10"
+    placeholder="10 अंकों का मोबाइल">
 </label>
 
 
 <label class="full">
 
-पूरा पता
+  पूरा पता
 
-<textarea
-  id="address"
-  required
-  placeholder="घर/दुकान, गली, मोहल्ला"
-></textarea>
-
-</label>
-
-
-<label>
-
-शहर
-
-<input
-  id="city"
-  required
-  placeholder="शहर का नाम"
->
+  <textarea
+    id="address"
+    required
+    placeholder="घर/दुकान, गली, मोहल्ला"></textarea>
 
 </label>
 
 
 <label>
 
-राज्य
+  शहर
 
-<input
-  id="state"
-  required
-  placeholder="राज्य का नाम"
->
-
-</label>
-
-
-<label>
-
-पिनकोड
-
-<input
-  id="pincode"
-  required
-  inputmode="numeric"
-  pattern="[0-9]{6}"
-  maxlength="6"
-  placeholder="6 अंकों का पिनकोड"
->
+  <input
+    id="city"
+    required
+    placeholder="शहर का नाम">
 
 </label>
 
 
 <label>
 
-पैक
+  राज्य
 
-<select
-  id="product"
-  required
-></select>
-
-</label>
-
-
-<label>
-
-मात्रा (Kg)
-
-<input
-  id="qty"
-  type="number"
-  min="1"
-  max="50"
-  value="1"
-  required
->
+  <input
+    id="state"
+    required
+    placeholder="राज्य का नाम">
 
 </label>
 
 
 <label>
 
-Payment Method
+  पिनकोड
 
-<select
-  id="paymentMethod"
->
+  <input
+    id="pincode"
+    required
+    inputmode="numeric"
+    pattern="[0-9]{6}"
+    maxlength="6"
+    placeholder="6 अंकों का पिनकोड">
 
-<option value="UPI">
-UPI / Online Payment
-</option>
+</label>
 
-<option value="COD">
-Cash on Delivery
-</option>
 
-</select>
+<label>
+
+  पैक
+
+  <select
+    id="product"
+    required>
+  </select>
+
+</label>
+
+
+<label>
+
+  मात्रा (Kg)
+
+  <input
+    id="qty"
+    type="number"
+    min="1"
+    max="50"
+    value="1"
+    required>
+
+</label>
+
+
+<label>
+
+  Payment Method
+
+  <select id="paymentMethod">
+
+    <option value="UPI">
+      UPI / Online Payment
+    </option>
+
+    <option value="COD">
+      Cash on Delivery
+    </option>
+
+  </select>
 
 </label>
 
@@ -309,45 +305,39 @@ Cash on Delivery
 
 <div
   id="upiBox"
-  class="payment-box full"
->
+  class="payment-box full">
 
 <strong>
-UPI Payment
+  UPI Payment
 </strong>
 
 <p>
-
-UPI ID:
-
-<span id="upiId">
-लोड हो रहा है...
-</span>
-
+  UPI ID:
+  <span id="upiId">
+    लोड हो रहा है...
+  </span>
 </p>
 
-
 <div id="qr"></div>
-
 
 <button
   type="button"
   class="pay-btn"
-  id="payBtn"
->
-📲 UPI App खोलें / Pay करें
+  id="payBtn">
+
+  📲 UPI App खोलें / Pay करें
+
 </button>
 
 
 <label>
 
-Payment UTR / Reference No.
-(यदि भुगतान किया है)
+  Payment UTR / Reference No.
+  (यदि भुगतान किया है)
 
-<input
-  id="utr"
-  placeholder="जैसे 123456789012"
->
+  <input
+    id="utr"
+    placeholder="जैसे 123456789012">
 
 </label>
 
@@ -361,29 +351,29 @@ Payment UTR / Reference No.
 <div class="total">
 
 <span>
-उत्पाद
+  उत्पाद
 </span>
 
 <strong id="productTotal">
-₹0
+  ₹0
 </strong>
 
 
 <span>
-डिलीवरी
+  डिलीवरी
 </span>
 
 <strong>
-₹300
+  ₹300
 </strong>
 
 
 <span>
-कुल
+  कुल
 </span>
 
 <strong id="grandTotal">
-₹300
+  ₹300
 </strong>
 
 </div>
@@ -391,16 +381,17 @@ Payment UTR / Reference No.
 
 <button
   class="whatsapp-btn"
-  type="submit"
->
-✅ Order Confirm करें
+  type="submit">
+
+  ✅ Order Confirm करें
+
 </button>
 
 
 <p class="small">
 
-UPI payment verification admin द्वारा की जाएगी।
-COD में भुगतान डिलीवरी के समय होगा।
+  UPI payment verification admin द्वारा की जाएगी।
+  COD में भुगतान डिलीवरी के समय होगा।
 
 </p>
 
@@ -410,78 +401,97 @@ COD में भुगतान डिलीवरी के समय हो�
 
 
 <!-- =====================================================
-     CUSTOMER ORDER TRACK / CANCEL
+     CUSTOMER CANCELLATION
 ===================================================== -->
 
 <section
-  class="order-management"
-  id="myOrder"
-  style="
-    max-width:700px;
-    margin:50px auto;
-    padding:25px;
-    border-radius:18px;
-    background:#fff;
-    box-shadow:0 5px 25px rgba(0,0,0,.08);
-  "
->
+  class="order-section"
+  id="cancel-order">
+
+<div class="order-copy">
+
+<p class="eyebrow">
+  Order Cancellation
+</p>
 
 <h2>
-📦 अपना Order देखें / Cancel करें
+  अपना Order Cancel करें
 </h2>
 
 <p>
-अपना Order Number और वही Mobile Number डालें
-जिससे आपने Order किया था।
+  यदि आपने order किया है और अब उसे cancel करना चाहते हैं,
+  तो अपना Order No. और वही mobile number डालें
+  जिससे order किया था।
 </p>
 
+<div class="contact-box">
+  ⚠️ Shipment courier को Out for Pickup होने के बाद
+  cancellation संभव नहीं हो सकती।
+</div>
 
-<form id="checkOrderForm">
+</div>
+
+
+<form
+  id="cancelForm"
+  class="order-form">
+
 
 <label>
 
-Order Number
+  Order No.
 
-<input
-  id="checkOrderNo"
-  required
-  placeholder="जैसे 23L378440773"
->
+  <input
+    id="cancelOrderNo"
+    required
+    placeholder="जैसे 23L378440773">
 
 </label>
 
 
 <label>
 
-Mobile Number
+  Mobile Number
 
-<input
-  id="checkOrderPhone"
-  required
-  inputmode="numeric"
-  pattern="[0-9]{10}"
-  maxlength="10"
-  placeholder="10 अंकों का मोबाइल नंबर"
->
+  <input
+    id="cancelPhone"
+    required
+    inputmode="numeric"
+    pattern="[0-9]{10}"
+    maxlength="10"
+    placeholder="Order वाला mobile number">
+
+</label>
+
+
+<label class="full">
+
+  Cancellation Reason
+  (Optional)
+
+  <textarea
+    id="cancelReason"
+    maxlength="500"
+    placeholder="Order cancel करने का कारण"></textarea>
 
 </label>
 
 
 <button
-  type="submit"
-  class="primary-btn"
->
-🔍 Order देखें
+  class="whatsapp-btn"
+  type="submit">
+
+  ❌ Order Cancel करें
+
 </button>
 
+
+<p
+  id="cancelMessage"
+  class="small">
+</p>
+
 </form>
-
-
-<div
-  id="orderResult"
-  style="margin-top:20px;"
-></div>
-
 
 </section>
 
@@ -493,7 +503,7 @@ Mobile Number
 <section class="gallery">
 
 <h2>
-उत्पाद की झलक
+  उत्पाद की झलक
 </h2>
 
 
@@ -501,26 +511,22 @@ Mobile Number
 
 <img
   src="laddu-main.png"
-  alt="मुख्य लड्डू फोटो"
->
+  alt="मुख्य लड्डू फोटो">
 
 
 <img
   src="product-details-hindi.png"
-  alt="हिंदी उत्पाद विवरण"
->
+  alt="हिंदी उत्पाद विवरण">
 
 
 <img
   src="product-poster-english.png"
-  alt="English Product Poster"
->
+  alt="English Product Poster">
 
 
 <img
   src="product-poster-hindi.png"
-  alt="Hindi Product Poster"
->
+  alt="Hindi Product Poster">
 
 </div>
 
@@ -536,19 +542,19 @@ Mobile Number
 <footer>
 
 <strong>
-23 स्वास्थ्यवर्धक सामान
+  23 स्वास्थ्यवर्धक सामान
 </strong>
 
 <span>
-स्वस्थ शरीर • खुशहाल जीवन
+  स्वस्थ शरीर • खुशहाल जीवन
 </span>
 
 <span>
-📞 9643185255
+  📞 9643185255
 </span>
 
 <a href="/admin">
-Admin
+  Admin
 </a>
 
 </footer>
@@ -560,31 +566,31 @@ Admin
 
 <div
   id="successModal"
-  class="modal hidden"
->
+  class="modal hidden">
 
 <div class="modal-card">
 
 <h2>
-🎉 Order Confirmed
+  🎉 Order Confirmed
 </h2>
-
 
 <p id="successText"></p>
 
 
 <button
-  onclick="closeModal()"
->
-ठीक है
+  onclick="closeModal()">
+
+  ठीक है
+
 </button>
 
 
 <a
   id="successWa"
-  target="_blank"
->
-WhatsApp पर Order भेजें
+  target="_blank">
+
+  WhatsApp पर Order भेजें
+
 </a>
 
 </div>
@@ -592,13 +598,15 @@ WhatsApp पर Order भेजें
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+</script>
 
 
 <script>
 
 /* =====================================================
-   GLOBAL VARIABLES
+   GLOBAL
 ===================================================== */
 
 let config = null;
@@ -606,22 +614,34 @@ let config = null;
 const delivery = 300;
 
 const product =
-  document.getElementById("product");
+  document.getElementById(
+    "product"
+  );
 
 const qty =
-  document.getElementById("qty");
+  document.getElementById(
+    "qty"
+  );
 
 const productTotal =
-  document.getElementById("productTotal");
+  document.getElementById(
+    "productTotal"
+  );
 
 const grandTotal =
-  document.getElementById("grandTotal");
+  document.getElementById(
+    "grandTotal"
+  );
 
 const paymentMethod =
-  document.getElementById("paymentMethod");
+  document.getElementById(
+    "paymentMethod"
+  );
 
 const upiBox =
-  document.getElementById("upiBox");
+  document.getElementById(
+    "upiBox"
+  );
 
 
 /* =====================================================
@@ -631,7 +651,8 @@ const upiBox =
 function money(n) {
 
   return "₹" +
-    Number(n).toLocaleString("en-IN");
+    Number(n)
+      .toLocaleString("en-IN");
 
 }
 
@@ -643,9 +664,12 @@ function money(n) {
 function price() {
 
   return Number(
-    product.options[
-      product.selectedIndex
-    ]?.dataset.price || 0
+    product
+      .options[
+        product.selectedIndex
+      ]
+      ?.dataset
+      .price || 0
   );
 
 }
@@ -659,16 +683,17 @@ function updateTotal() {
 
   const total =
     price() *
-    Number(qty.value || 0);
-
+    Number(
+      qty.value || 0
+    );
 
   productTotal.textContent =
     money(total);
 
-
   grandTotal.textContent =
-    money(total + delivery);
-
+    money(
+      total + delivery
+    );
 
   renderUPI();
 
@@ -683,33 +708,29 @@ function renderUPI() {
 
   if (!config) return;
 
-
   upiBox.style.display =
     paymentMethod.value === "UPI"
       ? "block"
       : "none";
 
-
   if (
-    paymentMethod.value !== "UPI"
+    paymentMethod.value !==
+    "UPI"
   ) {
-
     return;
-
   }
-
 
   const amount =
     price() *
-      Number(qty.value || 0)
-    +
+      Number(
+        qty.value || 0
+      ) +
     delivery;
 
-
-  document.getElementById(
-    "upiId"
-  ).textContent =
-    config.upiId;
+  document
+    .getElementById("upiId")
+    .textContent =
+      config.upiId;
 
 
   const qr =
@@ -717,13 +738,14 @@ function renderUPI() {
       "qr"
     );
 
-
   qr.innerHTML = "";
 
 
   if (
     config.upiId &&
-    !config.upiId.startsWith("YOUR-")
+    !config.upiId.startsWith(
+      "YOUR-"
+    )
   ) {
 
     const url =
@@ -750,27 +772,30 @@ function renderUPI() {
     );
 
 
-    document.getElementById(
-      "payBtn"
-    ).onclick =
-      () => {
+    document
+      .getElementById(
+        "payBtn"
+      )
+      .onclick = () => {
 
         window.location.href =
           url;
 
       };
 
-
   } else {
 
     qr.innerHTML =
-      '<div class="qr-placeholder">Admin panel में UPI ID सेट करें।</div>';
+      '<div class="qr-placeholder">' +
+      'Admin panel में UPI ID सेट करें।' +
+      '</div>';
 
 
-    document.getElementById(
-      "payBtn"
-    ).onclick =
-      () => {
+    document
+      .getElementById(
+        "payBtn"
+      )
+      .onclick = () => {
 
         alert(
           "पहले .env में अपनी UPI ID डालें।"
@@ -784,7 +809,7 @@ function renderUPI() {
 
 
 /* =====================================================
-   INITIALIZE
+   INIT
 ===================================================== */
 
 async function init() {
@@ -795,7 +820,6 @@ async function init() {
       await fetch(
         "/api/config"
       );
-
 
     config =
       await response.json();
@@ -809,8 +833,7 @@ async function init() {
           p =>
             `<option
               value="${p.id}"
-              data-price="${p.price}"
-            >
+              data-price="${p.price}">
               ${p.name} — ${money(p.price)}/Kg
             </option>`
         )
@@ -822,18 +845,18 @@ async function init() {
     ) {
 
       product.value =
-        config.products[1].id;
+        config
+          .products[1]
+          .id;
 
     }
 
 
     updateTotal();
 
-
   } catch (error) {
 
     console.error(
-      "Config error:",
       error
     );
 
@@ -855,12 +878,10 @@ product.addEventListener(
   updateTotal
 );
 
-
 qty.addEventListener(
   "input",
   updateTotal
 );
-
 
 paymentMethod.addEventListener(
   "change",
@@ -869,11 +890,13 @@ paymentMethod.addEventListener(
 
 
 /* =====================================================
-   CREATE ORDER
+   ORDER FORM
 ===================================================== */
 
 document
-  .getElementById("orderForm")
+  .getElementById(
+    "orderForm"
+  )
   .addEventListener(
     "submit",
     async e => {
@@ -885,37 +908,49 @@ document
 
         name:
           document
-            .getElementById("name")
+            .getElementById(
+              "name"
+            )
             .value
             .trim(),
 
         phone:
           document
-            .getElementById("phone")
+            .getElementById(
+              "phone"
+            )
             .value
             .trim(),
 
         address:
           document
-            .getElementById("address")
+            .getElementById(
+              "address"
+            )
             .value
             .trim(),
 
         city:
           document
-            .getElementById("city")
+            .getElementById(
+              "city"
+            )
             .value
             .trim(),
 
         state:
           document
-            .getElementById("state")
+            .getElementById(
+              "state"
+            )
             .value
             .trim(),
 
         pincode:
           document
-            .getElementById("pincode")
+            .getElementById(
+              "pincode"
+            )
             .value
             .trim(),
 
@@ -923,14 +958,18 @@ document
           product.value,
 
         quantity:
-          Number(qty.value),
+          Number(
+            qty.value
+          ),
 
         paymentMethod:
           paymentMethod.value,
 
         utr:
           document
-            .getElementById("utr")
+            .getElementById(
+              "utr"
+            )
             .value
             .trim()
 
@@ -951,7 +990,9 @@ document
               },
 
               body:
-                JSON.stringify(body)
+                JSON.stringify(
+                  body
+                )
             }
           );
 
@@ -979,51 +1020,35 @@ document
           .innerHTML =
 
           `आपका Order No.
-          <strong>
-          ${data.orderNo}
-          </strong>
+          <strong>${data.orderNo}</strong>
           है।<br>
-
           कुल राशि:
-          <strong>
-          ${money(data.total)}
-          </strong>
+          <strong>${money(data.total)}</strong>
           <br>
-
           ${data.message}`;
 
 
+        const selectedProduct =
+          product.options[
+            product.selectedIndex
+          ]
+          ?.text || "";
+
+
         const wa =
-
-          `नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है।
-
-Order No: ${data.orderNo}
-
-नाम: ${body.name}
-
-मोबाइल: ${body.phone}
-
-पैक: ${
-  product.options[
-    product.selectedIndex
-  ].text
-}
-
-मात्रा: ${body.quantity} Kg
-
-पता: ${body.address}
-
-शहर: ${body.city}
-
-राज्य: ${body.state}
-
-पिनकोड: ${body.pincode}
-
-कुल: ${money(data.total)}
-
-Payment: ${body.paymentMethod}
-
-UTR: ${body.utr || "N/A"}`;
+          `नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। ` +
+          `Order No: ${data.orderNo}. ` +
+          `नाम: ${body.name}, ` +
+          `मोबाइल: ${body.phone}, ` +
+          `पैक: ${selectedProduct}, ` +
+          `मात्रा: ${body.quantity} Kg, ` +
+          `पता: ${body.address}, ` +
+          `शहर: ${body.city}, ` +
+          `राज्य: ${body.state}, ` +
+          `पिनकोड: ${body.pincode}, ` +
+          `कुल: ${money(data.total)}, ` +
+          `Payment: ${body.paymentMethod}, ` +
+          `UTR: ${body.utr || "N/A"}`;
 
 
         document
@@ -1031,10 +1056,10 @@ UTR: ${body.utr || "N/A"}`;
             "successWa"
           )
           .href =
-
-          "https://wa.me/919643185255?text=" +
-
-          encodeURIComponent(wa);
+            "https://wa.me/919643185255?text=" +
+            encodeURIComponent(
+              wa
+            );
 
 
         document
@@ -1042,27 +1067,23 @@ UTR: ${body.utr || "N/A"}`;
             "successModal"
           )
           .classList
-          .remove("hidden");
+          .remove(
+            "hidden"
+          );
 
 
         e.target.reset();
 
 
-        if (
-          config.products.length > 1
-        ) {
-
-          product.value =
-            config.products[1].id;
-
-        }
-
+        product.value =
+          config
+            .products[1]
+            .id;
 
         qty.value = 1;
 
 
         updateTotal();
-
 
       } catch (error) {
 
@@ -1071,7 +1092,7 @@ UTR: ${body.utr || "N/A"}`;
         );
 
         alert(
-          "Internet या server connection की समस्या है।"
+          "Server से connection नहीं हो सका।"
         );
 
       }
@@ -1081,28 +1102,12 @@ UTR: ${body.utr || "N/A"}`;
 
 
 /* =====================================================
-   CLOSE SUCCESS MODAL
-===================================================== */
-
-function closeModal() {
-
-  document
-    .getElementById(
-      "successModal"
-    )
-    .classList
-    .add("hidden");
-
-}
-
-
-/* =====================================================
-   CUSTOMER ORDER CHECK
+   CUSTOMER CANCEL FORM
 ===================================================== */
 
 document
   .getElementById(
-    "checkOrderForm"
+    "cancelForm"
   )
   .addEventListener(
     "submit",
@@ -1111,10 +1116,20 @@ document
       e.preventDefault();
 
 
+      const cancelMessage =
+        document.getElementById(
+          "cancelMessage"
+        );
+
+
+      cancelMessage.textContent =
+        "Order cancellation check हो रहा है...";
+
+
       const orderNo =
         document
           .getElementById(
-            "checkOrderNo"
+            "cancelOrderNo"
           )
           .value
           .trim();
@@ -1123,29 +1138,43 @@ document
       const phone =
         document
           .getElementById(
-            "checkOrderPhone"
+            "cancelPhone"
           )
           .value
           .trim();
 
 
-      const resultBox =
-        document.getElementById(
-          "orderResult"
+      const reason =
+        document
+          .getElementById(
+            "cancelReason"
+          )
+          .value
+          .trim();
+
+
+      const confirmed =
+        window.confirm(
+          "क्या आप सच में इस Order को cancel करना चाहते हैं?"
         );
 
 
-      resultBox.innerHTML =
-        "⏳ Order खोजा जा रहा है...";
+      if (!confirmed) {
+
+        cancelMessage.textContent =
+          "Cancellation रोक दी गई।";
+
+        return;
+
+      }
 
 
       try {
 
         const response =
           await fetch(
-            "/api/orders/check",
+            "/api/orders/cancel",
             {
-
               method: "POST",
 
               headers: {
@@ -1156,9 +1185,9 @@ document
               body:
                 JSON.stringify({
                   orderNo,
-                  phone
+                  phone,
+                  reason
                 })
-
             }
           );
 
@@ -1169,183 +1198,27 @@ document
 
         if (!response.ok) {
 
-          resultBox.innerHTML =
-            `<div style="
-              padding:15px;
-              border-radius:10px;
-              background:#ffecec;
-              color:#b00020;
-            ">
-              ❌ ${
-                data.error ||
-                "Order नहीं मिला।"
-              }
-            </div>`;
+          cancelMessage.textContent =
+            data.error ||
+            "Order cancel नहीं हुआ।";
 
           return;
 
         }
 
 
-        const order =
-          data.order;
+        cancelMessage.innerHTML =
+          `✅ <strong>${data.message}</strong>
+           <br>
+           Order No:
+           <strong>${data.orderNo}</strong>`;
 
 
-        let statusText =
-          order.order_status;
-
-
-        if (
-          order.order_status ===
-          "new"
-        ) {
-
-          statusText =
-            "🆕 नया Order";
-
-        } else if (
-          order.order_status ===
-          "confirmed"
-        ) {
-
-          statusText =
-            "✅ Confirmed";
-
-        } else if (
-          order.order_status ===
-          "packed"
-        ) {
-
-          statusText =
-            "📦 Packed";
-
-        } else if (
-          order.order_status ===
-          "shipped"
-        ) {
-
-          statusText =
-            "🚚 Shipped";
-
-        } else if (
-          order.order_status ===
-          "delivered"
-        ) {
-
-          statusText =
-            "🎉 Delivered";
-
-        } else if (
-          order.order_status ===
-          "cancelled"
-        ) {
-
-          statusText =
-            "❌ Cancelled";
-
-        }
-
-
-        let cancelButton = "";
-
-
-        if (
-          order.order_status ===
-            "new" ||
-          order.order_status ===
-            "confirmed"
-        ) {
-
-          cancelButton = `
-
-            <button
-              type="button"
-              onclick="cancelCustomerOrder('${escapeHtml(order.order_no)}','${escapeHtml(order.phone)}')"
-              style="
-                margin-top:15px;
-                padding:12px 20px;
-                border:0;
-                border-radius:10px;
-                background:#d32f2f;
-                color:white;
-                cursor:pointer;
-                font-size:16px;
-              "
-            >
-              ❌ Order Cancel करें
-            </button>
-
-          `;
-
-        }
-
-
-        resultBox.innerHTML = `
-
-          <div style="
-            padding:20px;
-            border-radius:15px;
-            background:#f7f7f7;
-            line-height:1.8;
-          ">
-
-            <h3>
-              📦 Order Details
-            </h3>
-
-            <p>
-              <strong>Order No:</strong>
-              ${escapeHtml(order.order_no)}
-            </p>
-
-            <p>
-              <strong>नाम:</strong>
-              ${escapeHtml(order.customer_name)}
-            </p>
-
-            <p>
-              <strong>Product:</strong>
-              ${escapeHtml(order.product)}
-            </p>
-
-            <p>
-              <strong>Quantity:</strong>
-              ${order.quantity} Kg
-            </p>
-
-            <p>
-              <strong>Total:</strong>
-              ${money(order.total)}
-            </p>
-
-            <p>
-              <strong>Payment:</strong>
-              ${escapeHtml(order.payment_method)}
-            </p>
-
-            <p>
-              <strong>Order Status:</strong>
-              ${statusText}
-            </p>
-
-            ${
-              order.shiprocket_awb
-                ? `
-                  <p>
-                    <strong>AWB:</strong>
-                    ${escapeHtml(
-                      order.shiprocket_awb
-                    )}
-                  </p>
-                `
-                : ""
-            }
-
-            ${cancelButton}
-
-          </div>
-
-        `;
+        document
+          .getElementById(
+            "cancelForm"
+          )
+          .reset();
 
 
       } catch (error) {
@@ -1354,16 +1227,8 @@ document
           error
         );
 
-
-        resultBox.innerHTML =
-          `<div style="
-            padding:15px;
-            border-radius:10px;
-            background:#ffecec;
-            color:#b00020;
-          ">
-            ❌ Server connection error.
-          </div>`;
+        cancelMessage.textContent =
+          "Server से connection नहीं हो सका।";
 
       }
 
@@ -1372,134 +1237,18 @@ document
 
 
 /* =====================================================
-   CUSTOMER CANCEL ORDER
+   MODAL
 ===================================================== */
 
-async function cancelCustomerOrder(
-  orderNo,
-  phone
-) {
+function closeModal() {
 
-  const confirmCancel =
-    confirm(
-      "क्या आप इस Order को Cancel करना चाहते हैं?"
-    );
-
-
-  if (!confirmCancel) {
-
-    return;
-
-  }
-
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/orders/cancel",
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-
-              orderNo,
-              phone
-
-            })
-
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      alert(
-        data.error ||
-        "Order cancel नहीं हो सका।"
-      );
-
-      return;
-
-    }
-
-
-    alert(
-      data.message ||
-      "Order successfully cancelled."
-    );
-
-
-    /* -------------------------------------------
-       Order फिर से check करें
-    ------------------------------------------- */
-
-    document
-      .getElementById(
-        "checkOrderForm"
-      )
-      .dispatchEvent(
-        new Event(
-          "submit"
-        )
-      );
-
-
-  } catch (error) {
-
-    console.error(
-      error
-    );
-
-
-    alert(
-      "Server connection error."
-    );
-
-  }
-
-}
-
-
-/* =====================================================
-   HTML ESCAPE
-===================================================== */
-
-function escapeHtml(value) {
-
-  return String(
-    value || ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
+  document
+    .getElementById(
+      "successModal"
     )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
+    .classList
+    .add(
+      "hidden"
     );
 
 }
