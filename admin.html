@@ -1,46 +1,1349 @@
 <!doctype html>
 <html lang="hi">
+
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel | 23 स्वास्थ्यवर्धक सामान</title><link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Admin Panel | 23 स्वास्थ्यवर्धक सामान</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+.admin-body {
+  min-height: 100vh;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.admin-login {
+  max-width: 450px;
+  margin: 50px auto;
+  padding: 25px;
+}
+
+.admin-login input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 10px 0;
+  padding: 12px;
+}
+
+.admin-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stats > div {
+  padding: 15px;
+  border-radius: 10px;
+  background: #f5f5f5;
+}
+
+.stats b {
+  display: block;
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+  background: white;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #f5f5f5;
+}
+
+td select {
+  padding: 6px;
+}
+
+.mini {
+  display: inline-block;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: #25d366;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+
+.refresh-btn {
+  padding: 9px 14px;
+  cursor: pointer;
+}
+
+.shiprocket {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.status-created {
+  color: green;
+  font-weight: bold;
+}
+
+.status-failed {
+  color: red;
+  font-weight: bold;
+}
+
+.status-cancelled {
+  color: #b00020;
+  font-weight: bold;
+}
+
+.empty {
+  padding: 30px;
+  text-align: center;
+}
+
+.error-box {
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #ffecec;
+  color: #b00020;
+  border-radius: 8px;
+}
+
+@media (max-width: 700px) {
+  .admin-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+
 </head>
+
 <body class="admin-body">
-<header class="topbar"><div class="brand">23 <span>Admin Panel</span></div><a class="call-btn" href="/">Store</a></header>
+
+<header class="topbar">
+
+  <div class="brand">
+    23 <span>Admin Panel</span>
+  </div>
+
+  <a
+    class="call-btn"
+    href="/">
+    Store
+  </a>
+
+</header>
+
+
 <main>
-<section id="loginBox" class="admin-login">
-<h1>Admin Login</h1>
-<form id="loginForm"><input id="username" placeholder="Username" required><input id="password" type="password" placeholder="Password" required><button class="primary-btn">Login</button></form>
-<p class="small">Username/password `.env` file में सेट करें।</p>
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section
+  id="loginBox"
+  class="admin-login">
+
+  <h1>
+    Admin Login
+  </h1>
+
+  <form id="loginForm">
+
+    <input
+      id="username"
+      placeholder="Username"
+      autocomplete="username"
+      required>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+      required>
+
+    <button
+      type="submit"
+      class="primary-btn">
+
+      Login
+
+    </button>
+
+  </form>
+
+  <p
+    id="loginError"
+    class="small">
+  </p>
+
 </section>
 
-<section id="dashboard" class="hidden">
-<div class="admin-head"><div><h1>Orders Dashboard</h1><p>Customer orders, payment और delivery status manage करें।</p></div><button id="logout" class="secondary-btn">Logout</button></div>
-<div class="stats" id="stats"></div>
-<div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Product</th><th>Total</th><th>Payment</th><th>Order Status</th><th>Action</th></tr></thead><tbody id="orders"></tbody></table></div>
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section
+  id="dashboard"
+  class="hidden">
+
+  <div class="admin-head">
+
+    <div>
+
+      <h1>
+        Orders Dashboard
+      </h1>
+
+      <p>
+        Customer orders, payment और delivery status manage करें।
+      </p>
+
+    </div>
+
+    <div>
+
+      <button
+        id="refreshBtn"
+        class="refresh-btn">
+
+        🔄 Refresh
+
+      </button>
+
+      <button
+        id="logout"
+        class="secondary-btn">
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="errorBox"
+    class="error-box hidden">
+  </div>
+
+
+  <!-- ===================================================
+       STATS
+  =================================================== -->
+
+  <div
+    class="stats"
+    id="stats">
+  </div>
+
+
+  <!-- ===================================================
+       ORDERS
+  =================================================== -->
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Order
+          </th>
+
+          <th>
+            Customer
+          </th>
+
+          <th>
+            Product
+          </th>
+
+          <th>
+            Total
+          </th>
+
+          <th>
+            Payment
+          </th>
+
+          <th>
+            Order Status
+          </th>
+
+          <th>
+            Shiprocket
+          </th>
+
+          <th>
+            Action
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody
+        id="orders">
+
+      </tbody>
+
+    </table>
+
+  </div>
+
 </section>
+
 </main>
+
+
 <script>
-async function api(url,opt={}){const r=await fetch(url,opt);const d=await r.json();if(!r.ok)throw new Error(d.error||'Error');return d}
-async function check(){
- const d=await api('/api/admin/me'); if(d.loggedIn) showDash();
+
+/* =====================================================
+   API HELPER
+===================================================== */
+
+async function api(url, options = {}) {
+
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+
+        credentials: "same-origin"
+      }
+    );
+
+  let data = {};
+
+  try {
+
+    data =
+      await response.json();
+
+  } catch (e) {
+
+    data = {};
+
+  }
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error ||
+      data.message ||
+      `HTTP ${response.status}`
+    );
+
+  }
+
+  return data;
+
 }
-document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username.value,password:password.value})});showDash()}catch(err){alert(err.message)}}
-async function showDash(){loginBox.classList.add('hidden');dashboard.classList.remove('hidden');await loadOrders()}
-logout.onclick=async()=>{await api('/api/admin/logout',{method:'POST'});location.reload()}
-async function loadOrders(){
- const rows=await api('/api/admin/orders');
- stats.innerHTML=`<div>कुल Orders <b>${rows.length}</b></div><div>Paid <b>${rows.filter(x=>x.payment_status==='paid').length}</b></div><div>New <b>${rows.filter(x=>x.order_status==='new').length}</b></div><div>Delivered <b>${rows.filter(x=>x.order_status==='delivered').length}</b></div>`;
- orders.innerHTML=rows.map(r=>`<tr>
-<td><b>${r.order_no}</b><br><small>${new Date(r.created_at).toLocaleString('hi-IN')}</small></td>
-<td>${esc(r.customer_name)}<br>📞 ${esc(r.phone)}<br>${esc(r.address)}, ${esc(r.pincode)}</td>
-<td>${esc(r.product)}<br>${r.quantity} Kg</td>
-<td>₹${Number(r.total).toLocaleString('en-IN')}</td>
-<td><select onchange="update(${r.id},null,this.value)"><option ${r.payment_status==='pending'?'selected':''}>pending</option><option ${r.payment_status==='submitted'?'selected':''}>submitted</option><option ${r.payment_status==='paid'?'selected':''}>paid</option><option ${r.payment_status==='failed'?'selected':''}>failed</option><option ${r.payment_status==='refunded'?'selected':''}>refunded</option></select><br><small>UTR: ${esc(r.utr||'-')}</small></td>
-<td><select onchange="update(${r.id},this.value,null)"><option value="new" ${r.order_status==='new'?'selected':''}>new</option><option value="confirmed" ${r.order_status==='confirmed'?'selected':''}>confirmed</option><option value="packed" ${r.order_status==='packed'?'selected':''}>packed</option><option value="shipped" ${r.order_status==='shipped'?'selected':''}>shipped</option><option value="delivered" ${r.order_status==='delivered'?'selected':''}>delivered</option><option value="cancelled" ${r.order_status==='cancelled'?'selected':''}>cancelled</option></select></td>
-<td><a class="mini" href="https://wa.me/91${r.phone}" target="_blank">WhatsApp</a></td></tr>`).join('');
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const loginBox =
+  document.getElementById(
+    "loginBox"
+  );
+
+const dashboard =
+  document.getElementById(
+    "dashboard"
+  );
+
+const loginForm =
+  document.getElementById(
+    "loginForm"
+  );
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+const username =
+  document.getElementById(
+    "username"
+  );
+
+const password =
+  document.getElementById(
+    "password"
+  );
+
+const logout =
+  document.getElementById(
+    "logout"
+  );
+
+const refreshBtn =
+  document.getElementById(
+    "refreshBtn"
+  );
+
+const stats =
+  document.getElementById(
+    "stats"
+  );
+
+const orders =
+  document.getElementById(
+    "orders"
+  );
+
+const errorBox =
+  document.getElementById(
+    "errorBox"
+  );
+
+
+/* =====================================================
+   CHECK LOGIN
+===================================================== */
+
+async function checkLogin() {
+
+  try {
+
+    const data =
+      await api(
+        "/api/admin/me"
+      );
+
+    if (
+      data.loggedIn
+    ) {
+
+      showDashboard();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Session check error:",
+      error
+    );
+
+  }
+
 }
-async function update(id,orderStatus,paymentStatus){const body={};if(orderStatus)body.orderStatus=orderStatus;if(paymentStatus)body.paymentStatus=paymentStatus;try{await api('/api/admin/orders/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});loadOrders()}catch(e){alert(e.message)}}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-check();
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+loginForm.addEventListener(
+  "submit",
+  async function(e) {
+
+    e.preventDefault();
+
+    loginError.textContent =
+      "Login हो रहा है...";
+
+    try {
+
+      await api(
+        "/api/admin/login",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          credentials:
+            "same-origin",
+
+          body:
+            JSON.stringify({
+              username:
+                username.value.trim(),
+
+              password:
+                password.value
+            })
+        }
+      );
+
+      password.value = "";
+
+      loginError.textContent = "";
+
+      showDashboard();
+
+    } catch (error) {
+
+      console.error(
+        "Login error:",
+        error
+      );
+
+      loginError.textContent =
+        "❌ " +
+        error.message;
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   SHOW DASHBOARD
+===================================================== */
+
+async function showDashboard() {
+
+  loginBox.classList.add(
+    "hidden"
+  );
+
+  dashboard.classList.remove(
+    "hidden"
+  );
+
+  await loadOrders();
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+logout.addEventListener(
+  "click",
+  async function() {
+
+    try {
+
+      await api(
+        "/api/admin/logout",
+        {
+          method: "POST",
+          credentials:
+            "same-origin"
+        }
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+    }
+
+    location.reload();
+
+  }
+);
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+refreshBtn.addEventListener(
+  "click",
+  loadOrders
+);
+
+
+/* =====================================================
+   LOAD ORDERS
+===================================================== */
+
+async function loadOrders() {
+
+  errorBox.classList.add(
+    "hidden"
+  );
+
+  orders.innerHTML = `
+    <tr>
+      <td colspan="8" class="empty">
+        ⏳ Orders load हो रहे हैं...
+      </td>
+    </tr>
+  `;
+
+  try {
+
+    const rows =
+      await api(
+        "/api/admin/orders"
+      );
+
+    renderStats(rows);
+
+    renderOrders(rows);
+
+  } catch (error) {
+
+    console.error(
+      "Orders loading error:",
+      error
+    );
+
+    orders.innerHTML = `
+      <tr>
+        <td colspan="8" class="empty">
+          ❌ Orders load नहीं हो सके।
+        </td>
+      </tr>
+    `;
+
+    errorBox.textContent =
+      error.message;
+
+    errorBox.classList.remove(
+      "hidden"
+    );
+
+    /*
+      अगर session expire हो गया है,
+      तो वापस login दिखाएँ।
+    */
+
+    if (
+      error.message
+        .toLowerCase()
+        .includes("unauthorized")
+    ) {
+
+      loginBox.classList.remove(
+        "hidden"
+      );
+
+      dashboard.classList.add(
+        "hidden"
+      );
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+function renderStats(rows) {
+
+  const paid =
+    rows.filter(
+      x =>
+        x.payment_status ===
+        "paid"
+    ).length;
+
+  const newOrders =
+    rows.filter(
+      x =>
+        x.order_status ===
+        "new"
+    ).length;
+
+  const delivered =
+    rows.filter(
+      x =>
+        x.order_status ===
+        "delivered"
+    ).length;
+
+  const cancelled =
+    rows.filter(
+      x =>
+        x.order_status ===
+        "cancelled"
+    ).length;
+
+  const shiprocketCreated =
+    rows.filter(
+      x =>
+        x.shiprocket_status ===
+        "created"
+    ).length;
+
+
+  stats.innerHTML = `
+
+    <div>
+      कुल Orders
+      <b>${rows.length}</b>
+    </div>
+
+    <div>
+      Paid
+      <b>${paid}</b>
+    </div>
+
+    <div>
+      New
+      <b>${newOrders}</b>
+    </div>
+
+    <div>
+      Delivered
+      <b>${delivered}</b>
+    </div>
+
+    <div>
+      Cancelled
+      <b>${cancelled}</b>
+    </div>
+
+    <div>
+      Shiprocket Created
+      <b>${shiprocketCreated}</b>
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   RENDER ORDERS
+===================================================== */
+
+function renderOrders(rows) {
+
+  if (
+    !rows ||
+    rows.length === 0
+  ) {
+
+    orders.innerHTML = `
+      <tr>
+        <td
+          colspan="8"
+          class="empty">
+
+          📦 अभी कोई order नहीं मिला।
+
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  orders.innerHTML =
+    rows.map(
+      r => `
+
+      <tr>
+
+        <!-- ORDER -->
+
+        <td>
+
+          <b>
+            ${esc(r.order_no)}
+          </b>
+
+          <br>
+
+          <small>
+            ${formatDate(
+              r.created_at
+            )}
+          </small>
+
+        </td>
+
+
+        <!-- CUSTOMER -->
+
+        <td>
+
+          <b>
+            ${esc(
+              r.customer_name
+            )}
+          </b>
+
+          <br>
+
+          📞
+          ${esc(r.phone)}
+
+          <br>
+
+          ${esc(r.address)}
+
+          <br>
+
+          ${esc(
+            r.city || ""
+          )},
+
+          ${esc(
+            r.state || ""
+          )}
+
+          -
+
+          ${esc(
+            r.pincode
+          )}
+
+        </td>
+
+
+        <!-- PRODUCT -->
+
+        <td>
+
+          ${esc(
+            r.product
+          )}
+
+          <br>
+
+          <b>
+            ${Number(
+              r.quantity
+            )} Kg
+          </b>
+
+          <br>
+
+          SKU:
+          ${esc(
+            r.sku || "-"
+          )}
+
+        </td>
+
+
+        <!-- TOTAL -->
+
+        <td>
+
+          <b>
+            ₹${Number(
+              r.total
+            ).toLocaleString(
+              "en-IN"
+            )}
+          </b>
+
+          <br>
+
+          <small>
+            Product:
+            ₹${Number(
+              r.price
+            ).toLocaleString(
+              "en-IN"
+            )}
+
+            <br>
+
+            Delivery:
+            ₹${Number(
+              r.delivery
+            ).toLocaleString(
+              "en-IN"
+            )}
+          </small>
+
+        </td>
+
+
+        <!-- PAYMENT -->
+
+        <td>
+
+          <select
+            onchange="
+              updatePayment(
+                ${r.id},
+                this.value
+              )
+            ">
+
+            ${paymentOptions(
+              r.payment_status
+            )}
+
+          </select>
+
+          <br>
+
+          <small>
+            Method:
+            ${esc(
+              r.payment_method
+            )}
+          </small>
+
+          <br>
+
+          <small>
+            UTR:
+            ${esc(
+              r.utr || "-"
+            )}
+          </small>
+
+        </td>
+
+
+        <!-- ORDER STATUS -->
+
+        <td>
+
+          <select
+            onchange="
+              updateOrderStatus(
+                ${r.id},
+                this.value
+              )
+            ">
+
+            ${orderStatusOptions(
+              r.order_status
+            )}
+
+          </select>
+
+          ${
+            r.cancelled_at
+              ? `
+                <br>
+                <small>
+                  Cancelled:
+                  ${formatDate(
+                    r.cancelled_at
+                  )}
+                </small>
+              `
+              : ""
+          }
+
+        </td>
+
+
+        <!-- SHIPROCKET -->
+
+        <td>
+
+          <div class="shiprocket">
+
+            <b>
+              Status:
+            </b>
+
+            <span
+              class="${shiprocketClass(
+                r.shiprocket_status
+              )}">
+
+              ${esc(
+                r.shiprocket_status ||
+                "not sent"
+              )}
+
+            </span>
+
+            <br>
+
+            Order ID:
+            ${esc(
+              r.shiprocket_order_id ||
+              "-"
+            )}
+
+            <br>
+
+            Shipment ID:
+            ${esc(
+              r.shiprocket_shipment_id ||
+              "-"
+            )}
+
+            <br>
+
+            AWB:
+            ${esc(
+              r.shiprocket_awb ||
+              "-"
+            )}
+
+            ${
+              r.shiprocket_error
+                ? `
+                  <br>
+                  <span class="status-failed">
+                    Error:
+                    ${esc(
+                      r.shiprocket_error
+                    )}
+                  </span>
+                `
+                : ""
+            }
+
+          </div>
+
+        </td>
+
+
+        <!-- ACTION -->
+
+        <td>
+
+          <a
+            class="mini"
+            href="https://wa.me/91${encodeURIComponent(
+              r.phone
+            )}"
+            target="_blank"
+            rel="noopener">
+
+            WhatsApp
+
+          </a>
+
+        </td>
+
+      </tr>
+
+    `
+    ).join("");
+
+}
+
+
+/* =====================================================
+   PAYMENT OPTIONS
+===================================================== */
+
+function paymentOptions(current) {
+
+  const values = [
+    "pending",
+    "submitted",
+    "paid",
+    "failed",
+    "refunded"
+  ];
+
+  return values
+    .map(
+      value =>
+        `<option
+          value="${value}"
+          ${
+            current === value
+              ? "selected"
+              : ""
+          }>
+
+          ${value}
+
+        </option>`
+    )
+    .join("");
+
+}
+
+
+/* =====================================================
+   ORDER STATUS OPTIONS
+===================================================== */
+
+function orderStatusOptions(current) {
+
+  const values = [
+    "new",
+    "confirmed",
+    "packed",
+    "shipped",
+    "delivered",
+    "cancelled"
+  ];
+
+  return values
+    .map(
+      value =>
+        `<option
+          value="${value}"
+          ${
+            current === value
+              ? "selected"
+              : ""
+          }>
+
+          ${value}
+
+        </option>`
+    )
+    .join("");
+
+}
+
+
+/* =====================================================
+   UPDATE PAYMENT
+===================================================== */
+
+async function updatePayment(
+  id,
+  paymentStatus
+) {
+
+  try {
+
+    await api(
+      "/api/admin/orders/" +
+      id,
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        credentials:
+          "same-origin",
+
+        body:
+          JSON.stringify({
+            paymentStatus
+          })
+      }
+    );
+
+    await loadOrders();
+
+  } catch (error) {
+
+    alert(
+      "Payment status update नहीं हुआ:\n" +
+      error.message
+    );
+
+    await loadOrders();
+
+  }
+
+}
+
+
+/* =====================================================
+   UPDATE ORDER STATUS
+===================================================== */
+
+async function updateOrderStatus(
+  id,
+  orderStatus
+) {
+
+  try {
+
+    await api(
+      "/api/admin/orders/" +
+      id,
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        credentials:
+          "same-origin",
+
+        body:
+          JSON.stringify({
+            orderStatus
+          })
+      }
+    );
+
+    await loadOrders();
+
+  } catch (error) {
+
+    alert(
+      "Order status update नहीं हुआ:\n" +
+      error.message
+    );
+
+    await loadOrders();
+
+  }
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function esc(value) {
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    function(match) {
+
+      return {
+        "&":
+          "&amp;",
+
+        "<":
+          "&lt;",
+
+        ">":
+          "&gt;",
+
+        '"':
+          "&quot;",
+
+        "'":
+          "&#039;"
+
+      }[match];
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(value) {
+
+  if (!value) {
+    return "-";
+  }
+
+  const date =
+    new Date(value);
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return esc(value);
+  }
+
+  return date.toLocaleString(
+    "hi-IN"
+  );
+
+}
+
+
+/* =====================================================
+   SHIPROCKET STATUS CLASS
+===================================================== */
+
+function shiprocketClass(
+  status
+) {
+
+  if (
+    status ===
+    "created"
+  ) {
+    return "status-created";
+  }
+
+  if (
+    status ===
+    "failed" ||
+    status ===
+    "cancellation_failed"
+  ) {
+    return "status-failed";
+  }
+
+  if (
+    status ===
+    "cancelled"
+  ) {
+    return "status-cancelled";
+  }
+
+  return "";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+checkLogin();
+
 </script>
-</body></html>
+
+</body>
+</html>
