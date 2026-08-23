@@ -9,6 +9,7 @@ const app = express();
 
 const PORT = Number(process.env.PORT || 3000);
 
+
 /* =========================================================
    BASIC SETTINGS
    ========================================================= */
@@ -26,17 +27,35 @@ const UPI_NAME =
   process.env.UPI_NAME || "23 Swasthyavardhak Samaan";
 
 
-/*
-  DELIVERY CHARGE
+/* =========================================================
+   DELIVERY CHARGE
+   =========================================================
 
-  500 gram = ₹100
-  1 kg     = ₹200
-  1.5 kg   = ₹300
-  2 kg     = ₹400
+   500 gram = ₹100
+   1 kg     = ₹100
+   1.5 kg   = ₹200
+   2 kg     = ₹200
+   2.5 kg   = ₹300
+   3 kg     = ₹300
+   3.5 kg   = ₹400
+   4 kg     = ₹400
 
-  1 quantity = 500 gram
+   1 quantity = 500 gram
+
+   Rule:
+   हर 1 KG के लिए ₹100
+   लेकिन 500 gram की शुरुआत भी ₹100 होगी.
+
+   इसलिए:
+   1 quantity  = 500g  = ₹100
+   2 quantity  = 1kg   = ₹100
+   3 quantity  = 1.5kg = ₹200
+   4 quantity  = 2kg   = ₹200
+   5 quantity  = 2.5kg = ₹300
+   6 quantity  = 3kg   = ₹300
 */
-const DELIVERY_PER_500G = 100;
+
+const DELIVERY_PER_KG = 100;
 
 const PRODUCT_WEIGHT_KG = 0.5;
 
@@ -46,24 +65,27 @@ const PRODUCT_WEIGHT_KG = 0.5;
    ========================================================= */
 
 function calculateDelivery(quantity) {
+
   const qty = Number(quantity);
 
-  if (!Number.isInteger(qty) || qty < 1) {
+  if (
+    !Number.isInteger(qty) ||
+    qty < 1
+  ) {
     return 0;
   }
 
-  return qty * DELIVERY_PER_500G;
+  /*
+    1 = 500g  = ₹100
+    2 = 1kg   = ₹100
+    3 = 1.5kg = ₹200
+    4 = 2kg   = ₹200
+    5 = 2.5kg = ₹300
+    6 = 3kg   = ₹300
+  */
+
+  return Math.ceil(qty / 2) * DELIVERY_PER_KG;
 }
-
-
-/*
-  Examples:
-
-  quantity 1 = 500g  = ₹100
-  quantity 2 = 1kg   = ₹200
-  quantity 3 = 1.5kg = ₹300
-  quantity 4 = 2kg   = ₹400
-*/
 
 
 /* =========================================================
@@ -180,6 +202,7 @@ function addColumnIfMissing(
   columnName,
   columnDefinition
 ) {
+
   const columns = db
     .prepare(`PRAGMA table_info(${tableName})`)
     .all();
@@ -189,11 +212,13 @@ function addColumnIfMissing(
   );
 
   if (!exists) {
+
     db.exec(
       `ALTER TABLE ${tableName}
        ADD COLUMN ${columnName}
        ${columnDefinition}`
     );
+
   }
 }
 
@@ -286,6 +311,7 @@ app.set("trust proxy", 1);
 
 app.use(
   session({
+
     secret:
       process.env.SESSION_SECRET ||
       "23-Swasthyavardhak-Change-This-Secret",
@@ -295,11 +321,18 @@ app.use(
     saveUninitialized: false,
 
     cookie: {
+
       httpOnly: true,
+
       secure: true,
+
       sameSite: "lax",
-      maxAge: 8 * 60 * 60 * 1000
+
+      maxAge:
+        8 * 60 * 60 * 1000
+
     }
+
   })
 );
 
@@ -347,12 +380,27 @@ app.get(
 
     res.json({
 
-      upiId: UPI_ID,
+      upiId:
+        UPI_ID,
 
-      upiName: UPI_NAME,
+      upiName:
+        UPI_NAME,
+
+      /*
+        यह value frontend compatibility
+        के लिए 100 रखी गई है.
+      */
+
+      deliveryPerKg:
+        DELIVERY_PER_KG,
+
+      /*
+        पुराना frontend अगर इस field को
+        पढ़ता है तो भी 100 मिलेगा.
+      */
 
       deliveryPer500g:
-        DELIVERY_PER_500G,
+        DELIVERY_PER_KG,
 
       productWeightKg:
         PRODUCT_WEIGHT_KG,
@@ -386,9 +434,13 @@ function splitCustomerName(fullName) {
     parts.join(" ") || "Customer";
 
   return {
+
     firstName,
+
     lastName
+
   };
+
 }
 
 
@@ -411,6 +463,7 @@ async function getShiprocketToken() {
     throw new Error(
       "Shiprocket API credentials are not configured."
     );
+
   }
 
 
@@ -426,6 +479,7 @@ async function getShiprocketToken() {
   ) {
 
     return shiprocketToken;
+
   }
 
 
@@ -438,22 +492,27 @@ async function getShiprocketToken() {
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
+
         method: "POST",
 
         headers: {
+
           "Content-Type":
             "application/json"
+
         },
 
-        body: JSON.stringify({
+        body:
+          JSON.stringify({
 
-          email:
-            SHIPROCKET_API_EMAIL,
+            email:
+              SHIPROCKET_API_EMAIL,
 
-          password:
-            SHIPROCKET_API_PASSWORD
+            password:
+              SHIPROCKET_API_PASSWORD
 
-        })
+          })
+
       }
     );
 
@@ -476,6 +535,7 @@ async function getShiprocketToken() {
     console.error(
       "Shiprocket login failed:",
       {
+
         status:
           response.status,
 
@@ -484,14 +544,21 @@ async function getShiprocketToken() {
 
         error:
           data.error || ""
+
       }
     );
 
+
     throw new Error(
+
       data.message ||
+
       data.error ||
+
       `Shiprocket login failed with HTTP ${response.status}`
+
     );
+
   }
 
 
@@ -508,6 +575,7 @@ async function getShiprocketToken() {
 
 
   return shiprocketToken;
+
 }
 
 
@@ -531,6 +599,7 @@ async function createShiprocketOrder(
     throw new Error(
       "Customer city/state missing."
     );
+
   }
 
 
@@ -546,6 +615,7 @@ async function createShiprocketOrder(
     1 quantity = 500g
     2 quantity = 1kg
     3 quantity = 1.5kg
+    4 quantity = 2kg
   */
 
   const totalWeight =
@@ -554,11 +624,16 @@ async function createShiprocketOrder(
 
 
   /*
-    Delivery charge is also based on quantity.
+    DELIVERY CHARGE
 
-    1 quantity = ₹100
-    2 quantity = ₹200
-    3 quantity = ₹300
+    500g  = ₹100
+    1kg   = ₹100
+    1.5kg = ₹200
+    2kg   = ₹200
+    2.5kg = ₹300
+    3kg   = ₹300
+    3.5kg = ₹400
+    4kg   = ₹400
   */
 
   const deliveryCharge =
@@ -589,11 +664,14 @@ async function createShiprocketOrder(
       )
     )
       ? {
+
           channel_id:
             Number(
               SHIPROCKET_CHANNEL_ID
             )
+
         }
+
       : {}),
 
 
@@ -689,6 +767,7 @@ async function createShiprocketOrder(
 
         hsn:
           ""
+
       }
 
     ],
@@ -731,6 +810,7 @@ async function createShiprocketOrder(
 
     weight:
       totalWeight
+
   };
 
 
@@ -738,6 +818,7 @@ async function createShiprocketOrder(
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       {
+
         method: "POST",
 
         headers: {
@@ -754,11 +835,13 @@ async function createShiprocketOrder(
           JSON.stringify(
             payload
           )
+
       }
     );
 
 
   let data = {};
+
 
   try {
 
@@ -768,6 +851,7 @@ async function createShiprocketOrder(
   } catch (_) {
 
     data = {};
+
   }
 
 
@@ -784,11 +868,17 @@ async function createShiprocketOrder(
       data
     );
 
+
     throw new Error(
+
       data.message ||
+
       data.error ||
+
       JSON.stringify(data)
+
     );
+
   }
 
 
@@ -799,6 +889,7 @@ async function createShiprocketOrder(
 
 
   return data;
+
 }
 
 
@@ -813,11 +904,16 @@ async function cancelShiprocketOrder(
   if (!shiprocketOrderId) {
 
     return {
+
       success: false,
+
       skipped: true,
+
       message:
         "Shiprocket order ID उपलब्ध नहीं है।"
+
     };
+
   }
 
 
@@ -840,6 +936,7 @@ async function cancelShiprocketOrder(
     throw new Error(
       "Invalid Shiprocket order ID."
     );
+
   }
 
 
@@ -847,6 +944,7 @@ async function cancelShiprocketOrder(
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/cancel",
       {
+
         method: "POST",
 
         headers: {
@@ -867,6 +965,7 @@ async function cancelShiprocketOrder(
             ]
 
           })
+
       }
     );
 
@@ -876,14 +975,19 @@ async function cancelShiprocketOrder(
   ) {
 
     return {
+
       success: true,
+
       message:
         "Shiprocket order cancelled."
+
     };
+
   }
 
 
   let data = {};
+
 
   try {
 
@@ -896,17 +1000,26 @@ async function cancelShiprocketOrder(
   if (!response.ok) {
 
     throw new Error(
+
       data.message ||
+
       data.error ||
+
       `Shiprocket cancellation failed with HTTP ${response.status}`
+
     );
+
   }
 
 
   return {
+
     success: true,
+
     data
+
   };
+
 }
 
 
@@ -921,11 +1034,16 @@ async function cancelShiprocketShipment(
   if (!awb) {
 
     return {
+
       success: false,
+
       skipped: true,
+
       message:
         "AWB उपलब्ध नहीं है।"
+
     };
+
   }
 
 
@@ -937,6 +1055,7 @@ async function cancelShiprocketShipment(
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/cancel/shipment/awbs",
       {
+
         method: "POST",
 
         headers: {
@@ -957,6 +1076,7 @@ async function cancelShiprocketShipment(
             ]
 
           })
+
       }
     );
 
@@ -966,14 +1086,19 @@ async function cancelShiprocketShipment(
   ) {
 
     return {
+
       success: true,
+
       message:
         "Shiprocket shipment cancellation request sent."
+
     };
+
   }
 
 
   let data = {};
+
 
   try {
 
@@ -986,17 +1111,26 @@ async function cancelShiprocketShipment(
   if (!response.ok) {
 
     throw new Error(
+
       data.message ||
+
       data.error ||
+
       `Shipment cancellation failed with HTTP ${response.status}`
+
     );
+
   }
 
 
   return {
+
     success: true,
+
     data
+
   };
+
 }
 
 
@@ -1083,6 +1217,7 @@ app.post(
             "कृपया नाम, मोबाइल, पूरा पता, शहर, राज्य और सही पिनकोड भरें।"
 
         });
+
       }
 
 
@@ -1092,35 +1227,33 @@ app.post(
           : "COD";
 
 
-      /*
-        PRODUCT TOTAL
-
-        Example:
-        ₹1300 × 1 = ₹1300
-        ₹1300 × 2 = ₹2600
-      */
+      /* =====================================================
+         PRODUCT TOTAL
+         ===================================================== */
 
       const productTotal =
         product.price *
         qty;
 
 
-      /*
-        DELIVERY
+      /* =====================================================
+         DELIVERY
 
-        500g = ₹100
-        1kg = ₹200
-        1.5kg = ₹300
-        2kg = ₹400
-      */
+         500g  = ₹100
+         1kg   = ₹100
+         1.5kg = ₹200
+         2kg   = ₹200
+         2.5kg = ₹300
+         3kg   = ₹300
+         ===================================================== */
 
       const delivery =
         calculateDelivery(qty);
 
 
-      /*
-        FINAL TOTAL
-      */
+      /* =====================================================
+         FINAL TOTAL
+         ===================================================== */
 
       const total =
         productTotal +
@@ -1339,6 +1472,7 @@ app.post(
           result.lastInsertRowid
 
         );
+
       }
 
 
@@ -1402,7 +1536,9 @@ app.post(
           "ऑर्डर सेव नहीं हो सका।"
 
       });
+
     }
+
   }
 );
 
@@ -1436,6 +1572,7 @@ app.get(
             "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
 
         });
+
       }
 
 
@@ -1585,7 +1722,9 @@ app.get(
           "Order history load नहीं हो सकी।"
 
       });
+
     }
+
   }
 );
 
@@ -1629,6 +1768,7 @@ app.post(
             "Order No. और सही Mobile Number डालें।"
 
         });
+
       }
 
 
@@ -1662,6 +1802,7 @@ app.post(
             "Order No. और Mobile Number का मिलान नहीं हुआ।"
 
         });
+
       }
 
 
@@ -1763,7 +1904,9 @@ app.post(
           "Order details load नहीं हो सके।"
 
       });
+
     }
+
   }
 );
 
@@ -1820,6 +1963,7 @@ app.post(
             "कृपया सही Order No. और 10 अंकों का मोबाइल नंबर डालें।"
 
         });
+
       }
 
 
@@ -1853,6 +1997,7 @@ app.post(
             "Order No. और Mobile Number का मिलान नहीं हुआ।"
 
         });
+
       }
 
 
@@ -1867,6 +2012,7 @@ app.post(
             "यह order पहले ही cancelled है।"
 
         });
+
       }
 
 
@@ -1893,6 +2039,7 @@ app.post(
             "इस order को अब website से cancel नहीं किया जा सकता। कृपया customer support से संपर्क करें।"
 
         });
+
       }
 
 
@@ -1924,7 +2071,9 @@ app.post(
             )
 
           );
+
         }
+
       }
 
 
@@ -1952,7 +2101,9 @@ app.post(
             )
 
           );
+
         }
+
       }
 
 
@@ -1996,6 +2147,7 @@ app.post(
             shiprocketErrors
 
         });
+
       }
 
 
@@ -2069,7 +2221,9 @@ app.post(
           "Order cancellation में समस्या आई। कृपया बाद में फिर प्रयास करें।"
 
       });
+
     }
+
   }
 );
 
@@ -2090,6 +2244,7 @@ function requireAdmin(
   ) {
 
     return next();
+
   }
 
 
@@ -2099,6 +2254,7 @@ function requireAdmin(
       "Unauthorized"
 
   });
+
 }
 
 
@@ -2139,6 +2295,7 @@ app.post(
           true
 
       });
+
     }
 
 
@@ -2148,6 +2305,7 @@ app.post(
         "गलत username या password"
 
     });
+
   }
 );
 
@@ -2169,8 +2327,10 @@ app.post(
             true
 
         });
+
       }
     );
+
   }
 );
 
@@ -2192,6 +2352,7 @@ app.get(
         )
 
     });
+
   }
 );
 
@@ -2218,6 +2379,7 @@ app.get(
 
 
     res.json(rows);
+
   }
 );
 
@@ -2294,6 +2456,7 @@ app.patch(
           "Invalid order status"
 
       });
+
     }
 
 
@@ -2313,6 +2476,7 @@ app.patch(
           "Invalid payment status"
 
       });
+
     }
 
 
@@ -2330,6 +2494,7 @@ app.patch(
           "Order not found"
 
       });
+
     }
 
 
@@ -2372,6 +2537,7 @@ app.patch(
         true
 
     });
+
   }
 );
 
@@ -2401,6 +2567,7 @@ app.get(
       )
 
     );
+
   }
 );
 
@@ -2421,6 +2588,7 @@ app.get(
       )
 
     );
+
   }
 );
 
@@ -2455,7 +2623,7 @@ app.listen(
 
 
     console.log(
-      `Delivery charge: ₹${DELIVERY_PER_500G} per 500 gram`
+      `Delivery charge: ₹${DELIVERY_PER_KG} per KG`
     );
 
   }
