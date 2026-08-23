@@ -65,26 +65,24 @@ const PRODUCT_WEIGHT_KG = 0.5;
    ========================================================= */
 
 function calculateDelivery(quantity) {
-
   const qty = Number(quantity);
 
-  if (
-    !Number.isInteger(qty) ||
-    qty < 1
-  ) {
+  if (!Number.isInteger(qty) || qty < 1) {
     return 0;
   }
 
   /*
-    1 = 500g  = ₹100
-    2 = 1kg   = ₹100
-    3 = 1.5kg = ₹200
-    4 = 2kg   = ₹200
-    5 = 2.5kg = ₹300
-    6 = 3kg   = ₹300
+    1 quantity  = 500g  = ₹100
+    2 quantity  = 1kg   = ₹100
+    3 quantity  = 1.5kg = ₹200
+    4 quantity  = 2kg   = ₹200
+    5 quantity  = 2.5kg = ₹300
+    6 quantity  = 3kg   = ₹300
+    7 quantity  = 3.5kg = ₹400
+    8 quantity  = 4kg   = ₹400
   */
 
-  return Math.ceil(qty / 2) * DELIVERY_PER_KG;
+  return Math.ceil(qty / 2) * 100;
 }
 
 
@@ -634,6 +632,7 @@ async function createShiprocketOrder(
     3kg   = ₹300
     3.5kg = ₹400
     4kg   = ₹400
+    1 quantity = 500 gram
   */
 
   const deliveryCharge =
