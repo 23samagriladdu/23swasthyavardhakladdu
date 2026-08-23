@@ -25,7 +25,45 @@ const UPI_ID =
 const UPI_NAME =
   process.env.UPI_NAME || "23 Swasthyavardhak Samaan";
 
-const DELIVERY = 300;
+
+/*
+  DELIVERY CHARGE
+
+  500 gram = ₹100
+  1 kg     = ₹200
+  1.5 kg   = ₹300
+  2 kg     = ₹400
+
+  1 quantity = 500 gram
+*/
+const DELIVERY_PER_500G = 100;
+
+const PRODUCT_WEIGHT_KG = 0.5;
+
+
+/* =========================================================
+   DELIVERY CALCULATOR
+   ========================================================= */
+
+function calculateDelivery(quantity) {
+  const qty = Number(quantity);
+
+  if (!Number.isInteger(qty) || qty < 1) {
+    return 0;
+  }
+
+  return qty * DELIVERY_PER_500G;
+}
+
+
+/*
+  Examples:
+
+  quantity 1 = 500g  = ₹100
+  quantity 2 = 1kg   = ₹200
+  quantity 3 = 1.5kg = ₹300
+  quantity 4 = 2kg   = ₹400
+*/
 
 
 /* =========================================================
@@ -313,11 +351,16 @@ app.get(
 
       upiName: UPI_NAME,
 
-      delivery: DELIVERY,
+      deliveryPer500g:
+        DELIVERY_PER_500G,
+
+      productWeightKg:
+        PRODUCT_WEIGHT_KG,
 
       products
 
     });
+
   }
 );
 
@@ -497,6 +540,33 @@ async function createShiprocketOrder(
     );
 
 
+  /*
+    Package weight is based on quantity.
+
+    1 quantity = 500g
+    2 quantity = 1kg
+    3 quantity = 1.5kg
+  */
+
+  const totalWeight =
+    Number(order.quantity) *
+    PRODUCT_WEIGHT_KG;
+
+
+  /*
+    Delivery charge is also based on quantity.
+
+    1 quantity = ₹100
+    2 quantity = ₹200
+    3 quantity = ₹300
+  */
+
+  const deliveryCharge =
+    calculateDelivery(
+      order.quantity
+    );
+
+
   const payload = {
 
     order_id:
@@ -632,9 +702,7 @@ async function createShiprocketOrder(
         : "COD",
 
     shipping_charges:
-      Number(
-        order.delivery
-      ),
+      deliveryCharge,
 
     giftwrap_charges:
       0,
@@ -662,7 +730,7 @@ async function createShiprocketOrder(
       PACKAGE_HEIGHT,
 
     weight:
-      PACKAGE_WEIGHT
+      totalWeight
   };
 
 
@@ -1024,14 +1092,39 @@ app.post(
           : "COD";
 
 
+      /*
+        PRODUCT TOTAL
+
+        Example:
+        ₹1300 × 1 = ₹1300
+        ₹1300 × 2 = ₹2600
+      */
+
       const productTotal =
         product.price *
         qty;
 
 
+      /*
+        DELIVERY
+
+        500g = ₹100
+        1kg = ₹200
+        1.5kg = ₹300
+        2kg = ₹400
+      */
+
+      const delivery =
+        calculateDelivery(qty);
+
+
+      /*
+        FINAL TOTAL
+      */
+
       const total =
         productTotal +
-        DELIVERY;
+        delivery;
 
 
       const orderNo =
@@ -1109,7 +1202,7 @@ app.post(
 
           qty,
 
-          DELIVERY,
+          delivery,
 
           total,
 
@@ -1255,7 +1348,16 @@ app.post(
 
         orderNo,
 
+        productTotal,
+
+        delivery,
+
         total,
+
+        quantity: qty,
+
+        weightKg:
+          qty * PRODUCT_WEIGHT_KG,
 
         paymentStatus:
           safePayment === "UPI"
@@ -1306,14 +1408,7 @@ app.post(
 
 
 /* =========================================================
-   ⭐ CUSTOMER ORDER HISTORY
-   =========================================================
-   
-   Customer अपना registered mobile number डालकर
-   अपने सभी orders देख सकता है.
-
-   URL:
-   /api/orders/history?phone=9876543210
+   CUSTOMER ORDER HISTORY
    ========================================================= */
 
 app.get(
@@ -1398,15 +1493,6 @@ app.get(
         `).all(phone);
 
 
-      /*
-         Customer को केवल जरूरी information
-         दिखाई जाएगी।
-         
-         Shiprocket internal order ID आदि
-         customer को नहीं भेजे जाएंगे।
-      */
-
-
       const orders =
         rows.map(order => ({
 
@@ -1424,6 +1510,10 @@ app.get(
 
           quantity:
             order.quantity,
+
+          weightKg:
+            Number(order.quantity) *
+            PRODUCT_WEIGHT_KG,
 
           price:
             order.price,
@@ -1501,20 +1591,7 @@ app.get(
 
 
 /* =========================================================
-   ⭐ CUSTOMER SINGLE ORDER DETAILS
-   =========================================================
-
-   Customer Order No + Mobile से
-   specific order देख सकता है.
-
-   POST /api/orders/details
-
-   Body:
-   {
-     orderNo: "23L123456789",
-     phone: "9876543210"
-   }
-
+   CUSTOMER SINGLE ORDER DETAILS
    ========================================================= */
 
 app.post(
@@ -1558,47 +1635,7 @@ app.post(
       const order =
         db.prepare(`
 
-          SELECT
-
-            order_no,
-
-            created_at,
-
-            customer_name,
-
-            phone,
-
-            address,
-
-            pincode,
-
-            city,
-
-            state,
-
-            product,
-
-            quantity,
-
-            price,
-
-            delivery,
-
-            total,
-
-            payment_method,
-
-            payment_status,
-
-            order_status,
-
-            shiprocket_awb,
-
-            shiprocket_status,
-
-            cancellation_reason,
-
-            cancelled_at
+          SELECT *
 
           FROM orders
 
@@ -1663,6 +1700,10 @@ app.post(
 
           quantity:
             order.quantity,
+
+          weightKg:
+            Number(order.quantity) *
+            PRODUCT_WEIGHT_KG,
 
           price:
             order.price,
@@ -2410,6 +2451,11 @@ app.listen(
       `Shiprocket pickup location: ${
         SHIPROCKET_PICKUP_LOCATION
       }`
+    );
+
+
+    console.log(
+      `Delivery charge: ₹${DELIVERY_PER_500G} per 500 gram`
     );
 
   }
