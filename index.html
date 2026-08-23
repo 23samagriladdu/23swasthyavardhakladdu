@@ -384,10 +384,13 @@
       </div>
 
       <p class="delivery-note">
-        🚚 डिलीवरी चार्ज:
-        <strong>₹300</strong>
-        प्रति ऑर्डर
-      </p>
+  🚚 डिलीवरी चार्ज:
+  <strong>
+    500 ग्राम–1.5 Kg: ₹100 |
+    2 Kg: ₹200 |
+    2.5 Kg या अधिक: ₹300
+  </strong>
+</p>
 
     </section>
 
@@ -539,14 +542,14 @@
 
           मात्रा (Kg)
 
-          <input
-            id="qty"
-            type="number"
-            min="1"
-            max="50"
-            step="1"
-            value="1"
-            required>
+<input
+  id="qty"
+  type="number"
+  min="0.5"
+  max="50"
+  step="0.5"
+  value="1"
+  required>
 
         </label>
 
@@ -632,12 +635,12 @@
 
 
           <span>
-            डिलीवरी
-          </span>
+  डिलीवरी
+</span>
 
-          <strong>
-            ₹300
-          </strong>
+<strong id="deliveryCharge">
+  ₹100
+</strong>
 
 
           <span>
@@ -961,7 +964,24 @@
 
     let config = null;
 
-    const delivery = 300;
+    function getDeliveryCharge(quantity) {
+
+  quantity = Number(quantity || 0);
+
+  if (quantity <= 0) {
+    return 0;
+  }
+
+  if (quantity <= 1.5) {
+    return 100;
+  }
+
+  if (quantity <= 2) {
+    return 200;
+  }
+
+  return 300;
+}
 
     const product =
       document.getElementById("product");
@@ -1016,21 +1036,54 @@
 
     function updateTotal() {
 
-      const quantity =
-        Number(qty.value || 0);
+  const quantity =
+    Number(qty.value || 0);
 
-      const total =
-        price() * quantity;
+  const total =
+    price() * quantity;
 
-      productTotal.textContent =
-        money(total);
+  const delivery =
+    getDeliveryCharge(quantity);
 
-      grandTotal.textContent =
-        money(total + delivery);
+  productTotal.textContent =
+    money(total);
 
-      renderUPI();
+  document.querySelector(
+    ".total span:nth-of-type(2)"
+  ).textContent = "डिलीवरी";
 
-    }
+  function updateTotal() {
+
+  const quantity =
+    Number(qty.value || 0);
+
+  const total =
+    price() * quantity;
+
+  const delivery =
+    getDeliveryCharge(quantity);
+
+  productTotal.textContent =
+    money(total);
+
+  document.getElementById(
+    "deliveryCharge"
+  ).textContent =
+    money(delivery);
+
+  grandTotal.textContent =
+    money(total + delivery);
+
+  renderUPI();
+
+}
+
+  grandTotal.textContent =
+    money(total + delivery);
+
+  renderUPI();
+
+}
 
 
     /* =====================================================
@@ -1161,9 +1214,15 @@
       }
 
 
-      const amount =
-        price() * Number(qty.value || 0) +
-        delivery;
+      const quantity =
+  Number(qty.value || 0);
+
+const delivery =
+  getDeliveryCharge(quantity);
+
+const amount =
+  price() * quantity +
+  delivery;
 
 
       document
@@ -1505,18 +1564,19 @@
 
 
           if (
-            !Number.isInteger(body.quantity) ||
-            body.quantity < 1 ||
-            body.quantity > 50
-          ) {
+  !Number.isFinite(body.quantity) ||
+  body.quantity < 0.5 ||
+  body.quantity > 50 ||
+  (body.quantity * 2) % 1 !== 0
+) {
 
-            alert(
-              "मात्रा 1 से 50 Kg के बीच होनी चाहिए।"
-            );
+  alert(
+    "मात्रा 0.5 Kg से 50 Kg के बीच होनी चाहिए।"
+  );
 
-            return;
+  return;
 
-          }
+}
 
 
           try {
