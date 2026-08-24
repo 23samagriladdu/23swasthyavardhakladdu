@@ -9,7 +9,6 @@ const app = express();
 
 const PORT = Number(process.env.PORT || 3000);
 
-
 /* =========================================================
    BASIC SETTINGS
    ========================================================= */
@@ -28,36 +27,25 @@ const UPI_NAME =
 
 
 /* =========================================================
-   DELIVERY CHARGE
+   PRODUCT / DELIVERY SETTINGS
    =========================================================
 
-   500 gram = ₹100
-   1 kg     = ₹100
-   1.5 kg   = ₹200
-   2 kg     = ₹200
-   2.5 kg   = ₹300
-   3 kg     = ₹300
-   3.5 kg   = ₹400
-   4 kg     = ₹400
+   NEW PRODUCTS:
+   1 quantity = 800 gram
 
-   1 quantity = 500 gram
+   Delivery:
+   800g  = ₹100
+   1.6kg = ₹200
+   2.4kg = ₹300
+   3.2kg = ₹400
+   4.0kg = ₹500
 
-   Rule:
-   हर 1 KG के लिए ₹100
-   लेकिन 500 gram की शुरुआत भी ₹100 होगी.
-
-   इसलिए:
-   1 quantity  = 500g  = ₹100
-   2 quantity  = 1kg   = ₹100
-   3 quantity  = 1.5kg = ₹200
-   4 quantity  = 2kg   = ₹200
-   5 quantity  = 2.5kg = ₹300
-   6 quantity  = 3kg   = ₹300
+   यानी हर 800 gram quantity के लिए ₹100 delivery.
 */
 
 const DELIVERY_PER_KG = 100;
 
-const PRODUCT_WEIGHT_KG = 0.5;
+const PRODUCT_WEIGHT_KG = 0.8;
 
 
 /* =========================================================
@@ -72,17 +60,14 @@ function calculateDelivery(quantity) {
   }
 
   /*
-    1 quantity  = 500g  = ₹100
-    2 quantity  = 1kg   = ₹100
-    3 quantity  = 1.5kg = ₹200
-    4 quantity  = 2kg   = ₹200
-    5 quantity  = 2.5kg = ₹300
-    6 quantity  = 3kg   = ₹300
-    7 quantity  = 3.5kg = ₹400
-    8 quantity  = 4kg   = ₹400
+    1 quantity = 800g  = ₹100
+    2 quantity = 1.6kg = ₹200
+    3 quantity = 2.4kg = ₹300
+    4 quantity = 3.2kg = ₹400
+    5 quantity = 4kg   = ₹500
   */
 
-  return Math.ceil(qty / 2) * 100;
+  return qty * 100;
 }
 
 
@@ -115,9 +100,6 @@ const PACKAGE_BREADTH =
 
 const PACKAGE_HEIGHT =
   Number(process.env.PACKAGE_HEIGHT || 10);
-
-const PACKAGE_WEIGHT =
-  Number(process.env.PACKAGE_WEIGHT || 0.5);
 
 
 /* =========================================================
@@ -200,7 +182,6 @@ function addColumnIfMissing(
   columnName,
   columnDefinition
 ) {
-
   const columns = db
     .prepare(`PRAGMA table_info(${tableName})`)
     .all();
@@ -210,13 +191,11 @@ function addColumnIfMissing(
   );
 
   if (!exists) {
-
     db.exec(
       `ALTER TABLE ${tableName}
        ADD COLUMN ${columnName}
        ${columnDefinition}`
     );
-
   }
 }
 
@@ -309,7 +288,6 @@ app.set("trust proxy", 1);
 
 app.use(
   session({
-
     secret:
       process.env.SESSION_SECRET ||
       "23-Swasthyavardhak-Change-This-Secret",
@@ -319,7 +297,6 @@ app.use(
     saveUninitialized: false,
 
     cookie: {
-
       httpOnly: true,
 
       secure: true,
@@ -328,41 +305,134 @@ app.use(
 
       maxAge:
         8 * 60 * 60 * 1000
-
     }
-
   })
 );
 
 
 /* =========================================================
    PRODUCTS
-   ========================================================= */
+   =========================================================
+
+   पुराने products वही रखे गए हैं।
+
+   नए products:
+   सभी का weight = 800gm
+*/
 
 const products = [
+
+  /* =====================================================
+     OLD PRODUCTS
+     ===================================================== */
 
   {
     id: "10-dryfruit",
     name: "10 सामग्री - Only Dryfruits",
-    price: 1600
+    price: 1600,
+    weight: 800,
+    image: ""
   },
 
   {
     id: "23-seeds-dryfruit",
     name: "23 सामग्री - Seeds & Dryfruits",
-    price: 1300
+    price: 1300,
+    weight: 800,
+    image: ""
   },
 
   {
     id: "30-seeds-dryfruit",
     name: "30 सामग्री - Seeds & Dryfruits",
-    price: 1600
+    price: 1600,
+    weight: 800,
+    image: ""
   },
 
   {
     id: "10-seeds-dryfruit",
     name: "10 सामग्री - Seeds & Dryfruits",
-    price: 600
+    price: 600,
+    weight: 800,
+    image: ""
+  },
+
+
+  /* =====================================================
+     NEW PRODUCTS
+     ===================================================== */
+
+  {
+    id: "besan",
+    name: "Besan Laddu",
+    price: 500,
+    weight: 800,
+    image: "besan.jpeg"
+  },
+
+  {
+    id: "dry-fruit",
+    name: "Dry Fruit Laddu",
+    price: 1300,
+    weight: 800,
+    image: "dry_fruit.jpeg"
+  },
+
+  {
+    id: "mix-ladd-2",
+    name: "Mix Laddu 2",
+    price: 1100,
+    weight: 800,
+    image: "mix_ladd-2.jpeg"
+  },
+
+  {
+    id: "mix-laddu",
+    name: "Mix Laddu",
+    price: 1000,
+    weight: 800,
+    image: "mix_laddu-.jpeg"
+  },
+
+  {
+    id: "mix-laddu-3",
+    name: "Mix Laddu 3",
+    price: 1200,
+    weight: 800,
+    image: "mix_laddu-3.jpeg"
+  },
+
+  {
+    id: "mix-laddu-4",
+    name: "Mix Laddu 4",
+    price: 700,
+    weight: 800,
+    image: "mix_laddu-4.jpeg"
+  },
+
+  {
+    id: "mix-laddu-5",
+    name: "Mix Laddu 5",
+    price: 850,
+    weight: 800,
+    image: "mix_laddu-5.jpeg"
+  },
+
+  {
+    id: "mix-laddu-6",
+    name: "Mix Laddu 6",
+    price: 850,
+    weight: 800,
+    image: "mix laddu-6.jpeg"
+  },
+
+  {
+    id: "seeds-dryfruit",
+    name: "Seeds & Dry Fruit Laddu",
+    price: 1100,
+    weight: 800,
+    image: "seeds_dryfruit.jpeg"
   }
 
 ];
@@ -384,24 +454,17 @@ app.get(
       upiName:
         UPI_NAME,
 
-      /*
-        यह value frontend compatibility
-        के लिए 100 रखी गई है.
-      */
-
       deliveryPerKg:
         DELIVERY_PER_KG,
 
-      /*
-        पुराना frontend अगर इस field को
-        पढ़ता है तो भी 100 मिलेगा.
-      */
-
-      deliveryPer500g:
-        DELIVERY_PER_KG,
+      deliveryPer800g:
+        100,
 
       productWeightKg:
         PRODUCT_WEIGHT_KG,
+
+      productWeightGram:
+        PRODUCT_WEIGHT_KG * 1000,
 
       products
 
@@ -432,13 +495,9 @@ function splitCustomerName(fullName) {
     parts.join(" ") || "Customer";
 
   return {
-
     firstName,
-
     lastName
-
   };
-
 }
 
 
@@ -461,7 +520,6 @@ async function getShiprocketToken() {
     throw new Error(
       "Shiprocket API credentials are not configured."
     );
-
   }
 
 
@@ -477,7 +535,6 @@ async function getShiprocketToken() {
   ) {
 
     return shiprocketToken;
-
   }
 
 
@@ -490,14 +547,11 @@ async function getShiprocketToken() {
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
-
         method: "POST",
 
         headers: {
-
           "Content-Type":
             "application/json"
-
         },
 
         body:
@@ -510,7 +564,6 @@ async function getShiprocketToken() {
               SHIPROCKET_API_PASSWORD
 
           })
-
       }
     );
 
@@ -533,7 +586,6 @@ async function getShiprocketToken() {
     console.error(
       "Shiprocket login failed:",
       {
-
         status:
           response.status,
 
@@ -542,7 +594,6 @@ async function getShiprocketToken() {
 
         error:
           data.error || ""
-
       }
     );
 
@@ -556,7 +607,6 @@ async function getShiprocketToken() {
       `Shiprocket login failed with HTTP ${response.status}`
 
     );
-
   }
 
 
@@ -573,7 +623,6 @@ async function getShiprocketToken() {
 
 
   return shiprocketToken;
-
 }
 
 
@@ -597,7 +646,6 @@ async function createShiprocketOrder(
     throw new Error(
       "Customer city/state missing."
     );
-
   }
 
 
@@ -608,12 +656,11 @@ async function createShiprocketOrder(
 
 
   /*
-    Package weight is based on quantity.
+    NEW PRODUCT WEIGHT
 
-    1 quantity = 500g
-    2 quantity = 1kg
-    3 quantity = 1.5kg
-    4 quantity = 2kg
+    1 quantity = 800g
+    2 quantity = 1.6kg
+    3 quantity = 2.4kg
   */
 
   const totalWeight =
@@ -622,17 +669,11 @@ async function createShiprocketOrder(
 
 
   /*
-    DELIVERY CHARGE
+    DELIVERY
 
-    500g  = ₹100
-    1kg   = ₹100
-    1.5kg = ₹200
-    2kg   = ₹200
-    2.5kg = ₹300
-    3kg   = ₹300
-    3.5kg = ₹400
-    4kg   = ₹400
-    1 quantity = 500 gram
+    1 quantity = ₹100
+    2 quantity = ₹200
+    3 quantity = ₹300
   */
 
   const deliveryCharge =
@@ -877,7 +918,6 @@ async function createShiprocketOrder(
       JSON.stringify(data)
 
     );
-
   }
 
 
@@ -888,7 +928,6 @@ async function createShiprocketOrder(
 
 
   return data;
-
 }
 
 
@@ -912,7 +951,6 @@ async function cancelShiprocketOrder(
         "Shiprocket order ID उपलब्ध नहीं है।"
 
     };
-
   }
 
 
@@ -935,7 +973,6 @@ async function cancelShiprocketOrder(
     throw new Error(
       "Invalid Shiprocket order ID."
     );
-
   }
 
 
@@ -981,7 +1018,6 @@ async function cancelShiprocketOrder(
         "Shiprocket order cancelled."
 
     };
-
   }
 
 
@@ -1007,7 +1043,6 @@ async function cancelShiprocketOrder(
       `Shiprocket cancellation failed with HTTP ${response.status}`
 
     );
-
   }
 
 
@@ -1018,7 +1053,6 @@ async function cancelShiprocketOrder(
     data
 
   };
-
 }
 
 
@@ -1042,7 +1076,6 @@ async function cancelShiprocketShipment(
         "AWB उपलब्ध नहीं है।"
 
     };
-
   }
 
 
@@ -1092,7 +1125,6 @@ async function cancelShiprocketShipment(
         "Shiprocket shipment cancellation request sent."
 
     };
-
   }
 
 
@@ -1118,7 +1150,6 @@ async function cancelShiprocketShipment(
       `Shipment cancellation failed with HTTP ${response.status}`
 
     );
-
   }
 
 
@@ -1129,7 +1160,6 @@ async function cancelShiprocketShipment(
     data
 
   };
-
 }
 
 
@@ -1216,7 +1246,6 @@ app.post(
             "कृपया नाम, मोबाइल, पूरा पता, शहर, राज्य और सही पिनकोड भरें।"
 
         });
-
       }
 
 
@@ -1237,13 +1266,6 @@ app.post(
 
       /* =====================================================
          DELIVERY
-
-         500g  = ₹100
-         1kg   = ₹100
-         1.5kg = ₹200
-         2kg   = ₹200
-         2.5kg = ₹300
-         3kg   = ₹300
          ===================================================== */
 
       const delivery =
@@ -1471,7 +1493,6 @@ app.post(
           result.lastInsertRowid
 
         );
-
       }
 
 
@@ -1491,6 +1512,9 @@ app.post(
 
         weightKg:
           qty * PRODUCT_WEIGHT_KG,
+
+        weightGram:
+          qty * PRODUCT_WEIGHT_KG * 1000,
 
         paymentStatus:
           safePayment === "UPI"
@@ -1535,9 +1559,7 @@ app.post(
           "ऑर्डर सेव नहीं हो सका।"
 
       });
-
     }
-
   }
 );
 
@@ -1571,7 +1593,6 @@ app.get(
             "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
 
         });
-
       }
 
 
@@ -1651,6 +1672,11 @@ app.get(
             Number(order.quantity) *
             PRODUCT_WEIGHT_KG,
 
+          weightGram:
+            Number(order.quantity) *
+            PRODUCT_WEIGHT_KG *
+            1000,
+
           price:
             order.price,
 
@@ -1721,9 +1747,7 @@ app.get(
           "Order history load नहीं हो सकी।"
 
       });
-
     }
-
   }
 );
 
@@ -1767,7 +1791,6 @@ app.post(
             "Order No. और सही Mobile Number डालें।"
 
         });
-
       }
 
 
@@ -1801,7 +1824,6 @@ app.post(
             "Order No. और Mobile Number का मिलान नहीं हुआ।"
 
         });
-
       }
 
 
@@ -1844,6 +1866,11 @@ app.post(
           weightKg:
             Number(order.quantity) *
             PRODUCT_WEIGHT_KG,
+
+          weightGram:
+            Number(order.quantity) *
+            PRODUCT_WEIGHT_KG *
+            1000,
 
           price:
             order.price,
@@ -1903,9 +1930,7 @@ app.post(
           "Order details load नहीं हो सके।"
 
       });
-
     }
-
   }
 );
 
@@ -1962,7 +1987,6 @@ app.post(
             "कृपया सही Order No. और 10 अंकों का मोबाइल नंबर डालें।"
 
         });
-
       }
 
 
@@ -1996,7 +2020,6 @@ app.post(
             "Order No. और Mobile Number का मिलान नहीं हुआ।"
 
         });
-
       }
 
 
@@ -2011,7 +2034,6 @@ app.post(
             "यह order पहले ही cancelled है।"
 
         });
-
       }
 
 
@@ -2038,7 +2060,6 @@ app.post(
             "इस order को अब website से cancel नहीं किया जा सकता। कृपया customer support से संपर्क करें।"
 
         });
-
       }
 
 
@@ -2070,9 +2091,7 @@ app.post(
             )
 
           );
-
         }
-
       }
 
 
@@ -2100,9 +2119,7 @@ app.post(
             )
 
           );
-
         }
-
       }
 
 
@@ -2146,7 +2163,6 @@ app.post(
             shiprocketErrors
 
         });
-
       }
 
 
@@ -2220,9 +2236,7 @@ app.post(
           "Order cancellation में समस्या आई। कृपया बाद में फिर प्रयास करें।"
 
       });
-
     }
-
   }
 );
 
@@ -2253,7 +2267,6 @@ function requireAdmin(
       "Unauthorized"
 
   });
-
 }
 
 
@@ -2294,7 +2307,6 @@ app.post(
           true
 
       });
-
     }
 
 
@@ -2304,7 +2316,6 @@ app.post(
         "गलत username या password"
 
     });
-
   }
 );
 
@@ -2455,7 +2466,6 @@ app.patch(
           "Invalid order status"
 
       });
-
     }
 
 
@@ -2475,7 +2485,6 @@ app.patch(
           "Invalid payment status"
 
       });
-
     }
 
 
@@ -2493,7 +2502,6 @@ app.patch(
           "Order not found"
 
       });
-
     }
 
 
@@ -2536,7 +2544,6 @@ app.patch(
         true
 
     });
-
   }
 );
 
@@ -2622,7 +2629,14 @@ app.listen(
 
 
     console.log(
-      `Delivery charge: ₹${DELIVERY_PER_KG} per KG`
+      `Product weight: ${
+        PRODUCT_WEIGHT_KG * 1000
+      } gram`
+    );
+
+
+    console.log(
+      `Delivery: ₹100 per 800 gram quantity`
     );
 
   }
