@@ -360,7 +360,7 @@ const products = [
 
 
   /* =====================================================
-     NEW PRODUCTS
+     NEW PRODUCTS - 800 GRAM
      ===================================================== */
 
   {
@@ -424,7 +424,7 @@ const products = [
     name: "Mix Laddu 6",
     price: 850,
     weight: 800,
-    image: "mix laddu-6.jpeg"
+    image: "mix_laddu-6.jpeg"
   },
 
   {
@@ -436,7 +436,6 @@ const products = [
   }
 
 ];
-
 
 /* =========================================================
    CONFIG API
