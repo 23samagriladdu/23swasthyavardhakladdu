@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel | 23 स्वास्थ्यवर्धक सामान</title><link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-body">
+<header class="topbar"><div class="brand">23 <span>Admin Panel</span></div><a class="call-btn" href="/">Store</a></header>
+<main>
+<section id="loginBox" class="admin-login">
+<h1>Admin Login</h1>
+<form id="loginForm"><input id="username" placeholder="Username" required><input id="password" type="password" placeholder="Password" required><button class="primary-btn">Login</button></form>
+<p class="small">Username/password `.env` file में सेट करें।</p>
+</section>
+
+<section id="dashboard" class="hidden">
+<div class="admin-head"><div><h1>Orders Dashboard</h1><p>Customer orders, payment और delivery status manage करें।</p></div><button id="logout" class="secondary-btn">Logout</button></div>
+<div class="stats" id="stats"></div>
+<div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Product</th><th>Total</th><th>Payment</th><th>Order Status</th><th>Action</th></tr></thead><tbody id="orders"></tbody></table></div>
+</section>
+</main>
+<script>
+async function api(url,opt={}){const r=await fetch(url,opt);const d=await r.json();if(!r.ok)throw new Error(d.error||'Error');return d}
+async function check(){
+ const d=await api('/api/admin/me'); if(d.loggedIn) showDash();
+}
+document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username.value,password:password.value})});showDash()}catch(err){alert(err.message)}}
+async function showDash(){loginBox.classList.add('hidden');dashboard.classList.remove('hidden');await loadOrders()}
+logout.onclick=async()=>{await api('/api/admin/logout',{method:'POST'});location.reload()}
+async function loadOrders(){
+ const rows=await api('/api/admin/orders');
+ stats.innerHTML=`<div>कुल Orders <b>${rows.length}</b></div><div>Paid <b>${rows.filter(x=>x.payment_status==='paid').length}</b></div><div>New <b>${rows.filter(x=>x.order_status==='new').length}</b></div><div>Delivered <b>${rows.filter(x=>x.order_status==='delivered').length}</b></div>`;
+ orders.innerHTML=rows.map(r=>`<tr>
+<td><b>${r.order_no}</b><br><small>${new Date(r.created_at).toLocaleString('hi-IN')}</small></td>
+<td>${esc(r.customer_name)}<br>📞 ${esc(r.phone)}<br>${esc(r.address)}, ${esc(r.pincode)}</td>
+<td>${esc(r.product)}<br>${r.quantity} Kg</td>
+<td>₹${Number(r.total).toLocaleString('en-IN')}</td>
+<td><select onchange="update(${r.id},null,this.value)"><option ${r.payment_status==='pending'?'selected':''}>pending</option><option ${r.payment_status==='submitted'?'selected':''}>submitted</option><option ${r.payment_status==='paid'?'selected':''}>paid</option><option ${r.payment_status==='failed'?'selected':''}>failed</option><option ${r.payment_status==='refunded'?'selected':''}>refunded</option></select><br><small>UTR: ${esc(r.utr||'-')}</small></td>
+<td><select onchange="update(${r.id},this.value,null)"><option value="new" ${r.order_status==='new'?'selected':''}>new</option><option value="confirmed" ${r.order_status==='confirmed'?'selected':''}>confirmed</option><option value="packed" ${r.order_status==='packed'?'selected':''}>packed</option><option value="shipped" ${r.order_status==='shipped'?'selected':''}>shipped</option><option value="delivered" ${r.order_status==='delivered'?'selected':''}>delivered</option><option value="cancelled" ${r.order_status==='cancelled'?'selected':''}>cancelled</option></select></td>
+<td><a class="mini" href="https://wa.me/91${r.phone}" target="_blank">WhatsApp</a></td></tr>`).join('');
+}
+async function update(id,orderStatus,paymentStatus){const body={};if(orderStatus)body.orderStatus=orderStatus;if(paymentStatus)body.paymentStatus=paymentStatus;try{await api('/api/admin/orders/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});loadOrders()}catch(e){alert(e.message)}}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+check();
+</script>
+</body></html>
