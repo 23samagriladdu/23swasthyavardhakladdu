@@ -9,7 +9,6 @@ const app = express();
 
 const PORT = Number(process.env.PORT || 3000);
 
-
 /* =========================================================
    BASIC SETTINGS
 ========================================================= */
@@ -29,32 +28,96 @@ const UPI_NAME =
 
 /* =========================================================
    DELIVERY SETTINGS
-=========================================================
 
-   DELIVERY RULE:
-
-   800 gram  = ₹100
-   1 kg      = ₹100
-   1.6 kg    = ₹200
-   2 kg      = ₹200
-   2.4 kg    = ₹300
-   3 kg      = ₹300
+   Delivery is calculated according to actual product weight.
 
    Rule:
-   हर शुरू हुए 1 KG पर ₹100
+   Up to 1 KG       = ₹100
+   Above 1 to 2 KG  = ₹200
+   Above 2 to 3 KG  = ₹300
+   Above 3 to 4 KG  = ₹400
 
-   Example:
+   Examples:
 
-   0.8 KG  -> ₹100
-   1 KG    -> ₹100
-   1.2 KG  -> ₹200
-   1.6 KG  -> ₹200
-   2 KG    -> ₹200
-   2.4 KG  -> ₹300
+   800g  = ₹100
+   1.6kg = ₹200
+   2.4kg = ₹300
 
+   1kg   = ₹100
+   2kg   = ₹200
+   3kg   = ₹300
 ========================================================= */
 
 const DELIVERY_PER_KG = 100;
+
+
+/* =========================================================
+   PRODUCT WEIGHTS
+
+   Old 4 products = 1 KG
+   New 9 products = 800 Gram
+========================================================= */
+
+const OLD_PRODUCT_WEIGHT_KG = 1;
+
+const NEW_PRODUCT_WEIGHT_KG = 0.8;
+
+
+/* =========================================================
+   DELIVERY CALCULATOR
+========================================================= */
+
+function calculateDelivery(quantity, productWeightKg) {
+  const qty = Number(quantity);
+  const weight = Number(productWeightKg);
+
+  if (
+    !Number.isInteger(qty) ||
+    qty < 1 ||
+    !Number.isFinite(weight) ||
+    weight <= 0
+  ) {
+    return 0;
+  }
+
+  const totalWeightKg = qty * weight;
+
+  return Math.ceil(totalWeightKg) * DELIVERY_PER_KG;
+}
+
+
+/* =========================================================
+   SHIPROCKET SETTINGS
+========================================================= */
+
+const SHIPROCKET_API_EMAIL =
+  process.env.SHIPROCKET_API_EMAIL || "";
+
+const SHIPROCKET_API_PASSWORD =
+  process.env.SHIPROCKET_API_PASSWORD || "";
+
+const SHIPROCKET_PICKUP_LOCATION =
+  process.env.SHIPROCKET_PICKUP_LOCATION || "Home";
+
+const SHIPROCKET_CHANNEL_ID =
+  process.env.SHIPROCKET_CHANNEL_ID || "";
+
+
+/* =========================================================
+   PACKAGE SETTINGS
+========================================================= */
+
+const PACKAGE_LENGTH =
+  Number(process.env.PACKAGE_LENGTH || 10);
+
+const PACKAGE_BREADTH =
+  Number(process.env.PACKAGE_BREADTH || 10);
+
+const PACKAGE_HEIGHT =
+  Number(process.env.PACKAGE_HEIGHT || 10);
+
+const PACKAGE_WEIGHT =
+  Number(process.env.PACKAGE_WEIGHT || 0.5);
 
 
 /* =========================================================
@@ -67,10 +130,6 @@ const db = new Database(
 
 db.pragma("journal_mode = WAL");
 
-
-/* =========================================================
-   CREATE ORDERS TABLE
-========================================================= */
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS orders (
@@ -99,9 +158,7 @@ CREATE TABLE IF NOT EXISTS orders (
 
   sku TEXT DEFAULT '',
 
-  image TEXT DEFAULT '',
-
-  weight_kg REAL DEFAULT 1,
+  product_weight_kg REAL DEFAULT 1,
 
   price INTEGER NOT NULL,
 
@@ -145,7 +202,6 @@ function addColumnIfMissing(
   columnName,
   columnDefinition
 ) {
-
   const columns = db
     .prepare(`PRAGMA table_info(${tableName})`)
     .all();
@@ -155,21 +211,14 @@ function addColumnIfMissing(
   );
 
   if (!exists) {
-
     db.exec(
       `ALTER TABLE ${tableName}
        ADD COLUMN ${columnName}
        ${columnDefinition}`
     );
-
-    console.log(
-      `Database column added: ${columnName}`
-    );
   }
 }
 
-
-/* Existing / new columns */
 
 addColumnIfMissing(
   "orders",
@@ -197,13 +246,7 @@ addColumnIfMissing(
 
 addColumnIfMissing(
   "orders",
-  "image",
-  "TEXT DEFAULT ''"
-);
-
-addColumnIfMissing(
-  "orders",
-  "weight_kg",
+  "product_weight_kg",
   "REAL DEFAULT 1"
 );
 
@@ -271,7 +314,6 @@ app.set("trust proxy", 1);
 
 app.use(
   session({
-
     secret:
       process.env.SESSION_SECRET ||
       "23-Swasthyavardhak-Change-This-Secret",
@@ -281,7 +323,6 @@ app.use(
     saveUninitialized: false,
 
     cookie: {
-
       httpOnly: true,
 
       secure: true,
@@ -290,9 +331,7 @@ app.use(
 
       maxAge:
         8 * 60 * 60 * 1000
-
     }
-
   })
 );
 
@@ -303,286 +342,147 @@ app.use(
 
    OLD 4 PRODUCTS
    ----------------
-   1 KG
+   1. 10 सामग्री - Only Dryfruits
+   2. 23 सामग्री - Seeds & Dryfruits
+   3. 30 सामग्री - Seeds & Dryfruits
+   4. 10 सामग्री - Seeds & Dryfruits
+
+   These remain unchanged.
 
    NEW 9 PRODUCTS
    ----------------
-   800 GM = 0.8 KG
-
+   All are 800 Gram.
 ========================================================= */
 
 const products = [
 
-  /* =====================================================
-     OLD PRODUCTS - SAME AS BEFORE
-  ===================================================== */
+  /* =======================================================
+     OLD 4 PRODUCTS
+  ======================================================= */
 
   {
     id: "10-dryfruit",
-
     name: "10 सामग्री - Only Dryfruits",
-
     price: 1600,
-
     weightKg: 1,
-
     weight: "1 KG",
-
     image: ""
   },
 
   {
     id: "23-seeds-dryfruit",
-
     name: "23 सामग्री - Seeds & Dryfruits",
-
     price: 1300,
-
     weightKg: 1,
-
     weight: "1 KG",
-
     image: ""
   },
 
   {
     id: "30-seeds-dryfruit",
-
     name: "30 सामग्री - Seeds & Dryfruits",
-
     price: 1600,
-
     weightKg: 1,
-
     weight: "1 KG",
-
     image: ""
   },
 
   {
     id: "10-seeds-dryfruit",
-
     name: "10 सामग्री - Seeds & Dryfruits",
-
     price: 600,
-
     weightKg: 1,
-
     weight: "1 KG",
-
     image: ""
   },
 
 
-  /* =====================================================
-     NEW PRODUCTS - 800 GM
-  ===================================================== */
+  /* =======================================================
+     NEW 9 PRODUCTS
+  ======================================================= */
 
   {
     id: "besan-laddu",
-
     name: "Besan Laddu",
-
     price: 500,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "besan.jpeg"
   },
 
   {
     id: "dry-fruit-laddu",
-
     name: "Dry Fruit Laddu",
-
     price: 1300,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "dry_fruit.jpeg"
   },
 
   {
     id: "mix-laddu-2",
-
     name: "Mix Laddu 2",
-
     price: 1100,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "mix_ladd-2.jpeg"
   },
 
   {
     id: "mix-laddu",
-
     name: "Mix Laddu",
-
     price: 1000,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "mix_laddu-.jpeg"
   },
 
   {
     id: "mix-laddu-3",
-
     name: "Mix Laddu 3",
-
     price: 1200,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "mix_laddu-3.jpeg"
   },
 
   {
     id: "mix-laddu-4",
-
     name: "Mix Laddu 4",
-
     price: 700,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "mix_laddu-4.jpeg"
   },
 
   {
     id: "mix-laddu-5",
-
     name: "Mix Laddu 5",
-
     price: 850,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "mix_laddu-5.jpeg"
   },
 
   {
     id: "mix-laddu-6",
-
     name: "Mix Laddu 6",
-
     price: 850,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "mix_laddu-6.jpeg"
   },
 
   {
-    id: "seeds-dry-fruit-laddu",
-
+    id: "seeds-dryfruit-laddu",
     name: "Seeds & Dry Fruit Laddu",
-
     price: 1100,
-
     weightKg: 0.8,
-
-    weight: "800 GM",
-
+    weight: "800 Gram",
     image: "seeds_dryfruit.jpeg"
   }
 
 ];
-
-
-/* =========================================================
-   DELIVERY CALCULATOR
-=========================================================
-
-   Product का actual weight लिया जाएगा।
-
-   Example:
-
-   800g x 1 = 0.8kg
-   Delivery = ₹100
-
-   800g x 2 = 1.6kg
-   Delivery = ₹200
-
-   800g x 3 = 2.4kg
-   Delivery = ₹300
-
-   1kg x 1 = 1kg
-   Delivery = ₹100
-
-   1kg x 2 = 2kg
-   Delivery = ₹200
-
-========================================================= */
-
-function calculateDeliveryByWeight(totalWeightKg) {
-
-  const weight =
-    Number(totalWeightKg);
-
-  if (
-    !Number.isFinite(weight) ||
-    weight <= 0
-  ) {
-
-    return 0;
-
-  }
-
-  return (
-    Math.ceil(weight) *
-    DELIVERY_PER_KG
-  );
-}
-
-
-/* =========================================================
-   PRODUCT TOTAL WEIGHT
-========================================================= */
-
-function calculateProductWeight(
-  product,
-  quantity
-) {
-
-  const qty =
-    Number(quantity);
-
-  const weightKg =
-    Number(product.weightKg);
-
-  if (
-    !Number.isFinite(qty) ||
-    qty < 1 ||
-    !Number.isFinite(weightKg)
-  ) {
-
-    return 0;
-
-  }
-
-  return (
-    weightKg *
-    qty
-  );
-}
 
 
 /* =========================================================
@@ -604,34 +504,106 @@ app.get(
       deliveryPerKg:
         DELIVERY_PER_KG,
 
+      /*
+        Kept for old frontend compatibility.
+      */
       deliveryPer500g:
         DELIVERY_PER_KG,
 
-      products:
+      /*
+        Old frontend compatibility.
+        New frontend should use product.weightKg.
+      */
+      productWeightKg:
+        NEW_PRODUCT_WEIGHT_KG,
 
-        products.map(product => ({
-
-          id:
-            product.id,
-
-          name:
-            product.name,
-
-          price:
-            product.price,
-
-          weightKg:
-            product.weightKg,
-
-          weight:
-            product.weight,
-
-          image:
-            product.image
-
-        }))
+      products
 
     });
+
+  }
+);
+
+
+/* =========================================================
+   DELIVERY API
+   Useful for frontend with different product weights.
+========================================================= */
+
+app.post(
+  "/api/calculate-delivery",
+  (req, res) => {
+
+    try {
+
+      const {
+        productId,
+        quantity
+      } = req.body;
+
+      const product =
+        products.find(
+          p => p.id === productId
+        );
+
+      const qty =
+        Number(quantity);
+
+      if (
+        !product ||
+        !Number.isInteger(qty) ||
+        qty < 1 ||
+        qty > 50
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Invalid product or quantity."
+        });
+
+      }
+
+      const totalWeightKg =
+        product.weightKg * qty;
+
+      const delivery =
+        calculateDelivery(
+          qty,
+          product.weightKg
+        );
+
+      res.json({
+
+        success: true,
+
+        productId:
+          product.id,
+
+        quantity:
+          qty,
+
+        productWeightKg:
+          product.weightKg,
+
+        totalWeightKg,
+
+        delivery
+
+      });
+
+    } catch (err) {
+
+      console.error(
+        "Delivery calculation error:",
+        err
+      );
+
+      res.status(500).json({
+        error:
+          "Delivery calculation failed."
+      });
+
+    }
 
   }
 );
@@ -658,51 +630,10 @@ function splitCustomerName(fullName) {
     parts.join(" ") || "Customer";
 
   return {
-
     firstName,
-
     lastName
-
   };
-
 }
-
-
-/* =========================================================
-   SHIPROCKET SETTINGS
-========================================================= */
-
-const SHIPROCKET_API_EMAIL =
-  process.env.SHIPROCKET_API_EMAIL || "";
-
-const SHIPROCKET_API_PASSWORD =
-  process.env.SHIPROCKET_API_PASSWORD || "";
-
-const SHIPROCKET_PICKUP_LOCATION =
-  process.env.SHIPROCKET_PICKUP_LOCATION || "Home";
-
-const SHIPROCKET_CHANNEL_ID =
-  process.env.SHIPROCKET_CHANNEL_ID || "";
-
-
-/* =========================================================
-   PACKAGE SETTINGS
-========================================================= */
-
-const PACKAGE_LENGTH =
-  Number(
-    process.env.PACKAGE_LENGTH || 10
-  );
-
-const PACKAGE_BREADTH =
-  Number(
-    process.env.PACKAGE_BREADTH || 10
-  );
-
-const PACKAGE_HEIGHT =
-  Number(
-    process.env.PACKAGE_HEIGHT || 10
-  );
 
 
 /* =========================================================
@@ -729,11 +660,7 @@ async function getShiprocketToken() {
 
 
   const TOKEN_VALIDITY =
-    9 *
-    24 *
-    60 *
-    60 *
-    1000;
+    9 * 24 * 60 * 60 * 1000;
 
 
   if (
@@ -761,10 +688,8 @@ async function getShiprocketToken() {
         method: "POST",
 
         headers: {
-
           "Content-Type":
             "application/json"
-
         },
 
         body:
@@ -800,7 +725,6 @@ async function getShiprocketToken() {
     console.error(
       "Shiprocket login failed:",
       {
-
         status:
           response.status,
 
@@ -809,7 +733,6 @@ async function getShiprocketToken() {
 
         error:
           data.error || ""
-
       }
     );
 
@@ -874,37 +797,38 @@ async function createShiprocketOrder(
     );
 
 
-  /* =====================================================
-     ACTUAL PRODUCT WEIGHT
-  ===================================================== */
+  /*
+    Weight comes from the selected product.
+
+    Example:
+
+    800g × 1 = 0.8kg
+    800g × 2 = 1.6kg
+    800g × 3 = 2.4kg
+  */
+
+  const productWeightKg =
+    Number(
+      order.product_weight_kg
+    ) || 1;
+
 
   const totalWeight =
-    Number(order.weight_kg);
+    Number(order.quantity) *
+    productWeightKg;
 
 
-  if (
-    !Number.isFinite(totalWeight) ||
-    totalWeight <= 0
-  ) {
-
-    throw new Error(
-      "Invalid product weight."
-    );
-
-  }
-
-
-  /* =====================================================
-     DELIVERY CHARGE
-  ===================================================== */
+  /*
+    Delivery charge is based on
+    actual product weight.
+  */
 
   const deliveryCharge =
-    Number(order.delivery);
+    calculateDelivery(
+      order.quantity,
+      productWeightKg
+    );
 
-
-  /* =====================================================
-     SHIPROCKET PAYLOAD
-  ===================================================== */
 
   const payload = {
 
@@ -923,19 +847,14 @@ async function createShiprocketOrder(
 
     ...(SHIPROCKET_CHANNEL_ID &&
     /^\d+$/.test(
-      String(
-        SHIPROCKET_CHANNEL_ID
-      )
+      String(SHIPROCKET_CHANNEL_ID)
     )
       ? {
-
           channel_id:
             Number(
               SHIPROCKET_CHANNEL_ID
             )
-
         }
-
       : {}),
 
 
@@ -1014,10 +933,14 @@ async function createShiprocketOrder(
           "23-LADOO",
 
         units:
-          Number(order.quantity),
+          Number(
+            order.quantity
+          ),
 
         selling_price:
-          Number(order.price),
+          Number(
+            order.price
+          ),
 
         discount:
           0,
@@ -1068,19 +991,10 @@ async function createShiprocketOrder(
     height:
       PACKAGE_HEIGHT,
 
-    /* ACTUAL TOTAL WEIGHT */
-
     weight:
       totalWeight
 
   };
-
-
-  console.log(
-    "Shiprocket order weight:",
-    totalWeight,
-    "KG"
-  );
 
 
   const response =
@@ -1441,8 +1355,7 @@ app.post(
       const product =
         products.find(
           p =>
-            p.id ===
-            productId
+            p.id === productId
         );
 
 
@@ -1506,14 +1419,12 @@ app.post(
 
 
       /* =====================================================
-         ACTUAL TOTAL WEIGHT
+         TOTAL PRODUCT WEIGHT
       ===================================================== */
 
       const totalWeightKg =
-        calculateProductWeight(
-          product,
-          qty
-        );
+        product.weightKg *
+        qty;
 
 
       /* =====================================================
@@ -1521,8 +1432,9 @@ app.post(
       ===================================================== */
 
       const delivery =
-        calculateDeliveryByWeight(
-          totalWeightKg
+        calculateDelivery(
+          qty,
+          product.weightKg
         );
 
 
@@ -1546,15 +1458,10 @@ app.post(
         new Date().toISOString();
 
 
-      /* =====================================================
-         SAVE ORDER
-      ===================================================== */
-
       const stmt =
         db.prepare(`
 
           INSERT INTO orders
-
           (
             order_no,
             created_at,
@@ -1567,8 +1474,7 @@ app.post(
             country,
             product,
             sku,
-            image,
-            weight_kg,
+            product_weight_kg,
             price,
             quantity,
             delivery,
@@ -1582,8 +1488,7 @@ app.post(
           VALUES
           (
             ?,?,?,?,?,?,?,?,?,?,
-            ?,?,?,?,?,?,?,?,?,?,
-            ?
+            ?,?,?,?,?,?,?,?,?,?
           )
 
         `);
@@ -1613,8 +1518,6 @@ app.post(
           product.name,
 
           product.id,
-
-          product.image,
 
           product.weightKg,
 
@@ -1651,10 +1554,6 @@ app.post(
       let shiprocketSuccess =
         false;
 
-
-      /* =====================================================
-         SEND TO SHIPROCKET
-      ===================================================== */
 
       try {
 
@@ -1767,10 +1666,6 @@ app.post(
       }
 
 
-      /* =====================================================
-         RESPONSE
-      ===================================================== */
-
       res.json({
 
         success: true,
@@ -1780,19 +1675,17 @@ app.post(
         product:
           product.name,
 
-        image:
-          product.image,
-
-        unitWeightKg:
-          product.weightKg,
-
-        weight:
-          product.weight,
+        price:
+          product.price,
 
         quantity:
           qty,
 
-        totalWeightKg,
+        productWeightKg:
+          product.weightKg,
+
+        weightKg:
+          totalWeightKg,
 
         productTotal,
 
@@ -1908,9 +1801,7 @@ app.get(
 
             sku,
 
-            image,
-
-            weight_kg,
+            product_weight_kg,
 
             quantity,
 
@@ -1958,24 +1849,20 @@ app.get(
           product:
             order.product,
 
-          image:
-            order.image || "",
+          sku:
+            order.sku || "",
 
-          unitWeightKg:
+          productWeightKg:
             Number(
-              order.weight_kg
+              order.product_weight_kg
             ),
 
           quantity:
             order.quantity,
 
-          totalWeightKg:
-            Number(
-              order.weight_kg
-            ) *
-            Number(
-              order.quantity
-            ),
+          weightKg:
+            Number(order.quantity) *
+            Number(order.product_weight_kg || 1),
 
           price:
             order.price,
@@ -2164,24 +2051,20 @@ app.post(
           product:
             order.product,
 
-          image:
-            order.image || "",
+          sku:
+            order.sku || "",
 
-          unitWeightKg:
+          productWeightKg:
             Number(
-              order.weight_kg
+              order.product_weight_kg
             ),
 
           quantity:
             order.quantity,
 
-          totalWeightKg:
-            Number(
-              order.weight_kg
-            ) *
-            Number(
-              order.quantity
-            ),
+          weightKg:
+            Number(order.quantity) *
+            Number(order.product_weight_kg || 1),
 
           price:
             order.price,
