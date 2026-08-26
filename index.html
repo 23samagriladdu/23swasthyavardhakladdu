@@ -1129,12 +1129,12 @@ function getDeliveryCharge(quantity) {
               ${escapeHtml(p.name)}
             </h3>
 
-            <p>
-              <strong>
-                ${money(p.price)}
-              </strong>
-              / Kg
-            </p>
+           <p>
+  <strong>
+    ${money(p.price)}
+  </strong>
+  / ${p.weight || "1Kg"}
+</p>
 
             <button
               type="button"
@@ -1358,7 +1358,7 @@ const amount =
                 `<option
                   value="${escapeHtml(p.id)}"
                   data-price="${Number(p.price) || 0}">
-                  ${escapeHtml(p.name)} — ${money(p.price)}/Kg
+                  ${escapeHtml(p.name)} — ${money(p.price)}/${escapeHtml(p.weight || "1Kg")}eHtml(p.name)} — ${money(p.price)}/Kg
                 </option>`
             )
             .join("");
