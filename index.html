@@ -542,15 +542,24 @@
 
           मात्रा (Kg)
 
-<input
-  id="qty"
-  type="number"
-  min="0.5"
-  max="50"
-  step="0.5"
-  value="1"
-  required>
+<label>
 
+  पैक की संख्या
+
+  <select id="qty" required>
+    <option value="1">1 Pack</option>
+    <option value="2">2 Packs</option>
+    <option value="3">3 Packs</option>
+    <option value="4">4 Packs</option>
+    <option value="5">5 Packs</option>
+    <option value="6">6 Packs</option>
+    <option value="7">7 Packs</option>
+    <option value="8">8 Packs</option>
+    <option value="9">9 Packs</option>
+    <option value="10">10 Packs</option>
+  </select>
+
+</label>
         </label>
 
 
@@ -1067,27 +1076,75 @@ function getDeliveryCharge(quantity) {
        UPDATE TOTAL
     ===================================================== */
 
-   function updateTotal() {
+   function getDeliveryCharge(totalWeight) {
 
-  const quantity =
-    Number(qty.value || 0);
+  const weight = Number(totalWeight || 0);
 
-  const total =
-    price() * quantity;
+  if (weight <= 0) {
+    return 0;
+  }
+
+  if (weight <= 1) {
+    return 100;
+  }
+
+  if (weight <= 2) {
+    return 200;
+  }
+
+  return 300;
+}
+
+
+function updateTotal() {
+
+  const selected =
+    product.options[product.selectedIndex];
+
+  if (!selected || !selected.value) {
+
+    productTotal.textContent = money(0);
+
+    document.getElementById(
+      "deliveryCharge"
+    ).textContent = money(0);
+
+    grandTotal.textContent = money(0);
+
+    return;
+  }
+
+  const packPrice =
+    Number(selected.dataset.price || 0);
+
+  const packWeight =
+    Number(selected.dataset.weight || 1);
+
+  const packQuantity =
+    Number(qty.value || 1);
+
+  const productAmount =
+    packPrice * packQuantity;
+
+  const totalWeight =
+    packWeight * packQuantity;
 
   const delivery =
-    getDeliveryCharge(quantity);
+    getDeliveryCharge(totalWeight);
+
+  const grand =
+    productAmount + delivery;
 
   productTotal.textContent =
-    money(total);
+    money(productAmount);
 
   document.getElementById(
     "deliveryCharge"
   ).textContent =
-    money(delivery);
+    `${money(delivery)} (${totalWeight}Kg)`;
 
   grandTotal.textContent =
-    money(total + delivery);
+    money(grand);
 
   renderUPI();
 }
@@ -1352,11 +1409,30 @@ const amount =
         }
 
 
-        product.innerHTML =
-          '<option value="">पैक चुनें</option>' +
+       product.innerHTML =
+  '<option value="">पैक चुनें</option>' +
 
-          config.products
-            .map(
+  config.products.map(p => {
+
+    const weight =
+      Number(p.weight || 1);
+
+    const weightText =
+      weight === 1 ? "1Kg" : `${weight}Kg`;
+
+    return `
+      <option
+        value="${escapeHtml(p.id)}"
+        data-price="${Number(p.price) || 0}"
+        data-weight="${weight}">
+
+        ${escapeHtml(p.name)}
+        — ${money(p.price)} / ${weightText}
+
+      </option>
+    `;
+
+  }).join("");
               p =>
                 `<option
                   value="${escapeHtml(p.id)}"
