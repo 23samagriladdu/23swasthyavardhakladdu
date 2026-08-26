@@ -230,11 +230,7 @@ app.use(
    STATIC WEBSITE
 ========================================================= */
 
-app.use(
-  express.static(
-    path.join(__dirname, "public")
-  )
-);
+app.use(express.static(__dirname));
 
 
 /* =========================================================
