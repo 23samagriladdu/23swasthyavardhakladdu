@@ -238,7 +238,86 @@ app.use(express.static(__dirname));
    कुल 13 Products
 ========================================================= */
 
-const products = [
+const PRODUCTS = [
+  {
+    id: "10-dryfruits",
+    name: "10 सामग्री - Only Dryfruits",
+    price: 1600,
+    weight: 1
+  },
+  {
+    id: "23-seeds-dryfruits",
+    name: "23 सामग्री - Seeds & Dryfruits",
+    price: 1300,
+    weight: 1
+  },
+  {
+    id: "30-seeds-dryfruits",
+    name: "30 सामग्री - Seeds & Dryfruits",
+    price: 1600,
+    weight: 1
+  },
+  {
+    id: "10-seeds-dryfruits",
+    name: "10 सामग्री - Seeds & Dryfruits",
+    price: 600,
+    weight: 1
+  },
+  {
+    id: "besan-laddu",
+    name: "Besan Laddu",
+    price: 500,
+    weight: 0.8
+  },
+  {
+    id: "dry-fruit-laddu",
+    name: "Dry Fruit Laddu",
+    price: 1300,
+    weight: 1
+  },
+  {
+    id: "mix-laddu-2",
+    name: "Mix Laddu 2",
+    price: 1100,
+    weight: 0.8
+  },
+  {
+    id: "mix-laddu",
+    name: "Mix Laddu",
+    price: 1000,
+    weight: 0.8
+  },
+  {
+    id: "mix-laddu-3",
+    name: "Mix Laddu 3",
+    price: 1200,
+    weight: 0.8
+  },
+  {
+    id: "mix-laddu-4",
+    name: "Mix Laddu 4",
+    price: 700,
+    weight: 0.8
+  },
+  {
+    id: "mix-laddu-5",
+    name: "Mix Laddu 5",
+    price: 850,
+    weight: 0.8
+  },
+  {
+    id: "mix-laddu-6",
+    name: "Mix Laddu 6",
+    price: 850,
+    weight: 0.8
+  },
+  {
+    id: "seeds-dry-fruit-laddu",
+    name: "Seeds & Dry Fruit Laddu",
+    price: 1100,
+    weight: 0.8
+  }
+];
 
   /* =======================================================
      OLD 4 PRODUCTS
