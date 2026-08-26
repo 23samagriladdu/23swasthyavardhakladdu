@@ -1072,11 +1072,11 @@ function getDeliveryCharge(quantity) {
     }
 
 
-    /* =====================================================
-       UPDATE TOTAL
-    ===================================================== */
+  /* =====================================================
+   DELIVERY CHARGE
+===================================================== */
 
-   function getDeliveryCharge(totalWeight) {
+function getDeliveryCharge(totalWeight) {
 
   const weight = Number(totalWeight || 0);
 
@@ -1084,17 +1084,24 @@ function getDeliveryCharge(quantity) {
     return 0;
   }
 
+  // 0.5Kg से 1Kg तक
   if (weight <= 1) {
     return 100;
   }
 
+  // 1.5Kg से 2Kg तक
   if (weight <= 2) {
     return 200;
   }
 
+  // 2.5Kg या उससे अधिक
   return 300;
 }
 
+
+/* =====================================================
+   UPDATE TOTAL
+===================================================== */
 
 function updateTotal() {
 
@@ -1103,58 +1110,93 @@ function updateTotal() {
 
   if (!selected || !selected.value) {
 
-    productTotal.textContent = money(0);
+    productTotal.textContent =
+      money(0);
 
     document.getElementById(
       "deliveryCharge"
-    ).textContent = money(0);
+    ).textContent =
+      money(0);
 
-    grandTotal.textContent = money(0);
+    grandTotal.textContent =
+      money(0);
 
     return;
   }
 
+
+  /* PACK PRICE */
+
   const packPrice =
     Number(selected.dataset.price || 0);
+
+
+  /* PACK WEIGHT */
 
   const packWeight =
     Number(selected.dataset.weight || 1);
 
+
+  /* NUMBER OF PACKS */
+
   const packQuantity =
     Number(qty.value || 1);
+
+
+  /* PRODUCT TOTAL */
 
   const productAmount =
     packPrice * packQuantity;
 
+
+  /* TOTAL PHYSICAL WEIGHT */
+
   const totalWeight =
     packWeight * packQuantity;
+
+
+  /* DELIVERY */
 
   const delivery =
     getDeliveryCharge(totalWeight);
 
+
+  /* GRAND TOTAL */
+
   const grand =
     productAmount + delivery;
 
+
+  /* SHOW PRODUCT TOTAL */
+
   productTotal.textContent =
     money(productAmount);
+
+
+  /* SHOW DELIVERY */
 
   document.getElementById(
     "deliveryCharge"
   ).textContent =
     `${money(delivery)} (${totalWeight}Kg)`;
 
+
+  /* SHOW GRAND TOTAL */
+
   grandTotal.textContent =
     money(grand);
 
+
+  /* UPDATE UPI QR */
+
   renderUPI();
 }
-
 
     /* =====================================================
        PRODUCT GRID
     ===================================================== */
 
-    function renderProducts() {
+   function renderProducts() {
 
   const grid =
     document.getElementById("productGrid");
@@ -1162,7 +1204,7 @@ function updateTotal() {
   if (!config || !Array.isArray(config.products)) {
 
     grid.innerHTML =
-      "<p>Products उपलब्ध नहीं हैं।";
+      "<p>Products उपलब्ध नहीं हैं।</p>";
 
     return;
   }
@@ -1170,46 +1212,51 @@ function updateTotal() {
   if (config.products.length === 0) {
 
     grid.innerHTML =
-      "<p>अभी कोई product उपलब्ध नहीं है।";
+      "<p>अभी कोई product उपलब्ध नहीं है।</p>";
 
     return;
   }
 
-  grid.innerHTML = config.products.map(p => {
+  grid.innerHTML =
+    config.products.map(p => {
 
-    const weight =
-      Number(p.weight || 1);
+      const weight =
+        Number(p.weight || 1);
 
-    const weightText =
-      weight === 1 ? "1Kg" : `${weight}Kg`;
+      const weightText =
+        weight === 1
+          ? "1Kg"
+          : `${weight}Kg`;
 
-    return `
-      <div class="product-card">
+      return `
 
-        <h3>
-          ${escapeHtml(p.name)}
-        </h3>
+        <div class="product-card">
 
-        <p>
-          <strong>
-            ${money(p.price)}
-          </strong>
-          / ${weightText}
-        </p>
+          <h3>
+            ${escapeHtml(p.name)}
+          </h3>
 
-        <button
-          type="button"
-          class="primary-btn"
-          onclick="selectProduct('${escapeJs(p.id)}')">
+          <p>
+            <strong>
+              ${money(p.price)}
+            </strong>
+            / ${weightText}
+          </p>
 
-          यह पैक चुनें
+          <button
+            type="button"
+            class="primary-btn"
+            onclick="selectProduct('${escapeJs(p.id)}')">
 
-        </button>
+            यह पैक चुनें
 
-      </div>
-    `;
+          </button>
 
-  }).join("");
+        </div>
+
+      `;
+
+    }).join("");
 }
 
     /* =====================================================
@@ -1281,14 +1328,26 @@ function updateTotal() {
       }
 
 
-      const quantity =
-  Number(qty.value || 0);
+     const selected =
+  product.options[product.selectedIndex];
+
+const packPrice =
+  Number(selected?.dataset?.price || 0);
+
+const packWeight =
+  Number(selected?.dataset?.weight || 1);
+
+const packQuantity =
+  Number(qty.value || 1);
+
+const totalWeight =
+  packWeight * packQuantity;
 
 const delivery =
-  getDeliveryCharge(quantity);
+  getDeliveryCharge(totalWeight);
 
 const amount =
-  price() * quantity +
+  packPrice * packQuantity +
   delivery;
 
 
@@ -1409,38 +1468,34 @@ const amount =
         }
 
 
-       product.innerHTML =
+      product.innerHTML =
   '<option value="">पैक चुनें</option>' +
 
-  config.products.map(p => {
+  config.products
+    .map(p => {
 
-    const weight =
-      Number(p.weight || 1);
+      const weight =
+        Number(p.weight || 1);
 
-    const weightText =
-      weight === 1 ? "1Kg" : `${weight}Kg`;
+      const weightText =
+        weight === 1
+          ? "1Kg"
+          : `${weight}Kg`;
 
-    return `
-      <option
-        value="${escapeHtml(p.id)}"
-        data-price="${Number(p.price) || 0}"
-        data-weight="${weight}">
+      return `
+        <option
+          value="${escapeHtml(p.id)}"
+          data-price="${Number(p.price) || 0}"
+          data-weight="${weight}">
 
-        ${escapeHtml(p.name)}
-        — ${money(p.price)} / ${weightText}
+          ${escapeHtml(p.name)}
+          — ${money(p.price)} / ${weightText}
 
-      </option>
-    `;
+        </option>
+      `;
 
-  }).join("");
-              p =>
-                `<option
-                  value="${escapeHtml(p.id)}"
-                  data-price="${Number(p.price) || 0}">
-                  ${escapeHtml(p.name)} — ${money(p.price)}/${escapeHtml(p.weight || "1Kg")}eHtml(p.name)} — ${money(p.price)}/Kg
-                </option>`
-            )
-            .join("");
+    })
+    .join("");
 
 
         /*
