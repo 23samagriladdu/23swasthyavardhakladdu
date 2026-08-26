@@ -243,197 +243,93 @@ const PRODUCTS = [
     id: "10-dryfruits",
     name: "10 सामग्री - Only Dryfruits",
     price: 1600,
-    weight: 1
+    weight: 1,
+    image: "laddu-main.png"
   },
   {
     id: "23-seeds-dryfruits",
     name: "23 सामग्री - Seeds & Dryfruits",
     price: 1300,
-    weight: 1
+    weight: 1,
+    image: "laddu-main.png"
   },
   {
     id: "30-seeds-dryfruits",
     name: "30 सामग्री - Seeds & Dryfruits",
     price: 1600,
-    weight: 1
+    weight: 1,
+    image: "laddu-main.png"
   },
   {
     id: "10-seeds-dryfruits",
     name: "10 सामग्री - Seeds & Dryfruits",
     price: 600,
-    weight: 1
+    weight: 1,
+    image: "laddu-main.png"
   },
   {
     id: "besan-laddu",
     name: "Besan Laddu",
     price: 500,
-    weight: 0.8
+    weight: 0.8,
+    image: "besan.jpeg"
   },
   {
     id: "dry-fruit-laddu",
     name: "Dry Fruit Laddu",
     price: 1300,
-    weight: 1
+    weight: 1,
+    image: "dry_fruit.jpeg"
   },
   {
     id: "mix-laddu-2",
     name: "Mix Laddu 2",
     price: 1100,
-    weight: 0.8
+    weight: 0.8,
+    image: "mix_ladd-2.jpeg"
   },
   {
     id: "mix-laddu",
     name: "Mix Laddu",
     price: 1000,
-    weight: 0.8
+    weight: 0.8,
+    image: "mix_laddu-.jpeg"
   },
   {
     id: "mix-laddu-3",
     name: "Mix Laddu 3",
     price: 1200,
-    weight: 0.8
+    weight: 0.8,
+    image: "mix_laddu-3.jpeg"
   },
   {
     id: "mix-laddu-4",
     name: "Mix Laddu 4",
     price: 700,
-    weight: 0.8
+    weight: 0.8,
+    image: "mix_laddu-4.jpeg"
   },
   {
     id: "mix-laddu-5",
     name: "Mix Laddu 5",
     price: 850,
-    weight: 0.8
+    weight: 0.8,
+    image: "mix_laddu-5.jpeg"
   },
   {
     id: "mix-laddu-6",
     name: "Mix Laddu 6",
     price: 850,
-    weight: 0.8
+    weight: 0.8,
+    image: "mix_laddu-6.jpeg"
   },
   {
     id: "seeds-dry-fruit-laddu",
     name: "Seeds & Dry Fruit Laddu",
     price: 1100,
-    weight: 0.8
-  }
-];
-
-  /* =======================================================
-     OLD 4 PRODUCTS
-     इनके लिए अभी laddu-main.png fallback image है।
-  ======================================================= */
-
-  {
-    id: "10-dryfruit",
-    name: "10 सामग्री - Only Dryfruits",
-    price: 1600,
-    weight: "0.5–50 Kg",
-    image: "laddu-main.png"
-  },
-
-  {
-    id: "23-seeds-dryfruit",
-    name: "23 सामग्री - Seeds & Dryfruits",
-    price: 1300,
-    weight: "0.5–50 Kg",
-    image: "laddu-main.png"
-  },
-
-  {
-    id: "30-seeds-dryfruit",
-    name: "30 सामग्री - Seeds & Dryfruits",
-    price: 1600,
-    weight: "0.5–50 Kg",
-    image: "laddu-main.png"
-  },
-
-  {
-    id: "10-seeds-dryfruit",
-    name: "10 सामग्री - Seeds & Dryfruits",
-    price: 600,
-    weight: "0.5–50 Kg",
-    image: "laddu-main.png"
-  },
-
-
-  /* =======================================================
-     NEW 9 PRODUCTS
-     आपके दिए हुए exact image names
-  ======================================================= */
-
-  {
-    id: "besan-laddu",
-    name: "Besan Laddu",
-    price: 500,
-    weight: "0.5–50 Kg",
-    image: "besan.jpeg"
-  },
-
-  {
-    id: "dry-fruit-laddu",
-    name: "Dry Fruit Laddu",
-    price: 1300,
-    weight: "0.5–50 Kg",
-    image: "dry_fruit.jpeg"
-  },
-
-  {
-    id: "mix-laddu-2",
-    name: "Mix Laddu 2",
-    price: 1100,
-    weight: "0.5–50 Kg",
-    image: "mix_ladd-2.jpeg"
-  },
-
-  {
-    id: "mix-laddu",
-    name: "Mix Laddu",
-    price: 1000,
-    weight: "0.5–50 Kg",
-    image: "mix_laddu-.jpeg"
-  },
-
-  {
-    id: "mix-laddu-3",
-    name: "Mix Laddu 3",
-    price: 1200,
-    weight: "0.5–50 Kg",
-    image: "mix_laddu-3.jpeg"
-  },
-
-  {
-    id: "mix-laddu-4",
-    name: "Mix Laddu 4",
-    price: 700,
-    weight: "0.5–50 Kg",
-    image: "mix_laddu-4.jpeg"
-  },
-
-  {
-    id: "mix-laddu-5",
-    name: "Mix Laddu 5",
-    price: 850,
-    weight: "0.5–50 Kg",
-    image: "mix_laddu-5.jpeg"
-  },
-
-  {
-    id: "mix-laddu-6",
-    name: "Mix Laddu 6",
-    price: 850,
-    weight: "0.5–50 Kg",
-    image: "mix_laddu-6.jpeg"
-  },
-
-  {
-    id: "seeds-dryfruit-laddu",
-    name: "Seeds & Dry Fruit Laddu",
-    price: 1100,
-    weight: "0.5–50 Kg",
+    weight: 0.8,
     image: "seeds_dryfruit.jpeg"
   }
-
 ];
 
 
@@ -441,46 +337,61 @@ const PRODUCTS = [
    DELIVERY CALCULATION
 ========================================================= */
 
-function getDeliveryCharge(quantity) {
+function getDeliveryCharge(totalWeight) {
 
-  const qty =
-    Number(quantity || 0);
+  const weight = Number(totalWeight || 0);
 
-  if (
-    !Number.isFinite(qty) ||
-    qty <= 0
-  ) {
-
+  if (!Number.isFinite(weight) || weight <= 0) {
     return 0;
-
   }
 
-
-  /* 0.5 Kg से 1 Kg */
-
-  if (qty <= 1) {
-
+  // 0.5 Kg से 1 Kg तक
+  if (weight <= 1) {
     return 100;
-
   }
 
-
-  /* 1.5 Kg से 2 Kg */
-
-  if (qty <= 2) {
-
+  // 1.5 Kg से 2 Kg तक
+  if (weight <= 2) {
     return 200;
-
   }
 
-
-  /* 2.5 Kg या अधिक */
-
+  // 2.5 Kg या उससे अधिक
   return 300;
-
 }
 
 
+/* =========================================================
+   QUANTITY / PACK COUNT VALIDATION
+========================================================= */
+
+function isValidQuantity(quantity) {
+
+  const qty = Number(quantity);
+
+  if (!Number.isFinite(qty)) {
+    return false;
+  }
+
+  // Pack quantity केवल whole number होगी
+  return (
+    Number.isInteger(qty) &&
+    qty >= 1 &&
+    qty <= 50
+  );
+}
+
+
+/* =========================================================
+   PRODUCT FINDER
+========================================================= */
+
+function getProduct(productId) {
+
+  return PRODUCTS.find(
+    p => p.id === String(productId)
+  );
+
+}
 /* =========================================================
    QUANTITY VALIDATION
 ========================================================= */
@@ -549,7 +460,7 @@ app.get(
       upiName:
         UPI_NAME,
 
-      products,
+      products: PRODUCTS,
 
       deliveryRules: {
 
@@ -1120,19 +1031,17 @@ app.post(
          SERVER-SIDE PRICE
       ===================================================== */
 
-      const productTotal =
-        Number(
-          product.price
-        ) * qty;
+     const productTotal =
+  Number(product.price) * qty;
 
+const totalWeight =
+  Number(product.weight) * qty;
 
-      const delivery =
-        getDeliveryCharge(qty);
+const delivery =
+  getDeliveryCharge(totalWeight);
 
-
-      const total =
-        productTotal +
-        delivery;
+const total =
+  productTotal + delivery;
 
 
       const orderNo =
@@ -1374,38 +1283,40 @@ app.post(
          SUCCESS RESPONSE
       ===================================================== */
 
-      return res.json({
+     return res.json({
 
-        success: true,
+  success: true,
 
-        orderNo,
+  orderNo,
 
-        total,
+  total,
 
-        productTotal,
+  productTotal,
 
-        delivery,
+  delivery,
 
-        quantity: qty,
+  quantity: qty,
 
-        paymentStatus,
+  packWeight: product.weight,
 
-        message:
-          safePayment === "UPI"
+  totalWeight,
 
-            ? (
-                "ऑर्डर सेव हो गया है। " +
-                "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
-                shiprocketMessage
-              )
+  paymentStatus,
 
-            : (
-                "ऑर्डर सेव हो गया है। " +
-                "Cash on Delivery चुना गया है." +
-                shiprocketMessage
-              )
+  message:
+    safePayment === "UPI"
+      ? (
+          "ऑर्डर सेव हो गया है। " +
+          "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
+          shiprocketMessage
+        )
+      : (
+          "ऑर्डर सेव हो गया है। " +
+          "Cash on Delivery चुना गया है." +
+          shiprocketMessage
+        )
 
-      });
+});
 
 
     } catch (error) {
