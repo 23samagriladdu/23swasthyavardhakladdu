@@ -1099,58 +1099,61 @@ function getDeliveryCharge(quantity) {
 
     function renderProducts() {
 
-      const grid =
-        document.getElementById("productGrid");
+  const grid =
+    document.getElementById("productGrid");
 
-      if (!config || !Array.isArray(config.products)) {
+  if (!config || !Array.isArray(config.products)) {
 
-        grid.innerHTML =
-          "<p>Products उपलब्ध नहीं हैं।</p>";
+    grid.innerHTML =
+      "<p>Products उपलब्ध नहीं हैं।";
 
-        return;
+    return;
+  }
 
-      }
+  if (config.products.length === 0) {
 
-      if (config.products.length === 0) {
+    grid.innerHTML =
+      "<p>अभी कोई product उपलब्ध नहीं है।";
 
-        grid.innerHTML =
-          "<p>अभी कोई product उपलब्ध नहीं है।</p>";
+    return;
+  }
 
-        return;
+  grid.innerHTML = config.products.map(p => {
 
-      }
+    const weight =
+      Number(p.weight || 1);
 
-      grid.innerHTML =
-        config.products.map(p => `
+    const weightText =
+      weight === 1 ? "1Kg" : `${weight}Kg`;
 
-          <div class="product-card">
+    return `
+      <div class="product-card">
 
-            <h3>
-              ${escapeHtml(p.name)}
-            </h3>
+        <h3>
+          ${escapeHtml(p.name)}
+        </h3>
 
-           <p>
-  <strong>
-    ${money(p.price)}
-  </strong>
-  / ${p.weight || "1Kg"}
-</p>
+        <p>
+          <strong>
+            ${money(p.price)}
+          </strong>
+          / ${weightText}
+        </p>
 
-            <button
-              type="button"
-              class="primary-btn"
-              onclick="selectProduct('${escapeJs(p.id)}')">
+        <button
+          type="button"
+          class="primary-btn"
+          onclick="selectProduct('${escapeJs(p.id)}')">
 
-              यह पैक चुनें
+          यह पैक चुनें
 
-            </button>
+        </button>
 
-          </div>
+      </div>
+    `;
 
-        `).join("");
-
-    }
-
+  }).join("");
+}
 
     /* =====================================================
        SELECT PRODUCT
