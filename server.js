@@ -342,17 +342,15 @@ const PRODUCTS = [
     image: "mix_laddu-4.jpeg"
   },
 
-  {
+    {
     id: "mix-laddu-5",
     name: "बेसन (0.5 किलो), 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
     price: 1100,
     weight: 1,
     type: "kg",
     image: "mix_laddu-5.jpeg"
-  },
-const PRODUCTS = [
-  // आपके बाकी 11 products
-  // ...
+  }
+
 ];
 
 
