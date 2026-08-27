@@ -243,7 +243,9 @@ app.use(
 
 const PRODUCTS = [
 
-  /* 4 PRODUCTS — 1 KG */
+  /* =======================================================
+     4 PRODUCTS — 1 KG
+  ======================================================= */
 
   {
     id: "10-dryfruits",
@@ -281,70 +283,77 @@ const PRODUCTS = [
     image: "laddu-main.png"
   },
 
-  /* 9 PRODUCTS — EACH PACK = 0.8 KG */
+
+  /* =======================================================
+     NEW MIX PRODUCTS — 1 KG
+  ======================================================= */
 
   {
     id: "besan-laddu",
-    name: "Besan Laddu",
-    price: 500,
-    weight: 0.8,
-    type: "pack",
+    name: "बेसन लड्डू — 1 किलो",
+    price: 600,
+    weight: 1,
+    type: "kg",
     image: "besan.jpeg"
   },
 
   {
     id: "dry-fruit-laddu",
-    name: "Dry Fruit Laddu",
-    price: 1300,
-    weight: 0.8,
-    type: "pack",
+    name: "23 सीड्स-ड्राई फ्रूट्स (0.5 किलो), 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
+    price: 1550,
+    weight: 1,
+    type: "kg",
     image: "dry_fruit.jpeg"
   },
 
   {
     id: "mix-laddu-2",
-    name: "Mix Laddu 2",
-    price: 1100,
-    weight: 0.8,
-    type: "pack",
+    name: "बेसन (0.4 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.3 किलो), 10 ड्राई फ्रूट्स (0.3 किलो) — मिक्स लड्डू 1 किलो",
+    price: 1110,
+    weight: 1,
+    type: "kg",
     image: "mix_ladd-2.jpeg"
   },
 
   {
     id: "mix-laddu",
-    name: "Mix Laddu",
-    price: 1000,
-    weight: 0.8,
-    type: "pack",
+    name: "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.4 किलो), 10 ड्राई फ्रूट्स (0.2 किलो) — मिक्स लड्डू 1 किलो",
+    price: 1010,
+    weight: 1,
+    type: "kg",
     image: "mix_laddu-.jpeg"
   },
 
   {
     id: "mix-laddu-3",
-    name: "Mix Laddu 3",
-    price: 1200,
-    weight: 0.8,
-    type: "pack",
+    name: "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
+    price: 1050,
+    weight: 1,
+    type: "kg",
     image: "mix_laddu-3.jpeg"
   },
 
   {
     id: "mix-laddu-4",
-    name: "Mix Laddu 4",
-    price: 700,
-    weight: 0.8,
-    type: "pack",
+    name: "बेसन (0.7 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.3 किलो) — मिक्स लड्डू 1 किलो",
+    price: 810,
+    weight: 1,
+    type: "kg",
     image: "mix_laddu-4.jpeg"
   },
 
   {
     id: "mix-laddu-5",
-    name: "Mix Laddu 5",
-    price: 850,
-    weight: 0.8,
-    type: "pack",
+    name: "बेसन (0.5 किलो), 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
+    price: 1100,
+    weight: 1,
+    type: "kg",
     image: "mix_laddu-5.jpeg"
   },
+
+  /* =======================================================
+     THESE 2 ARE STILL 0.8 KG
+     ======================================================= */
 
   {
     id: "mix-laddu-6",
