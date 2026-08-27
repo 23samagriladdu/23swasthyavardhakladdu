@@ -350,29 +350,9 @@ const PRODUCTS = [
     type: "kg",
     image: "mix_laddu-5.jpeg"
   },
-
-  /* =======================================================
-     THESE 2 ARE STILL 0.8 KG
-     ======================================================= */
-
-  {
-    id: "mix-laddu-6",
-    name: "Mix Laddu 6",
-    price: 850,
-    weight: 0.8,
-    type: "pack",
-    image: "mix_laddu-6.jpeg"
-  },
-
-  {
-    id: "seeds-dry-fruit-laddu",
-    name: "Seeds & Dry Fruit Laddu",
-    price: 1100,
-    weight: 0.8,
-    type: "pack",
-    image: "seeds_dryfruit.jpeg"
-  }
-
+const PRODUCTS = [
+  // आपके बाकी 11 products
+  // ...
 ];
 
 
