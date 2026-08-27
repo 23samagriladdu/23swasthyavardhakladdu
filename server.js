@@ -241,42 +241,9 @@ app.use(
    PRODUCTS
 =========================================================
 
-   IMPORTANT:
+  const PRODUCTS = [
 
-   FIRST 4 PRODUCTS
-   -----------------
-   type = "kg"
-
-   इनकी quantity actual Kg होगी।
-
-   Example:
-   0.5 Kg
-   1 Kg
-   1.5 Kg
-   2 Kg
-   2.5 Kg
-   ...
-   50 Kg
-
-
-   NEXT 9 PRODUCTS
-   ----------------
-   type = "pack"
-
-   हर pack = 0.8 Kg
-
-   Example:
-   1 Pack = 0.8 Kg
-   2 Pack = 1.6 Kg
-   3 Pack = 2.4 Kg
-   ...
-========================================================= */
-
-const PRODUCTS = [
-
-  /* =======================================================
-     4 PRODUCTS — KG
-  ======================================================= */
+  /* 4 PRODUCTS — 1 KG */
 
   {
     id: "10-dryfruits",
@@ -315,10 +282,7 @@ const PRODUCTS = [
   },
 
 
-  /* =======================================================
-     9 PRODUCTS — PACK
-     प्रत्येक Pack = 0.8 Kg
-  ======================================================= */
+  /* 9 PRODUCTS — EACH PACK = 0.8 KG */
 
   {
     id: "besan-laddu",
