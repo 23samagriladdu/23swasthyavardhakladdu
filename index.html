@@ -232,6 +232,12 @@
       font-weight: 600;
     }
 
+    .delivery-note {
+      text-align: center;
+      margin-top: 20px;
+      line-height: 1.7;
+    }
+
     @media(max-width: 650px) {
 
       .history-search {
@@ -383,14 +389,14 @@
         <p>Products load हो रहे हैं...</p>
       </div>
 
-<p class="delivery-note">
-  🚚 डिलीवरी चार्ज:
-  <strong>
-    0.5–1 Kg: ₹100 |
-    1.5–2 Kg: ₹200 |
-    2.5 Kg या अधिक: ₹300
-  </strong>
-</p>
+      <p class="delivery-note">
+        🚚 डिलीवरी चार्ज:
+        <strong>
+          0.5–1 Kg: ₹100 |
+          1.5–2 Kg: ₹200 |
+          2.5 Kg या अधिक: ₹300
+        </strong>
+      </p>
 
     </section>
 
@@ -536,30 +542,27 @@
         </label>
 
 
-        <!-- QUANTITY -->
+        <!-- QUANTITY / PACK COUNT -->
 
         <label>
 
-          मात्रा (Kg)
+          पैक की संख्या
 
-<label>
+          <select id="qty" required>
 
-  पैक की संख्या
+            <option value="1">1 Pack</option>
+            <option value="2">2 Packs</option>
+            <option value="3">3 Packs</option>
+            <option value="4">4 Packs</option>
+            <option value="5">5 Packs</option>
+            <option value="6">6 Packs</option>
+            <option value="7">7 Packs</option>
+            <option value="8">8 Packs</option>
+            <option value="9">9 Packs</option>
+            <option value="10">10 Packs</option>
 
-  <select id="qty" required>
-    <option value="1">1 Pack</option>
-    <option value="2">2 Packs</option>
-    <option value="3">3 Packs</option>
-    <option value="4">4 Packs</option>
-    <option value="5">5 Packs</option>
-    <option value="6">6 Packs</option>
-    <option value="7">7 Packs</option>
-    <option value="8">8 Packs</option>
-    <option value="9">9 Packs</option>
-    <option value="10">10 Packs</option>
-  </select>
+          </select>
 
-</label>
         </label>
 
 
@@ -644,12 +647,12 @@
 
 
           <span>
-  डिलीवरी
-</span>
+            डिलीवरी
+          </span>
 
-<strong id="deliveryCharge">
-  ₹0
-</strong>
+          <strong id="deliveryCharge">
+            ₹0
+          </strong>
 
 
           <span>
@@ -736,8 +739,6 @@
         class="history-grid">
       </div>
 
-
-      <!-- SINGLE ORDER DETAILS -->
 
       <div
         id="detailBox"
@@ -854,79 +855,119 @@
     <!-- =====================================================
          GALLERY
     ===================================================== -->
-<section class="gallery">
 
-  <h2>हमारे उत्पाद की झलक</h2>
+    <section class="gallery">
 
-  <p class="gallery-subtitle">
-    हमारे स्वादिष्ट लड्डू और प्राकृतिक सामग्री की कुछ तस्वीरें
-  </p>
+      <h2>
+        हमारे उत्पाद की झलक
+      </h2>
 
-  <div class="gallery-grid">
+      <p class="gallery-subtitle">
+        हमारे स्वादिष्ट लड्डू और प्राकृतिक सामग्री की कुछ तस्वीरें
+      </p>
 
-    <div class="gallery-item">
-      <img src="/besan.jpeg" alt="बेसन लड्डू" loading="lazy">
-      <p>बेसन लड्डू</p>
-    </div>
+      <div class="gallery-grid">
 
-    <div class="gallery-item">
-      <img src="/dry_fruit.jpeg" alt="ड्राय फ्रूट" loading="lazy">
-      <p>ड्राय फ्रूट</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/besan.jpeg"
+            alt="बेसन लड्डू"
+            loading="lazy">
+          <p>बेसन लड्डू</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/mix_ladd-2.jpeg" alt="मिक्स लड्डू" loading="lazy">
-      <p>मिक्स लड्डू</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/dry_fruit.jpeg"
+            alt="ड्राय फ्रूट"
+            loading="lazy">
+          <p>ड्राय फ्रूट</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/mix_laddu-.jpeg" alt="मिक्स लड्डू" loading="lazy">
-      <p>मिक्स लड्डू</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/mix_ladd-2.jpeg"
+            alt="मिक्स लड्डू"
+            loading="lazy">
+          <p>मिक्स लड्डू</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/mix_laddu-3.jpeg" alt="मिक्स लड्डू" loading="lazy">
-      <p>मिक्स लड्डू</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/mix_laddu-.jpeg"
+            alt="मिक्स लड्डू"
+            loading="lazy">
+          <p>मिक्स लड्डू</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/mix_laddu-4.jpeg" alt="मिक्स लड्डू" loading="lazy">
-      <p>मिक्स लड्डू</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/mix_laddu-3.jpeg"
+            alt="मिक्स लड्डू"
+            loading="lazy">
+          <p>मिक्स लड्डू</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/mix_laddu-5.jpeg" alt="मिक्स लड्डू" loading="lazy">
-      <p>मिक्स लड्डू</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/mix_laddu-4.jpeg"
+            alt="मिक्स लड्डू"
+            loading="lazy">
+          <p>मिक्स लड्डू</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/mix_laddu-6.jpeg" alt="मिक्स लड्डू" loading="lazy">
-      <p>मिक्स लड्डू</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/mix_laddu-5.jpeg"
+            alt="मिक्स लड्डू"
+            loading="lazy">
+          <p>मिक्स लड्डू</p>
+        </div>
 
-    <div class="gallery-item">
-      <img src="/seeds_dryfruit.jpeg" alt="सीड्स और ड्राय फ्रूट" loading="lazy">
-      <p>सीड्स और ड्राय फ्रूट</p>
-    </div>
+        <div class="gallery-item">
+          <img
+            src="/mix_laddu-6.jpeg"
+            alt="मिक्स लड्डू"
+            loading="lazy">
+          <p>मिक्स लड्डू</p>
+        </div>
 
-<img
-src="product-details-hindi.png"
-alt="हिंदी उत्पाद विवरण"
-loading="lazy">
+        <div class="gallery-item">
+          <img
+            src="/seeds_dryfruit.jpeg"
+            alt="सीड्स और ड्राय फ्रूट"
+            loading="lazy">
+          <p>सीड्स और ड्राय फ्रूट</p>
+        </div>
 
-<img
-src="product-poster-english.png"
-alt="English Product Poster"
-loading="lazy">
-    
-<img
-src="product-poster-hindi.png"
-alt="Hindi Product Poster"
-loading="lazy">
+        <div class="gallery-item">
+          <img
+            src="product-details-hindi.png"
+            alt="हिंदी उत्पाद विवरण"
+            loading="lazy">
+        </div>
 
-  </div>
+        <div class="gallery-item">
+          <img
+            src="product-poster-english.png"
+            alt="English Product Poster"
+            loading="lazy">
+        </div>
 
-</section>
+        <div class="gallery-item">
+          <img
+            src="product-poster-hindi.png"
+            alt="Hindi Product Poster"
+            loading="lazy">
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
   <!-- =====================================================
        FOOTER
   ===================================================== -->
@@ -1006,25 +1047,6 @@ loading="lazy">
 
     let config = null;
 
-function getDeliveryCharge(quantity) {
-
-  quantity = Number(quantity || 0);
-
-  if (quantity <= 0) {
-    return 0;
-  }
-
-  if (quantity <= 1) {
-    return 100;
-  }
-
-  if (quantity <= 2) {
-    return 200;
-  }
-
-  return 300;
-}
-
     const product =
       document.getElementById("product");
 
@@ -1036,6 +1058,9 @@ function getDeliveryCharge(quantity) {
 
     const grandTotal =
       document.getElementById("grandTotal");
+
+    const deliveryCharge =
+      document.getElementById("deliveryCharge");
 
     const paymentMethod =
       document.getElementById("paymentMethod");
@@ -1057,207 +1082,232 @@ function getDeliveryCharge(quantity) {
 
 
     /* =====================================================
+       DELIVERY CHARGE
+       
+       TOTAL WEIGHT:
+       0.5–1 Kg   = ₹100
+       1.5–2 Kg   = ₹200
+       2.5 Kg+    = ₹300
+    ===================================================== */
+
+    function getDeliveryCharge(totalWeight) {
+
+      const weight =
+        Number(totalWeight || 0);
+
+      if (!Number.isFinite(weight) || weight <= 0) {
+        return 0;
+      }
+
+      if (weight <= 1) {
+        return 100;
+      }
+
+      if (weight <= 2) {
+        return 200;
+      }
+
+      return 300;
+    }
+
+
+    /* =====================================================
        PRICE
     ===================================================== */
 
-    function price() {
+    function getSelectedProduct() {
 
       const selected =
         product.options[product.selectedIndex];
 
-      return Number(
-        selected?.dataset?.price || 0
-      );
+      if (!selected || !selected.value) {
+        return null;
+      }
 
+      return {
+        id: selected.value,
+        price: Number(selected.dataset.price || 0),
+        weight: Number(selected.dataset.weight || 1),
+        name: selected.textContent.trim()
+      };
     }
 
 
-  /* =====================================================
-   DELIVERY CHARGE
-===================================================== */
+    /* =====================================================
+       UPDATE TOTAL
+    ===================================================== */
 
-function getDeliveryCharge(totalWeight) {
+    function updateTotal() {
 
-  const weight = Number(totalWeight || 0);
+      const selected =
+        getSelectedProduct();
 
-  if (weight <= 0) {
-    return 0;
-  }
+      if (!selected) {
 
-  // 0.5Kg से 1Kg तक
-  if (weight <= 1) {
-    return 100;
-  }
+        productTotal.textContent =
+          money(0);
 
-  // 1.5Kg से 2Kg तक
-  if (weight <= 2) {
-    return 200;
-  }
+        deliveryCharge.textContent =
+          money(0);
 
-  // 2.5Kg या उससे अधिक
-  return 300;
-}
+        grandTotal.textContent =
+          money(0);
 
+        renderUPI();
 
-/* =====================================================
-   UPDATE TOTAL
-===================================================== */
-
-function updateTotal() {
-
-  const selected =
-    product.options[product.selectedIndex];
-
-  if (!selected || !selected.value) {
-
-    productTotal.textContent =
-      money(0);
-
-    document.getElementById(
-      "deliveryCharge"
-    ).textContent =
-      money(0);
-
-    grandTotal.textContent =
-      money(0);
-
-    return;
-  }
+        return;
+      }
 
 
-  /* PACK PRICE */
-
-  const packPrice =
-    Number(selected.dataset.price || 0);
+      const packPrice =
+        selected.price;
 
 
-  /* PACK WEIGHT */
-
-  const packWeight =
-    Number(selected.dataset.weight || 1);
+      const packWeight =
+        selected.weight;
 
 
-  /* NUMBER OF PACKS */
-
-  const packQuantity =
-    Number(qty.value || 1);
+      const packQuantity =
+        Number(qty.value || 1);
 
 
-  /* PRODUCT TOTAL */
+      /*
+        Product amount =
+        Pack price × number of packs
+      */
 
-  const productAmount =
-    packPrice * packQuantity;
-
-
-  /* TOTAL PHYSICAL WEIGHT */
-
-  const totalWeight =
-    packWeight * packQuantity;
+      const productAmount =
+        packPrice * packQuantity;
 
 
-  /* DELIVERY */
+      /*
+        Total physical weight =
+        Pack weight × number of packs
+      */
 
-  const delivery =
-    getDeliveryCharge(totalWeight);
-
-
-  /* GRAND TOTAL */
-
-  const grand =
-    productAmount + delivery;
+      const totalWeight =
+        packWeight * packQuantity;
 
 
-  /* SHOW PRODUCT TOTAL */
+      /*
+        Delivery based on total weight
+      */
 
-  productTotal.textContent =
-    money(productAmount);
-
-
-  /* SHOW DELIVERY */
-
-  document.getElementById(
-    "deliveryCharge"
-  ).textContent =
-    `${money(delivery)} (${totalWeight}Kg)`;
+      const delivery =
+        getDeliveryCharge(totalWeight);
 
 
-  /* SHOW GRAND TOTAL */
+      /*
+        Final amount
+      */
 
-  grandTotal.textContent =
-    money(grand);
+      const grand =
+        productAmount + delivery;
 
 
-  /* UPDATE UPI QR */
+      productTotal.textContent =
+        money(productAmount);
 
-  renderUPI();
-}
+
+      deliveryCharge.textContent =
+        `${money(delivery)} (${formatWeight(totalWeight)})`;
+
+
+      grandTotal.textContent =
+        money(grand);
+
+
+      renderUPI();
+    }
+
+
+    /* =====================================================
+       WEIGHT FORMAT
+    ===================================================== */
+
+    function formatWeight(weight) {
+
+      const n =
+        Number(weight || 0);
+
+      if (Number.isInteger(n)) {
+        return `${n} Kg`;
+      }
+
+      return `${n.toFixed(1)} Kg`;
+    }
+
 
     /* =====================================================
        PRODUCT GRID
     ===================================================== */
 
-   function renderProducts() {
+    function renderProducts() {
 
-  const grid =
-    document.getElementById("productGrid");
+      const grid =
+        document.getElementById("productGrid");
 
-  if (!config || !Array.isArray(config.products)) {
+      if (!config ||
+          !Array.isArray(config.products)) {
 
-    grid.innerHTML =
-      "<p>Products उपलब्ध नहीं हैं।</p>";
+        grid.innerHTML =
+          "<p>Products उपलब्ध नहीं हैं।</p>";
 
-    return;
-  }
+        return;
+      }
 
-  if (config.products.length === 0) {
 
-    grid.innerHTML =
-      "<p>अभी कोई product उपलब्ध नहीं है।</p>";
+      if (config.products.length === 0) {
 
-    return;
-  }
+        grid.innerHTML =
+          "<p>अभी कोई product उपलब्ध नहीं है।</p>";
 
-  grid.innerHTML =
-    config.products.map(p => {
+        return;
+      }
 
-      const weight =
-        Number(p.weight || 1);
 
-      const weightText =
-        weight === 1
-          ? "1Kg"
-          : `${weight}Kg`;
+      grid.innerHTML =
+        config.products.map(p => {
 
-      return `
+          const weight =
+            Number(p.weight || 1);
 
-        <div class="product-card">
 
-          <h3>
-            ${escapeHtml(p.name)}
-          </h3>
+          const weightText =
+            formatWeight(weight);
 
-          <p>
-            <strong>
-              ${money(p.price)}
-            </strong>
-            / ${weightText}
-          </p>
 
-          <button
-            type="button"
-            class="primary-btn"
-            onclick="selectProduct('${escapeJs(p.id)}')">
+          return `
 
-            यह पैक चुनें
+            <div class="product-card">
 
-          </button>
+              <h3>
+                ${escapeHtml(p.name)}
+              </h3>
 
-        </div>
+              <p>
+                <strong>
+                  ${money(p.price)}
+                </strong>
+                / ${weightText}
+              </p>
 
-      `;
+              <button
+                type="button"
+                class="primary-btn"
+                onclick="selectProduct('${escapeJs(p.id)}')">
 
-    }).join("");
-}
+                यह पैक चुनें
+
+              </button>
+
+            </div>
+
+          `;
+
+        }).join("");
+    }
+
 
     /* =====================================================
        SELECT PRODUCT
@@ -1265,7 +1315,8 @@ function updateTotal() {
 
     function selectProduct(id) {
 
-      product.value = id;
+      product.value =
+        id;
 
       updateTotal();
 
@@ -1274,7 +1325,6 @@ function updateTotal() {
         .scrollIntoView({
           behavior: "smooth"
         });
-
     }
 
 
@@ -1290,7 +1340,6 @@ function updateTotal() {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
     }
 
 
@@ -1303,7 +1352,6 @@ function updateTotal() {
       return String(value ?? "")
         .replace(/\\/g, "\\\\")
         .replace(/'/g, "\\'");
-
     }
 
 
@@ -1317,6 +1365,7 @@ function updateTotal() {
         return;
       }
 
+
       upiBox.style.display =
         paymentMethod.value === "UPI"
           ? "block"
@@ -1328,27 +1377,46 @@ function updateTotal() {
       }
 
 
-     const selected =
-  product.options[product.selectedIndex];
+      const selected =
+        getSelectedProduct();
 
-const packPrice =
-  Number(selected?.dataset?.price || 0);
 
-const packWeight =
-  Number(selected?.dataset?.weight || 1);
+      const qr =
+        document.getElementById("qr");
 
-const packQuantity =
-  Number(qty.value || 1);
 
-const totalWeight =
-  packWeight * packQuantity;
+      const payBtn =
+        document.getElementById("payBtn");
 
-const delivery =
-  getDeliveryCharge(totalWeight);
 
-const amount =
-  packPrice * packQuantity +
-  delivery;
+      if (!selected) {
+
+        qr.innerHTML =
+          '<div class="qr-placeholder">' +
+          'पहले product चुनें।' +
+          '</div>';
+
+        return;
+      }
+
+
+      const packQuantity =
+        Number(qty.value || 1);
+
+
+      const totalWeight =
+        selected.weight *
+        packQuantity;
+
+
+      const delivery =
+        getDeliveryCharge(totalWeight);
+
+
+      const amount =
+        selected.price *
+        packQuantity +
+        delivery;
 
 
       document
@@ -1358,15 +1426,8 @@ const amount =
           "UPI ID उपलब्ध नहीं है";
 
 
-      const qr =
-        document.getElementById("qr");
-
-
-      qr.innerHTML = "";
-
-
-      const payBtn =
-        document.getElementById("payBtn");
+      qr.innerHTML =
+        "";
 
 
       if (
@@ -1378,13 +1439,18 @@ const amount =
           `upi://pay?pa=${
             encodeURIComponent(config.upiId)
           }&pn=${
-            encodeURIComponent(config.upiName || "23 स्वास्थ्यवर्धक सामान")
+            encodeURIComponent(
+              config.upiName ||
+              "23 स्वास्थ्यवर्धक सामान"
+            )
           }&am=${
             amount.toFixed(2)
           }&cu=INR`;
 
 
-        if (typeof QRCode !== "undefined") {
+        if (
+          typeof QRCode !== "undefined"
+        ) {
 
           new QRCode(
             qr,
@@ -1401,15 +1467,16 @@ const amount =
             '<div class="qr-placeholder">' +
             'QR Code library load नहीं हुई।' +
             '</div>';
-
         }
 
 
-        payBtn.onclick = () => {
+        payBtn.onclick =
+          () => {
 
-          window.location.href = url;
+            window.location.href =
+              url;
 
-        };
+          };
 
 
       } else {
@@ -1420,16 +1487,15 @@ const amount =
           '</div>';
 
 
-        payBtn.onclick = () => {
+        payBtn.onclick =
+          () => {
 
-          alert(
-            "पहले Render में UPI_ID environment variable सेट करें।"
-          );
+            alert(
+              "पहले Render में UPI_ID environment variable सेट करें।"
+            );
 
-        };
-
+          };
       }
-
     }
 
 
@@ -1442,13 +1508,19 @@ const amount =
       try {
 
         const response =
-          await fetch("/api/config", {
-            cache: "no-store"
-          });
+          await fetch(
+            "/api/config",
+            {
+              cache: "no-store"
+            }
+          );
 
 
         if (!response.ok) {
-          throw new Error("Config API failed");
+
+          throw new Error(
+            "Config API failed"
+          );
         }
 
 
@@ -1464,55 +1536,59 @@ const amount =
           throw new Error(
             "Products configuration missing"
           );
-
         }
 
 
-      product.innerHTML =
-  '<option value="">पैक चुनें</option>' +
+        /*
+          Product dropdown
+        */
 
-  config.products
-    .map(p => {
+        product.innerHTML =
+          '<option value="">पैक चुनें</option>' +
 
-      const weight =
-        Number(p.weight || 1);
+          config.products
+            .map(p => {
 
-      const weightText =
-        weight === 1
-          ? "1Kg"
-          : `${weight}Kg`;
+              const weight =
+                Number(p.weight || 1);
 
-      return `
-        <option
-          value="${escapeHtml(p.id)}"
-          data-price="${Number(p.price) || 0}"
-          data-weight="${weight}">
 
-          ${escapeHtml(p.name)}
-          — ${money(p.price)} / ${weightText}
+              return `
+                <option
+                  value="${escapeHtml(p.id)}"
+                  data-price="${Number(p.price) || 0}"
+                  data-weight="${weight}">
 
-        </option>
-      `;
+                  ${escapeHtml(p.name)}
+                  — ${money(p.price)}
+                  / ${formatWeight(weight)}
 
-    })
-    .join("");
+                </option>
+              `;
+
+            })
+            .join("");
 
 
         /*
-          आपके पुराने code के अनुसार
-          दूसरे product को default select किया गया है।
+          Default product:
+          दूसरा product उपलब्ध हो तो
+          दूसरा product select होगा।
         */
 
-        if (config.products.length > 1) {
+        if (
+          config.products.length > 1
+        ) {
 
           product.value =
             config.products[1].id;
 
-        } else if (config.products.length === 1) {
+        } else if (
+          config.products.length === 1
+        ) {
 
           product.value =
             config.products[0].id;
-
         }
 
 
@@ -1523,7 +1599,11 @@ const amount =
 
       } catch (error) {
 
-        console.error("INIT ERROR:", error);
+        console.error(
+          "INIT ERROR:",
+          error
+        );
+
 
         document
           .getElementById("productGrid")
@@ -1535,9 +1615,7 @@ const amount =
 
         product.innerHTML =
           '<option value="">Product load नहीं हुआ</option>';
-
       }
-
     }
 
 
@@ -1552,7 +1630,7 @@ const amount =
 
 
     qty.addEventListener(
-      "input",
+      "change",
       updateTotal
     );
 
@@ -1590,11 +1668,13 @@ const amount =
                 .value
                 .trim(),
 
+
             phone:
               document
                 .getElementById("phone")
                 .value
                 .replace(/\D/g, ""),
+
 
             address:
               document
@@ -1602,11 +1682,13 @@ const amount =
                 .value
                 .trim(),
 
+
             city:
               document
                 .getElementById("city")
                 .value
                 .trim(),
+
 
             state:
               document
@@ -1614,20 +1696,30 @@ const amount =
                 .value
                 .trim(),
 
+
             pincode:
               document
                 .getElementById("pincode")
                 .value
                 .replace(/\D/g, ""),
 
+
             productId:
               product.value,
+
+
+            /*
+              IMPORTANT:
+              quantity = number of packs
+            */
 
             quantity:
               Number(qty.value),
 
+
             paymentMethod:
               paymentMethod.value,
+
 
             utr:
               document
@@ -1644,87 +1736,113 @@ const amount =
 
           if (!body.name) {
 
-            alert("कृपया नाम डालें।");
-            return;
+            alert(
+              "कृपया नाम डालें।"
+            );
 
+            return;
           }
 
 
-          if (!/^\d{10}$/.test(body.phone)) {
+          if (
+            !/^\d{10}$/.test(
+              body.phone
+            )
+          ) {
 
             alert(
               "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
             );
 
             return;
-
           }
 
 
           if (!body.address) {
 
-            alert("कृपया पूरा पता डालें।");
-            return;
+            alert(
+              "कृपया पूरा पता डालें।"
+            );
 
+            return;
           }
 
 
           if (!body.city) {
 
-            alert("कृपया शहर का नाम डालें।");
-            return;
+            alert(
+              "कृपया शहर का नाम डालें।"
+            );
 
+            return;
           }
 
 
           if (!body.state) {
 
-            alert("कृपया राज्य का नाम डालें।");
-            return;
+            alert(
+              "कृपया राज्य का नाम डालें।"
+            );
 
+            return;
           }
 
 
-          if (!/^\d{6}$/.test(body.pincode)) {
+          if (
+            !/^\d{6}$/.test(
+              body.pincode
+            )
+          ) {
 
             alert(
               "कृपया 6 अंकों का सही पिनकोड डालें।"
             );
 
             return;
-
           }
 
 
           if (!body.productId) {
 
-            alert("कृपया पैक चुनें।");
-            return;
+            alert(
+              "कृपया पैक चुनें।"
+            );
 
+            return;
           }
 
 
+          /*
+            Quantity अब PACK COUNT है।
+            केवल 1 से 10 packs allowed हैं।
+          */
+
           if (
-  !Number.isFinite(body.quantity) ||
-  body.quantity < 0.5 ||
-  body.quantity > 50 ||
-  (body.quantity * 2) % 1 !== 0
-) {
+            !Number.isInteger(
+              body.quantity
+            ) ||
+            body.quantity < 1 ||
+            body.quantity > 10
+          ) {
 
-  alert(
-    "मात्रा 0.5 Kg से 50 Kg के बीच होनी चाहिए।"
-  );
+            alert(
+              "कृपया 1 से 10 Pack के बीच मात्रा चुनें।"
+            );
 
-  return;
-
-}
+            return;
+          }
 
 
           try {
 
-            submitBtn.disabled = true;
+            submitBtn.disabled =
+              true;
 
-            submitBtn.classList.add("loading");
+
+            submitBtn.classList.add(
+              "loading"
+            );
+
 
             submitBtn.textContent =
               "⏳ Order भेजा जा रहा है...";
@@ -1743,7 +1861,6 @@ const amount =
 
                   body:
                     JSON.stringify(body)
-
                 }
               );
 
@@ -1760,7 +1877,6 @@ const amount =
               );
 
               return;
-
             }
 
 
@@ -1769,16 +1885,25 @@ const amount =
             ============================================== */
 
             document
-              .getElementById("successText")
+              .getElementById(
+                "successText"
+              )
               .innerHTML =
 
               `आपका Order No.
-              <strong>${escapeHtml(data.orderNo)}</strong>
+              <strong>${escapeHtml(
+                data.orderNo
+              )}</strong>
               है।<br>
               कुल राशि:
-              <strong>${money(data.total)}</strong>
+              <strong>${money(
+                data.total
+              )}</strong>
               <br>
-              ${escapeHtml(data.message || "Order successfully received.")}`;
+              ${escapeHtml(
+                data.message ||
+                "Order successfully received."
+              )}`;
 
 
             const selectedProduct =
@@ -1787,13 +1912,25 @@ const amount =
               ]?.text || "";
 
 
+            const selected =
+              getSelectedProduct();
+
+
+            const totalWeight =
+              selected
+                ? selected.weight *
+                  body.quantity
+                : 0;
+
+
             const wa =
               `नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। ` +
               `Order No: ${data.orderNo}. ` +
               `नाम: ${body.name}, ` +
               `मोबाइल: ${body.phone}, ` +
               `पैक: ${selectedProduct}, ` +
-              `मात्रा: ${body.quantity} Kg, ` +
+              `पैक की संख्या: ${body.quantity}, ` +
+              `कुल वजन: ${formatWeight(totalWeight)}, ` +
               `पता: ${body.address}, ` +
               `शहर: ${body.city}, ` +
               `राज्य: ${body.state}, ` +
@@ -1804,14 +1941,18 @@ const amount =
 
 
             document
-              .getElementById("successWa")
+              .getElementById(
+                "successWa"
+              )
               .href =
                 "https://wa.me/919643185255?text=" +
                 encodeURIComponent(wa);
 
 
             document
-              .getElementById("successModal")
+              .getElementById(
+                "successModal"
+              )
               .classList
               .remove("hidden");
 
@@ -1822,6 +1963,10 @@ const amount =
 
             e.target.reset();
 
+
+            /*
+              Default product वापस select करें
+            */
 
             if (
               config &&
@@ -1838,13 +1983,22 @@ const amount =
 
               product.value =
                 config.products[0].id;
-
             }
 
 
-            qty.value = 1;
+            qty.value =
+              "1";
 
-            paymentMethod.value = "UPI";
+
+            paymentMethod.value =
+              "UPI";
+
+
+            document
+              .getElementById("utr")
+              .value =
+              "";
+
 
             updateTotal();
 
@@ -1864,13 +2018,17 @@ const amount =
 
           } finally {
 
-            submitBtn.disabled = false;
+            submitBtn.disabled =
+              false;
 
-            submitBtn.classList.remove("loading");
+
+            submitBtn.classList.remove(
+              "loading"
+            );
+
 
             submitBtn.textContent =
               "✅ Order Confirm करें";
-
           }
 
         }
@@ -1900,7 +2058,6 @@ const amount =
             e.preventDefault();
 
             loadOrderHistory();
-
           }
 
         }
@@ -1911,7 +2068,9 @@ const amount =
 
       const phone =
         document
-          .getElementById("historyPhone")
+          .getElementById(
+            "historyPhone"
+          )
           .value
           .replace(/\D/g, "");
 
@@ -1938,16 +2097,20 @@ const amount =
         "none";
 
 
-      grid.innerHTML = "";
+      grid.innerHTML =
+        "";
 
 
-      if (!/^\d{10}$/.test(phone)) {
+      if (
+        !/^\d{10}$/.test(
+          phone
+        )
+      ) {
 
         message.textContent =
           "कृपया 10 अंकों का सही मोबाइल नंबर डालें।";
 
         return;
-
       }
 
 
@@ -1977,7 +2140,6 @@ const amount =
             "Orders load नहीं हो सके।";
 
           return;
-
         }
 
 
@@ -1990,7 +2152,6 @@ const amount =
             "इस मोबाइल नंबर से कोई order नहीं मिला।";
 
           return;
-
         }
 
 
@@ -2020,9 +2181,7 @@ const amount =
 
         message.textContent =
           "Server से connection नहीं हो सका।";
-
       }
-
     }
 
 
@@ -2036,7 +2195,9 @@ const amount =
     ) {
 
       const canCancel =
-        Boolean(order.canCancel);
+        Boolean(
+          order.canCancel
+        );
 
 
       const status =
@@ -2056,7 +2217,9 @@ const amount =
         <div class="history-card">
 
           <h3>
-            📦 ${escapeHtml(order.orderNo)}
+            📦 ${escapeHtml(
+              order.orderNo
+            )}
           </h3>
 
 
@@ -2067,7 +2230,9 @@ const amount =
             </span>
 
             <strong>
-              ${escapeHtml(order.product)}
+              ${escapeHtml(
+                order.product
+              )}
             </strong>
 
           </div>
@@ -2080,7 +2245,9 @@ const amount =
             </span>
 
             <strong>
-              ${Number(order.quantity || 0)} Kg
+              ${Number(
+                order.quantity || 0
+              )} Pack
             </strong>
 
           </div>
@@ -2093,7 +2260,9 @@ const amount =
             </span>
 
             <strong>
-              ${money(order.total)}
+              ${money(
+                order.total
+              )}
             </strong>
 
           </div>
@@ -2106,7 +2275,9 @@ const amount =
             </span>
 
             <strong>
-              ${escapeHtml(payment)}
+              ${escapeHtml(
+                payment
+              )}
             </strong>
 
           </div>
@@ -2119,7 +2290,9 @@ const amount =
             </span>
 
             <strong class="status">
-              ${escapeHtml(status)}
+              ${escapeHtml(
+                status
+              )}
             </strong>
 
           </div>
@@ -2135,7 +2308,9 @@ const amount =
                   </span>
 
                   <strong>
-                    ${escapeHtml(order.awb)}
+                    ${escapeHtml(
+                      order.awb
+                    )}
                   </strong>
 
                 </div>
@@ -2150,8 +2325,12 @@ const amount =
               type="button"
               class="details-btn"
               onclick="showOrderDetails(
-                '${escapeJs(order.orderNo)}',
-                '${escapeJs(phone)}'
+                '${escapeJs(
+                  order.orderNo
+                )}',
+                '${escapeJs(
+                  phone
+                )}'
               )">
 
               📋 Details
@@ -2166,8 +2345,12 @@ const amount =
                     type="button"
                     class="cancel-btn"
                     onclick="cancelFromHistory(
-                      '${escapeJs(order.orderNo)}',
-                      '${escapeJs(phone)}'
+                      '${escapeJs(
+                        order.orderNo
+                      )}',
+                      '${escapeJs(
+                        phone
+                      )}'
                     )">
 
                     ❌ Cancel
@@ -2191,7 +2374,6 @@ const amount =
         </div>
 
       `;
-
     }
 
 
@@ -2199,21 +2381,29 @@ const amount =
        STATUS TEXT
     ===================================================== */
 
-    function getStatusText(status) {
+    function getStatusText(
+      status
+    ) {
 
       const map = {
 
-        new: "नया Order",
+        new:
+          "नया Order",
 
-        confirmed: "Confirmed",
+        confirmed:
+          "Confirmed",
 
-        packed: "Packed",
+        packed:
+          "Packed",
 
-        shipped: "Shipped",
+        shipped:
+          "Shipped",
 
-        delivered: "Delivered",
+        delivered:
+          "Delivered",
 
-        cancelled: "Cancelled"
+        cancelled:
+          "Cancelled"
 
       };
 
@@ -2221,23 +2411,29 @@ const amount =
       return map[status] ||
         status ||
         "Unknown";
-
     }
 
 
-    function getPaymentStatusText(status) {
+    function getPaymentStatusText(
+      status
+    ) {
 
       const map = {
 
-        pending: "Payment Pending",
+        pending:
+          "Payment Pending",
 
-        submitted: "UTR Submitted",
+        submitted:
+          "UTR Submitted",
 
-        paid: "Paid",
+        paid:
+          "Paid",
 
-        failed: "Payment Failed",
+        failed:
+          "Payment Failed",
 
-        refunded: "Refunded"
+        refunded:
+          "Refunded"
 
       };
 
@@ -2245,7 +2441,6 @@ const amount =
       return map[status] ||
         status ||
         "Unknown";
-
     }
 
 
@@ -2302,7 +2497,6 @@ const amount =
                   orderNo,
                   phone
                 })
-
             }
           );
 
@@ -2322,7 +2516,6 @@ const amount =
             </p>`;
 
           return;
-
         }
 
 
@@ -2336,7 +2529,6 @@ const amount =
             "<p>Order details उपलब्ध नहीं हैं।</p>";
 
           return;
-
         }
 
 
@@ -2344,55 +2536,75 @@ const amount =
 
           <div class="detail-item">
             <strong>Order No.</strong><br>
-            ${escapeHtml(order.orderNo)}
+            ${escapeHtml(
+              order.orderNo
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Date</strong><br>
-            ${formatDate(order.createdAt)}
+            ${formatDate(
+              order.createdAt
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Customer</strong><br>
-            ${escapeHtml(order.customerName)}
+            ${escapeHtml(
+              order.customerName
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Mobile</strong><br>
-            ${escapeHtml(order.phone)}
+            ${escapeHtml(
+              order.phone
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Product</strong><br>
-            ${escapeHtml(order.product)}
+            ${escapeHtml(
+              order.product
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Quantity</strong><br>
-            ${Number(order.quantity || 0)} Kg
+            ${Number(
+              order.quantity || 0
+            )} Pack
           </div>
 
 
           <div class="detail-item">
             <strong>Product Price</strong><br>
-            ${money(order.price)}
+            ${money(
+              order.price
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Delivery</strong><br>
-            ${money(order.delivery)}
+            ${money(
+              order.delivery
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Total</strong><br>
-            <strong>${money(order.total)}</strong>
+            <strong>
+              ${money(
+                order.total
+              )}
+            </strong>
           </div>
 
 
@@ -2418,25 +2630,33 @@ const amount =
 
           <div class="detail-item full-width">
             <strong>Address</strong><br>
-            ${escapeHtml(order.address)}
+            ${escapeHtml(
+              order.address
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>City</strong><br>
-            ${escapeHtml(order.city)}
+            ${escapeHtml(
+              order.city
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>State</strong><br>
-            ${escapeHtml(order.state)}
+            ${escapeHtml(
+              order.state
+            )}
           </div>
 
 
           <div class="detail-item">
             <strong>Pincode</strong><br>
-            ${escapeHtml(order.pincode)}
+            ${escapeHtml(
+              order.pincode
+            )}
           </div>
 
 
@@ -2444,8 +2664,17 @@ const amount =
             order.awb
               ? `
                 <div class="detail-item">
-                  <strong>AWB</strong><br>
-                  ${escapeHtml(order.awb)}
+
+                  <strong>
+                    AWB
+                  </strong>
+
+                  <br>
+
+                  ${escapeHtml(
+                    order.awb
+                  )}
+
                 </div>
               `
               : ""
@@ -2456,8 +2685,17 @@ const amount =
             order.shiprocketStatus
               ? `
                 <div class="detail-item">
-                  <strong>Shipping Status</strong><br>
-                  ${escapeHtml(order.shiprocketStatus)}
+
+                  <strong>
+                    Shipping Status
+                  </strong>
+
+                  <br>
+
+                  ${escapeHtml(
+                    order.shiprocketStatus
+                  )}
+
                 </div>
               `
               : ""
@@ -2468,8 +2706,17 @@ const amount =
             order.cancellationReason
               ? `
                 <div class="detail-item full-width">
-                  <strong>Cancellation Reason</strong><br>
-                  ${escapeHtml(order.cancellationReason)}
+
+                  <strong>
+                    Cancellation Reason
+                  </strong>
+
+                  <br>
+
+                  ${escapeHtml(
+                    order.cancellationReason
+                  )}
+
                 </div>
               `
               : ""
@@ -2491,8 +2738,12 @@ const amount =
                     type="button"
                     class="cancel-btn"
                     onclick="cancelFromHistory(
-                      '${escapeJs(order.orderNo)}',
-                      '${escapeJs(order.phone)}'
+                      '${escapeJs(
+                        order.orderNo
+                      )}',
+                      '${escapeJs(
+                        order.phone
+                      )}'
                     )">
 
                     ❌ Order Cancel करें
@@ -2516,10 +2767,10 @@ const amount =
 
 
         detailContent.innerHTML =
-          "<p class='error-text'>Server से connection नहीं हो सका।</p>";
-
+          "<p class='error-text'>" +
+          "Server से connection नहीं हो सका।" +
+          "</p>";
       }
-
     }
 
 
@@ -2527,7 +2778,9 @@ const amount =
        DATE
     ===================================================== */
 
-    function formatDate(value) {
+    function formatDate(
+      value
+    ) {
 
       if (!value) {
         return "-";
@@ -2548,9 +2801,7 @@ const amount =
       } catch (error) {
 
         return String(value);
-
       }
-
     }
 
 
@@ -2564,23 +2815,28 @@ const amount =
     ) {
 
       document
-        .getElementById("cancelOrderNo")
+        .getElementById(
+          "cancelOrderNo"
+        )
         .value =
           orderNo;
 
 
       document
-        .getElementById("cancelPhone")
+        .getElementById(
+          "cancelPhone"
+        )
         .value =
           phone;
 
 
       document
-        .getElementById("cancel-order")
+        .getElementById(
+          "cancel-order"
+        )
         .scrollIntoView({
           behavior: "smooth"
         });
-
     }
 
 
@@ -2589,7 +2845,9 @@ const amount =
     ===================================================== */
 
     document
-      .getElementById("cancelForm")
+      .getElementById(
+        "cancelForm"
+      )
       .addEventListener(
         "submit",
         async e => {
@@ -2609,21 +2867,30 @@ const amount =
 
           const orderNo =
             document
-              .getElementById("cancelOrderNo")
+              .getElementById(
+                "cancelOrderNo"
+              )
               .value
               .trim();
 
 
           const phone =
             document
-              .getElementById("cancelPhone")
+              .getElementById(
+                "cancelPhone"
+              )
               .value
-              .replace(/\D/g, "");
+              .replace(
+                /\D/g,
+                ""
+              );
 
 
           const reason =
             document
-              .getElementById("cancelReason")
+              .getElementById(
+                "cancelReason"
+              )
               .value
               .trim();
 
@@ -2634,17 +2901,19 @@ const amount =
               "Order No. डालें।";
 
             return;
-
           }
 
 
-          if (!/^\d{10}$/.test(phone)) {
+          if (
+            !/^\d{10}$/.test(
+              phone
+            )
+          ) {
 
             cancelMessage.textContent =
               "सही 10 अंकों का mobile number डालें।";
 
             return;
-
           }
 
 
@@ -2660,7 +2929,6 @@ const amount =
               "Cancellation रोक दी गई।";
 
             return;
-
           }
 
 
@@ -2683,7 +2951,6 @@ const amount =
                       phone,
                       reason
                     })
-
                 }
               );
 
@@ -2696,38 +2963,57 @@ const amount =
 
               cancelMessage.innerHTML =
                 `<span class="error-text">
+
                   ${escapeHtml(
                     data.error ||
                     "Order cancel नहीं हुआ।"
                   )}
+
                 </span>`;
 
               return;
-
             }
 
 
             cancelMessage.innerHTML =
               `<span class="success-text">
-                ✅ ${escapeHtml(data.message || "Order successfully cancelled.")}
+
+                ✅ ${escapeHtml(
+                  data.message ||
+                  "Order successfully cancelled."
+                )}
+
                 <br>
+
                 Order No:
+
                 <strong>
-                  ${escapeHtml(data.orderNo || orderNo)}
+                  ${escapeHtml(
+                    data.orderNo ||
+                    orderNo
+                  )}
                 </strong>
+
               </span>`;
 
 
             document
-              .getElementById("cancelForm")
+              .getElementById(
+                "cancelForm"
+              )
               .reset();
 
 
             const historyPhone =
               document
-                .getElementById("historyPhone")
+                .getElementById(
+                  "historyPhone"
+                )
                 .value
-                .replace(/\D/g, "");
+                .replace(
+                  /\D/g,
+                  ""
+                );
 
 
             if (
@@ -2737,7 +3023,6 @@ const amount =
             ) {
 
               loadOrderHistory();
-
             }
 
 
@@ -2751,9 +3036,10 @@ const amount =
 
             cancelMessage.innerHTML =
               `<span class="error-text">
-                Server से connection नहीं हो सका।
-              </span>`;
 
+                Server से connection नहीं हो सका।
+
+              </span>`;
           }
 
         }
@@ -2767,19 +3053,22 @@ const amount =
     function closeModal() {
 
       document
-        .getElementById("successModal")
+        .getElementById(
+          "successModal"
+        )
         .classList
         .add("hidden");
-
     }
 
 
     /* =====================================================
-       CLOSE MODAL WHEN CLICKING OUTSIDE
+       CLOSE MODAL OUTSIDE
     ===================================================== */
 
     document
-      .getElementById("successModal")
+      .getElementById(
+        "successModal"
+      )
       .addEventListener(
         "click",
         event => {
@@ -2790,7 +3079,6 @@ const amount =
           ) {
 
             closeModal();
-
           }
 
         }
