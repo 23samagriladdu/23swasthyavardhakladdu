@@ -1,4 +1,6 @@
+```javascript
 require("dotenv").config();
+
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
@@ -93,7 +95,6 @@ db.exec(`
 
 /* =========================================================
    DATABASE MIGRATION
-   Existing orders.db को नुकसान नहीं होगा
 ========================================================= */
 
 function addColumnIfMissing(
@@ -128,7 +129,9 @@ function addColumnIfMissing(
 }
 
 
-/* पुराने database के लिए */
+/* =========================================================
+   OLD DATABASE MIGRATION
+========================================================= */
 
 addColumnIfMissing(
   "orders",
@@ -230,106 +233,175 @@ app.use(
    STATIC WEBSITE
 ========================================================= */
 
-app.use(express.static(__dirname));
+app.use(
+  express.static(__dirname)
+);
 
 
 /* =========================================================
    PRODUCTS
-   कुल 13 Products
+=========================================================
+
+   IMPORTANT:
+
+   FIRST 4 PRODUCTS
+   -----------------
+   type = "kg"
+
+   इनकी quantity actual Kg होगी।
+
+   Example:
+   0.5 Kg
+   1 Kg
+   1.5 Kg
+   2 Kg
+   2.5 Kg
+   ...
+   50 Kg
+
+
+   NEXT 9 PRODUCTS
+   ----------------
+   type = "pack"
+
+   हर pack = 0.8 Kg
+
+   Example:
+   1 Pack = 0.8 Kg
+   2 Pack = 1.6 Kg
+   3 Pack = 2.4 Kg
+   ...
 ========================================================= */
 
 const PRODUCTS = [
+
+  /* =======================================================
+     4 PRODUCTS — KG
+  ======================================================= */
+
   {
     id: "10-dryfruits",
     name: "10 सामग्री - Only Dryfruits",
     price: 1600,
     weight: 1,
+    type: "kg",
     image: "laddu-main.png"
   },
+
   {
     id: "23-seeds-dryfruits",
     name: "23 सामग्री - Seeds & Dryfruits",
     price: 1300,
     weight: 1,
+    type: "kg",
     image: "laddu-main.png"
   },
+
   {
     id: "30-seeds-dryfruits",
     name: "30 सामग्री - Seeds & Dryfruits",
     price: 1600,
     weight: 1,
+    type: "kg",
     image: "laddu-main.png"
   },
+
   {
     id: "10-seeds-dryfruits",
     name: "10 सामग्री - Seeds & Dryfruits",
     price: 600,
     weight: 1,
+    type: "kg",
     image: "laddu-main.png"
   },
+
+
+  /* =======================================================
+     9 PRODUCTS — PACK
+     प्रत्येक Pack = 0.8 Kg
+  ======================================================= */
+
   {
     id: "besan-laddu",
     name: "Besan Laddu",
     price: 500,
     weight: 0.8,
+    type: "pack",
     image: "besan.jpeg"
   },
+
   {
     id: "dry-fruit-laddu",
     name: "Dry Fruit Laddu",
     price: 1300,
-    weight: 1,
+    weight: 0.8,
+    type: "pack",
     image: "dry_fruit.jpeg"
   },
+
   {
     id: "mix-laddu-2",
     name: "Mix Laddu 2",
     price: 1100,
     weight: 0.8,
+    type: "pack",
     image: "mix_ladd-2.jpeg"
   },
+
   {
     id: "mix-laddu",
     name: "Mix Laddu",
     price: 1000,
     weight: 0.8,
+    type: "pack",
     image: "mix_laddu-.jpeg"
   },
+
   {
     id: "mix-laddu-3",
     name: "Mix Laddu 3",
     price: 1200,
     weight: 0.8,
+    type: "pack",
     image: "mix_laddu-3.jpeg"
   },
+
   {
     id: "mix-laddu-4",
     name: "Mix Laddu 4",
     price: 700,
     weight: 0.8,
+    type: "pack",
     image: "mix_laddu-4.jpeg"
   },
+
   {
     id: "mix-laddu-5",
     name: "Mix Laddu 5",
     price: 850,
     weight: 0.8,
+    type: "pack",
     image: "mix_laddu-5.jpeg"
   },
+
   {
     id: "mix-laddu-6",
     name: "Mix Laddu 6",
     price: 850,
     weight: 0.8,
+    type: "pack",
     image: "mix_laddu-6.jpeg"
   },
+
   {
     id: "seeds-dry-fruit-laddu",
     name: "Seeds & Dry Fruit Laddu",
     price: 1100,
     weight: 0.8,
+    type: "pack",
     image: "seeds_dryfruit.jpeg"
   }
+
 ];
 
 
@@ -339,64 +411,46 @@ const PRODUCTS = [
 
 function getDeliveryCharge(totalWeight) {
 
-  const weight = Number(totalWeight || 0);
+  const weight =
+    Number(totalWeight || 0);
 
-  if (!Number.isFinite(weight) || weight <= 0) {
+  if (
+    !Number.isFinite(weight) ||
+    weight <= 0
+  ) {
+
     return 0;
+
   }
 
-  // 0.5 Kg से 1 Kg तक
+  /* 1 Kg तक */
+
   if (weight <= 1) {
+
     return 100;
+
   }
 
-  // 1.5 Kg से 2 Kg तक
+  /* 1 Kg से ज्यादा और 2 Kg तक */
+
   if (weight <= 2) {
+
     return 200;
+
   }
 
-  // 2.5 Kg या उससे अधिक
+  /* 2 Kg से ज्यादा */
+
   return 300;
+
 }
 
 
 /* =========================================================
-   QUANTITY / PACK COUNT VALIDATION
+   KG QUANTITY VALIDATION
 ========================================================= */
 
-function isValidQuantity(quantity) {
-
-  const qty = Number(quantity);
-
-  if (!Number.isFinite(qty)) {
-    return false;
-  }
-
-  // Pack quantity केवल whole number होगी
-  return (
-    Number.isInteger(qty) &&
-    qty >= 1 &&
-    qty <= 50
-  );
-}
-
-
-/* =========================================================
-   PRODUCT FINDER
-========================================================= */
-
-function getProduct(productId) {
-
-  return PRODUCTS.find(
-    p => p.id === String(productId)
-  );
-
-}
-/* =========================================================
-   QUANTITY VALIDATION
-========================================================= */
-
-function isValidQuantity(quantity) {
+function isValidKgQuantity(quantity) {
 
   const qty =
     Number(quantity);
@@ -419,13 +473,38 @@ function isValidQuantity(quantity) {
   }
 
   /*
-    केवल 0.5, 1, 1.5, 2, 2.5...
+    केवल:
+
+    0.5
+    1
+    1.5
+    2
+    2.5
+    ...
+
+    allowed
   */
 
+  return Number.isInteger(
+    qty * 2
+  );
+
+}
+
+
+/* =========================================================
+   PACK QUANTITY VALIDATION
+========================================================= */
+
+function isValidPackQuantity(quantity) {
+
+  const qty =
+    Number(quantity);
+
   return (
-    Number.isInteger(
-      qty * 2
-    )
+    Number.isInteger(qty) &&
+    qty >= 1 &&
+    qty <= 50
   );
 
 }
@@ -437,8 +516,9 @@ function isValidQuantity(quantity) {
 
 function getProduct(productId) {
 
-  return products.find(
-    p => p.id === String(productId)
+  return PRODUCTS.find(
+    p =>
+      p.id === String(productId)
   );
 
 }
@@ -460,15 +540,19 @@ app.get(
       upiName:
         UPI_NAME,
 
-      products: PRODUCTS,
+      products:
+        PRODUCTS,
 
       deliveryRules: {
 
-        upTo1Kg: 100,
+        upTo1Kg:
+          100,
 
-        upTo2Kg: 200,
+        upTo2Kg:
+          200,
 
-        above2Kg: 300
+        above2Kg:
+          300
 
       }
 
@@ -521,9 +605,11 @@ function createOrderNumber() {
    SHIPROCKET TOKEN
 ========================================================= */
 
-let shiprocketToken = null;
+let shiprocketToken =
+  null;
 
-let shiprocketTokenTime = 0;
+let shiprocketTokenTime =
+  0;
 
 
 async function getShiprocketToken() {
@@ -546,13 +632,13 @@ async function getShiprocketToken() {
 
 
   /*
-    Token लगभग 10 दिन valid रहता है,
-    लेकिन हम सुरक्षित रूप से 24 घंटे में refresh करेंगे।
+    Token को 24 घंटे cache करेंगे।
   */
 
   if (
     shiprocketToken &&
-    Date.now() - shiprocketTokenTime <
+    Date.now() -
+      shiprocketTokenTime <
       24 * 60 * 60 * 1000
   ) {
 
@@ -566,7 +652,8 @@ async function getShiprocketToken() {
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
 
-        method: "POST",
+        method:
+          "POST",
 
         headers: {
 
@@ -629,11 +716,6 @@ async function createShiprocketOrder(
     process.env.SHIPROCKET_PICKUP_LOCATION;
 
 
-  /*
-    Shiprocket credentials या pickup location
-    नहीं है तो integration skip होगा।
-  */
-
   if (
     !process.env.SHIPROCKET_EMAIL ||
     !process.env.SHIPROCKET_PASSWORD ||
@@ -642,9 +724,11 @@ async function createShiprocketOrder(
 
     return {
 
-      success: false,
+      success:
+        false,
 
-      skipped: true,
+      skipped:
+        true,
 
       message:
         "Shiprocket environment variables not configured"
@@ -664,6 +748,37 @@ async function createShiprocketOrder(
       : "Prepaid";
 
 
+  /*
+    Product information से actual product निकालना
+  */
+
+  const product =
+    getProduct(
+      order.product_id
+    );
+
+
+  /*
+    KG product:
+      quantity = Kg
+
+    PACK product:
+      quantity = number of packs
+
+    Pack weight = 0.8 Kg
+  */
+
+  const totalWeight =
+    product
+      ? (
+          product.type === "kg"
+            ? Number(order.quantity)
+            : Number(product.weight) *
+              Number(order.quantity)
+        )
+      : Number(order.quantity);
+
+
   const shiprocketBody = {
 
     order_id:
@@ -674,6 +789,11 @@ async function createShiprocketOrder(
 
     pickup_location:
       pickupLocation,
+
+
+    /* =====================================================
+       BILLING
+    ===================================================== */
 
     billing_customer_name:
       order.customer_name,
@@ -705,6 +825,11 @@ async function createShiprocketOrder(
 
     billing_phone:
       Number(order.phone),
+
+
+    /* =====================================================
+       SHIPPING
+    ===================================================== */
 
     shipping_is_billing:
       true,
@@ -740,6 +865,11 @@ async function createShiprocketOrder(
     shipping_phone:
       Number(order.phone),
 
+
+    /* =====================================================
+       ORDER ITEM
+    ===================================================== */
+
     order_items: [
 
       {
@@ -750,6 +880,11 @@ async function createShiprocketOrder(
         sku:
           order.product_id ||
           order.order_no,
+
+        /*
+          Pack में number of packs जाएगा
+          Kg में Kg quantity जाएगी
+        */
 
         units:
           Number(order.quantity),
@@ -770,6 +905,7 @@ async function createShiprocketOrder(
 
     ],
 
+
     payment_method:
       paymentMethod,
 
@@ -785,11 +921,18 @@ async function createShiprocketOrder(
     total_discount:
       0,
 
+    /*
+      Product price × quantity
+    */
+
     sub_total:
-      Number(
-        order.price *
-        order.quantity
-      ),
+      Number(order.price) *
+      Number(order.quantity),
+
+
+    /*
+      Package dimensions
+    */
 
     length:
       20,
@@ -800,8 +943,15 @@ async function createShiprocketOrder(
     height:
       10,
 
+
+    /*
+      IMPORTANT:
+      Shiprocket को actual total weight
+      भेजना है।
+    */
+
     weight:
-      Number(order.quantity)
+      Number(totalWeight)
 
   };
 
@@ -811,7 +961,8 @@ async function createShiprocketOrder(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       {
 
-        method: "POST",
+        method:
+          "POST",
 
         headers: {
 
@@ -836,7 +987,9 @@ async function createShiprocketOrder(
     await response.json();
 
 
-  if (!response.ok) {
+  if (
+    !response.ok
+  ) {
 
     throw new Error(
       data.message ||
@@ -848,7 +1001,8 @@ async function createShiprocketOrder(
 
   return {
 
-    success: true,
+    success:
+      true,
 
     data
 
@@ -892,50 +1046,66 @@ app.post(
       } = req.body;
 
 
+      /* =====================================================
+         CLEAN INPUT
+      ===================================================== */
+
       const cleanName =
         String(name || "")
           .trim();
+
 
       const cleanPhone =
         String(phone || "")
           .replace(/\D/g, "");
 
+
       const cleanAddress =
         String(address || "")
           .trim();
+
 
       const cleanCity =
         String(city || "")
           .trim();
 
+
       const cleanState =
         String(state || "")
           .trim();
+
 
       const cleanPincode =
         String(pincode || "")
           .replace(/\D/g, "");
 
+
       const cleanUtr =
         String(utr || "")
           .trim();
 
+
       const product =
         getProduct(productId);
+
 
       const qty =
         Number(quantity);
 
 
       /* =====================================================
-         VALIDATION
+         CUSTOMER VALIDATION
       ===================================================== */
 
-      if (!cleanName) {
+      if (
+        !cleanName
+      ) {
 
         return res.status(400).json({
+
           error:
             "कृपया नाम डालें।"
+
         });
 
       }
@@ -948,38 +1118,52 @@ app.post(
       ) {
 
         return res.status(400).json({
+
           error:
             "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
+
         });
 
       }
 
 
-      if (!cleanAddress) {
+      if (
+        !cleanAddress
+      ) {
 
         return res.status(400).json({
+
           error:
             "कृपया पूरा पता डालें।"
+
         });
 
       }
 
 
-      if (!cleanCity) {
+      if (
+        !cleanCity
+      ) {
 
         return res.status(400).json({
+
           error:
             "कृपया शहर का नाम डालें।"
+
         });
 
       }
 
 
-      if (!cleanState) {
+      if (
+        !cleanState
+      ) {
 
         return res.status(400).json({
+
           error:
             "कृपया राज्य का नाम डालें।"
+
         });
 
       }
@@ -992,34 +1176,88 @@ app.post(
       ) {
 
         return res.status(400).json({
+
           error:
             "कृपया 6 अंकों का सही पिनकोड डालें।"
+
         });
 
       }
 
 
-      if (!product) {
-
-        return res.status(400).json({
-          error:
-            "कृपया सही product चुनें।"
-        });
-
-      }
-
+      /* =====================================================
+         PRODUCT VALIDATION
+      ===================================================== */
 
       if (
-        !isValidQuantity(qty)
+        !product
       ) {
 
         return res.status(400).json({
+
           error:
-            "मात्रा 0.5 Kg से 50 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
+            "कृपया सही product चुनें।"
+
         });
 
       }
 
+
+      /* =====================================================
+         QUANTITY VALIDATION
+      =====================================================
+
+         KG PRODUCT
+         -----------
+         0.5 Kg से 50 Kg
+
+         PACK PRODUCT
+         ------------
+         1 Pack से 50 Pack
+      ===================================================== */
+
+      if (
+        product.type === "kg"
+      ) {
+
+        if (
+          !isValidKgQuantity(
+            qty
+          )
+        ) {
+
+          return res.status(400).json({
+
+            error:
+              "Kg मात्रा 0.5 Kg से 50 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
+
+          });
+
+        }
+
+      } else {
+
+        if (
+          !isValidPackQuantity(
+            qty
+          )
+        ) {
+
+          return res.status(400).json({
+
+            error:
+              "Pack की संख्या 1 से 50 तक होनी चाहिए।"
+
+          });
+
+        }
+
+      }
+
+
+      /* =====================================================
+         PAYMENT
+      ===================================================== */
 
       const safePayment =
         paymentMethod === "COD"
@@ -1031,18 +1269,52 @@ app.post(
          SERVER-SIDE PRICE
       ===================================================== */
 
-     const productTotal =
-  Number(product.price) * qty;
+      const productTotal =
+        Number(product.price) *
+        qty;
 
-const totalWeight =
-  Number(product.weight) * qty;
 
-const delivery =
-  getDeliveryCharge(totalWeight);
+      /* =====================================================
+         TOTAL WEIGHT
+      =====================================================
 
-const total =
-  productTotal + delivery;
+         KG:
+           quantity = actual Kg
 
+         PACK:
+           quantity = number of packs
+           प्रत्येक pack = 0.8 Kg
+      ===================================================== */
+
+      const totalWeight =
+        product.type === "kg"
+          ? qty
+          : Number(product.weight) *
+            qty;
+
+
+      /* =====================================================
+         DELIVERY
+      ===================================================== */
+
+      const delivery =
+        getDeliveryCharge(
+          totalWeight
+        );
+
+
+      /* =====================================================
+         FINAL TOTAL
+      ===================================================== */
+
+      const total =
+        productTotal +
+        delivery;
+
+
+      /* =====================================================
+         ORDER NUMBER
+      ===================================================== */
 
       const orderNo =
         createOrderNumber();
@@ -1053,11 +1325,15 @@ const total =
           .toISOString();
 
 
+      /* =====================================================
+         PAYMENT STATUS
+      ===================================================== */
+
       const paymentStatus =
         safePayment === "UPI" &&
-      cleanUtr
-        ? "submitted"
-        : "pending";
+        cleanUtr
+          ? "submitted"
+          : "pending";
 
 
       /* =====================================================
@@ -1265,13 +1541,19 @@ const total =
 
         }
 
-      } catch (shiprocketError) {
+      } catch (
+        shiprocketError
+      ) {
 
         console.error(
           "SHIPROCKET ERROR:",
           shiprocketError.message
         );
 
+        /*
+          Shiprocket fail होने पर भी
+          customer का order database में save रहेगा।
+        */
 
         shiprocketMessage =
           "";
@@ -1283,43 +1565,55 @@ const total =
          SUCCESS RESPONSE
       ===================================================== */
 
-     return res.json({
+      return res.json({
 
-  success: true,
+        success:
+          true,
 
-  orderNo,
+        orderNo,
 
-  total,
+        total,
 
-  productTotal,
+        productTotal,
 
-  delivery,
+        delivery,
 
-  quantity: qty,
+        quantity:
+          qty,
 
-  packWeight: product.weight,
+        productType:
+          product.type,
 
-  totalWeight,
+        packWeight:
+          product.type === "pack"
+            ? Number(product.weight)
+            : null,
 
-  paymentStatus,
+        totalWeight,
 
-  message:
-    safePayment === "UPI"
-      ? (
-          "ऑर्डर सेव हो गया है। " +
-          "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
-          shiprocketMessage
-        )
-      : (
-          "ऑर्डर सेव हो गया है। " +
-          "Cash on Delivery चुना गया है." +
-          shiprocketMessage
-        )
+        paymentStatus,
 
-});
+        message:
+          safePayment === "UPI"
+
+            ? (
+                "ऑर्डर सेव हो गया है। " +
+                "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
+                shiprocketMessage
+              )
+
+            : (
+                "ऑर्डर सेव हो गया है। " +
+                "Cash on Delivery चुना गया है." +
+                shiprocketMessage
+              )
+
+      });
 
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       console.error(
         "ORDER ERROR:",
@@ -1358,7 +1652,9 @@ app.get(
 
 
       if (
-        !/^\d{10}$/.test(phone)
+        !/^\d{10}$/.test(
+          phone
+        )
       ) {
 
         return res.status(400).json({
@@ -1401,7 +1697,9 @@ app.get(
       });
 
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       console.error(
         "HISTORY ERROR:",
@@ -1437,15 +1735,19 @@ app.post(
           req.body.orderNo || ""
         ).trim();
 
+
       const phone =
         String(
           req.body.phone || ""
-        ).replace(/\D/g, "");
+        )
+          .replace(/\D/g, "");
 
 
       if (
         !orderNo ||
-        !/^\d{10}$/.test(phone)
+        !/^\d{10}$/.test(
+          phone
+        )
       ) {
 
         return res.status(400).json({
@@ -1470,8 +1772,11 @@ app.post(
           AND phone = ?
 
         `).get(
+
           orderNo,
+
           phone
+
         );
 
 
@@ -1495,7 +1800,9 @@ app.post(
       });
 
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       console.error(
         "DETAIL ERROR:",
@@ -1531,10 +1838,13 @@ app.post(
           req.body.orderNo || ""
         ).trim();
 
+
       const phone =
         String(
           req.body.phone || ""
-        ).replace(/\D/g, "");
+        )
+          .replace(/\D/g, "");
+
 
       const reason =
         String(
@@ -1542,7 +1852,9 @@ app.post(
         ).trim();
 
 
-      if (!orderNo) {
+      if (
+        !orderNo
+      ) {
 
         return res.status(400).json({
 
@@ -1555,7 +1867,9 @@ app.post(
 
 
       if (
-        !/^\d{10}$/.test(phone)
+        !/^\d{10}$/.test(
+          phone
+        )
       ) {
 
         return res.status(400).json({
@@ -1580,8 +1894,11 @@ app.post(
           AND phone = ?
 
         `).get(
+
           orderNo,
+
           phone
+
         );
 
 
@@ -1630,7 +1947,8 @@ app.post(
 
         SET
 
-          order_status = 'cancelled',
+          order_status =
+            'cancelled',
 
           cancellation_reason = ?
 
@@ -1651,7 +1969,8 @@ app.post(
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         orderNo,
 
@@ -1661,7 +1980,9 @@ app.post(
       });
 
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       console.error(
         "CANCEL ERROR:",
@@ -1683,7 +2004,7 @@ app.post(
 
 
 /* =========================================================
-   CUSTOMER ORDER MAPPER
+   CAN CANCEL ORDER
 ========================================================= */
 
 function canCancelOrder(
@@ -1705,9 +2026,77 @@ function canCancelOrder(
 }
 
 
+/* =========================================================
+   GET PRODUCT TYPE / WEIGHT
+========================================================= */
+
+function getOrderProductInfo(
+  order
+) {
+
+  const product =
+    getProduct(
+      order.product_id
+    );
+
+
+  if (!product) {
+
+    return {
+
+      type:
+        "kg",
+
+      packWeight:
+        null,
+
+      totalWeight:
+        Number(
+          order.quantity
+        )
+
+    };
+
+  }
+
+
+  const totalWeight =
+    product.type === "kg"
+      ? Number(order.quantity)
+      : Number(product.weight) *
+        Number(order.quantity);
+
+
+  return {
+
+    type:
+      product.type,
+
+    packWeight:
+      product.type === "pack"
+        ? Number(product.weight)
+        : null,
+
+    totalWeight
+
+  };
+
+}
+
+
+/* =========================================================
+   CUSTOMER ORDER MAPPER
+========================================================= */
+
 function mapOrderForCustomer(
   order
 ) {
+
+  const productInfo =
+    getOrderProductInfo(
+      order
+    );
+
 
   return {
 
@@ -1746,6 +2135,15 @@ function mapOrderForCustomer(
 
     quantity:
       order.quantity,
+
+    productType:
+      productInfo.type,
+
+    packWeight:
+      productInfo.packWeight,
+
+    totalWeight:
+      productInfo.totalWeight,
 
     delivery:
       order.delivery,
@@ -1782,9 +2180,19 @@ function mapOrderForCustomer(
 }
 
 
+/* =========================================================
+   CUSTOMER ORDER DETAILS MAPPER
+========================================================= */
+
 function mapOrderDetails(
   order
 ) {
+
+  const productInfo =
+    getOrderProductInfo(
+      order
+    );
+
 
   return {
 
@@ -1823,6 +2231,15 @@ function mapOrderDetails(
 
     quantity:
       order.quantity,
+
+    productType:
+      productInfo.type,
+
+    packWeight:
+      productInfo.packWeight,
+
+    totalWeight:
+      productInfo.totalWeight,
 
     delivery:
       order.delivery,
@@ -1898,17 +2315,22 @@ app.post(
   (req, res) => {
 
     const {
+
       username,
+
       password
+
     } = req.body;
 
 
     if (
+
       username ===
         ADMIN_USERNAME &&
 
       password ===
         ADMIN_PASSWORD
+
     ) {
 
       req.session.admin =
@@ -1917,7 +2339,8 @@ app.post(
 
       return res.json({
 
-        success: true
+        success:
+          true
 
       });
 
@@ -1948,7 +2371,8 @@ app.post(
 
         res.json({
 
-          success: true
+          success:
+            true
 
         });
 
@@ -1971,8 +2395,10 @@ app.get(
 
       loggedIn:
         Boolean(
+
           req.session &&
           req.session.admin
+
         )
 
     });
@@ -2004,10 +2430,49 @@ app.get(
         `).all();
 
 
-      res.json(rows);
+      /*
+        Admin में भी product type,
+        pack weight और total weight
+        भेजेंगे।
+      */
+
+      const orders =
+        rows.map(
+          order => {
+
+            const info =
+              getOrderProductInfo(
+                order
+              );
 
 
-    } catch (error) {
+            return {
+
+              ...order,
+
+              product_type:
+                info.type,
+
+              pack_weight:
+                info.packWeight,
+
+              total_weight:
+                info.totalWeight
+
+            };
+
+          }
+        );
+
+
+      res.json(
+        orders
+      );
+
+
+    } catch (
+      error
+    ) {
 
       console.error(
         "ADMIN ORDERS ERROR:",
@@ -2091,10 +2556,13 @@ app.patch(
 
 
       if (
+
         orderStatus &&
+
         !allowedOrder.includes(
           orderStatus
         )
+
       ) {
 
         return res.status(400).json({
@@ -2108,10 +2576,13 @@ app.patch(
 
 
       if (
+
         paymentStatus &&
+
         !allowedPayment.includes(
           paymentStatus
         )
+
       ) {
 
         return res.status(400).json({
@@ -2149,16 +2620,28 @@ app.patch(
         SET
 
           order_status =
-            COALESCE(?, order_status),
+            COALESCE(
+              ?,
+              order_status
+            ),
 
           payment_status =
-            COALESCE(?, payment_status),
+            COALESCE(
+              ?,
+              payment_status
+            ),
 
           awb =
-            COALESCE(?, awb),
+            COALESCE(
+              ?,
+              awb
+            ),
 
           shiprocket_status =
-            COALESCE(?, shiprocket_status)
+            COALESCE(
+              ?,
+              shiprocket_status
+            )
 
         WHERE id = ?
 
@@ -2185,12 +2668,15 @@ app.patch(
 
       return res.json({
 
-        success: true
+        success:
+          true
 
       });
 
 
-    } catch (error) {
+    } catch (
+      error
+    ) {
 
       console.error(
         "ADMIN UPDATE ERROR:",
@@ -2215,18 +2701,38 @@ app.patch(
    ADMIN PAGE
 ========================================================= */
 
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin.html"));
-});
+app.get(
+  "/admin",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "admin.html"
+      )
+    );
+
+  }
+);
 
 
 /* =========================================================
    ROOT
 ========================================================= */
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+app.get(
+  "/",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "index.html"
+      )
+    );
+
+  }
+);
 
 
 /* =========================================================
@@ -2234,7 +2740,12 @@ app.get("/", (req, res) => {
 ========================================================= */
 
 app.use(
-  (err, req, res, next) => {
+  (
+    err,
+    req,
+    res,
+    next
+  ) => {
 
     console.error(
       "SERVER ERROR:",
@@ -2268,3 +2779,4 @@ app.listen(
 
   }
 );
+```
