@@ -385,11 +385,10 @@
         हमारे लड्डू पैक
       </h2>
 
-      <div id="productGrid" class="product-grid">
-        <p>Products load हो रहे हैं...</p>
-      </div>
+     <div id="productGrid" class="product-grid">
+  <p>उत्पाद उपलब्ध हैं।</p>
+</div>
 
-      <p class="delivery-note">
        <p class="delivery-note">
   🚚 डिलीवरी चार्ज:
   <strong>
@@ -519,26 +518,39 @@
 
         <label>
 
-          पिनकोड
+  पिनकोड
 
-          <input
-            id="pincode"
-            required
-            inputmode="numeric"
-            pattern="[0-9]{6}"
-            maxlength="6"
-            autocomplete="postal-code"
-            placeholder="6 अंकों का पिनकोड">
+  <input
+    id="pincode"
+    required
+    inputmode="numeric"
+    pattern="[0-9]{6}"
+    maxlength="6"
+    autocomplete="postal-code"
+    placeholder="6 अंकों का पिनकोड">
 
-       <label>
+</label>
+
+
+<label>
 
   लड्डू का प्रकार
 
   <select id="product" required>
 
     <option value="">
-      Products load हो रहे हैं...
+      पैक चुनें
     </option>
+
+  </select>
+
+</label>
+
+  <select id="product" required>
+
+   <option value="">
+  पैक चुनें
+</option>
 
   </select>
 
@@ -605,8 +617,8 @@
           <p>
             UPI ID:
             <span id="upiId">
-              लोड हो रहा है...
-            </span>
+  UPI ID उपलब्ध नहीं है
+</span>
           </p>
 
           <div id="qr"></div>
@@ -1084,36 +1096,6 @@
         Number(n || 0).toLocaleString("en-IN");
 
     }
-
-
-    /* =====================================================
-       DELIVERY CHARGE
-       
-       TOTAL WEIGHT:
-       0.5–1 Kg   = ₹100
-       1.5–2 Kg   = ₹200
-       2.5 Kg+    = ₹300
-    ===================================================== */
-
-    function getDeliveryCharge(totalWeight) {
-
-      const weight =
-        Number(totalWeight || 0);
-
-      if (!Number.isFinite(weight) || weight <= 0) {
-        return 0;
-      }
-
-      function getDeliveryCharge(totalWeight) {
-
-  const weight = Number(totalWeight || 0);
-
-  if (!Number.isFinite(weight) || weight <= 0) {
-    return 0;
-  }
-
-  return Math.ceil(weight) * 100;
-}
 
 
     /* =====================================================
