@@ -477,38 +477,20 @@ function getProduct(productId) {
    CONFIG API
 ========================================================= */
 
-app.get(
-  "/api/config",
-  (req, res) => {
+app.get("/api/config", (req, res) => {
+  res.json({
+    upiId: UPI_ID,
+    upiName: UPI_NAME,
 
-    res.json({
+    products: PRODUCTS,
 
-      upiId:
-        UPI_ID,
-
-      upiName:
-        UPI_NAME,
-
-      products:
-        PRODUCTS,
-
-      deliveryRules: {
-
-        upTo1Kg:
-          100,
-
-        upTo2Kg:
-          200,
-
-        above2Kg:
-          300
-
-      }
-
-    });
-
-  }
-);
+    deliveryRules: {
+      upTo1Kg: 100,
+      upTo2Kg: 200,
+      above2Kg: 300
+    }
+  });
+});
 
 
 /* =========================================================
