@@ -536,15 +536,17 @@
   लड्डू का प्रकार
 
   <select id="product" required>
+
     <option value="">
       लड्डू का प्रकार चुनें
     </option>
+
   </select>
 
 </label>
 
 
-<!-- QUANTITY -->
+<!-- KG QUANTITY -->
 
 <label for="quantity">
 
@@ -552,91 +554,6 @@
 
   <select id="quantity" required>
 
-    <option value="0.5">
-      0.5 Kg
-    </option>
-
-    <option value="1" selected>
-      1 Kg
-    </option>
-
-    <option value="1.5">
-      1.5 Kg
-    </option>
-
-    <option value="2">
-      2 Kg
-    </option>
-
-    <option value="2.5">
-      2.5 Kg
-    </option>
-
-    <option value="3">
-      3 Kg
-    </option>
-
-    <option value="3.5">
-      3.5 Kg
-    </option>
-
-    <option value="4">
-      4 Kg
-    </option>
-
-    <option value="4.5">
-      4.5 Kg
-    </option>
-
-    <option value="5">
-      5 Kg
-    </option>
-
-    <option value="5.5">
-      5.5 Kg
-    </option>
-
-    <option value="6">
-      6 Kg
-    </option>
-
-    <option value="6.5">
-      6.5 Kg
-    </option>
-
-    <option value="7">
-      7 Kg
-    </option>
-
-    <option value="7.5">
-      7.5 Kg
-    </option>
-
-    <option value="8">
-      8 Kg
-    </option>
-
-    <option value="8.5">
-      8.5 Kg
-    </option>
-
-    <option value="9">
-      9 Kg
-    </option>
-
-    <option value="9.5">
-      9.5 Kg
-    </option>
-
-    <option value="10">
-      10 Kg
-    </option>
-
-  </select>
-
-</label>
-
-  <select id="quantity" required>
     <option value="0.5">0.5 Kg</option>
     <option value="1" selected>1 Kg</option>
     <option value="1.5">1.5 Kg</option>
@@ -657,7 +574,9 @@
     <option value="9">9 Kg</option>
     <option value="9.5">9.5 Kg</option>
     <option value="10">10 Kg</option>
+
   </select>
+
 </label>
 
         <!-- PAYMENT -->
@@ -1173,13 +1092,67 @@
         Number(n || 0).toLocaleString("en-IN");
 
     }
+/* =====================================================
+   DELIVERY CALCULATION
+===================================================== */
+
+function getDeliveryCharge(totalWeight) {
+
+  const weight =
+    Number(totalWeight || 0);
+
+  if (
+    !Number.isFinite(weight) ||
+    weight <= 0
+  ) {
+    return 0;
+  }
+
+  if (weight <= 1) {
+    return 100;
+  }
+
+  if (weight <= 2) {
+    return 200;
+  }
+
+  if (weight <= 3) {
+    return 300;
+  }
+
+  if (weight <= 4) {
+    return 400;
+  }
+
+  if (weight <= 5) {
+    return 500;
+  }
+
+  if (weight <= 6) {
+    return 600;
+  }
+
+  if (weight <= 7) {
+    return 700;
+  }
+
+  if (weight <= 8) {
+    return 800;
+  }
+
+  if (weight <= 9) {
+    return 900;
+  }
+
+  return 1000;
+}
 
 
-    /* =====================================================
-       PRICE
-    ===================================================== */
+/* =====================================================
+   PRICE
+===================================================== */
 
-    function getSelectedProduct() {
+function getSelectedProduct() {
 
       const selected =
         product.options[product.selectedIndex];
@@ -1963,10 +1936,7 @@ if (
 
 
             const totalWeight =
-              selected
-                ? selected.weight *
-                  body.quantity
-                : 0;
+  body.quantity;
 
 
             const wa =
