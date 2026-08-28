@@ -522,25 +522,19 @@
             autocomplete="postal-code"
             placeholder="6 अंकों का पिनकोड">
 
-        </label>
+       <label>
 
+  लड्डू का प्रकार
 
-        <!-- PRODUCT -->
+  <select id="product" required>
 
-        <label>
+    <option value="">
+      Products load हो रहे हैं...
+    </option>
 
-          पैक
+  </select>
 
-          <select id="product" required>
-
-            <option value="">
-              Products load हो रहे हैं...
-            </option>
-
-          </select>
-
-        </label>
-
+</label>
 
        <label for="quantity">Kg मात्रा</label>
 
@@ -1053,8 +1047,8 @@
     const product =
       document.getElementById("product");
 
-    const qty =
-      document.getElementById("qty");
+   const qty =
+  document.getElementById("quantity");
 
     const productTotal =
       document.getElementById("productTotal");
@@ -1162,50 +1156,36 @@
       }
 
 
-      const packPrice =
-        selected.price;
+      const productPrice =
+  selected.price;
 
+const quantityKg =
+  Number(qty.value || 1);
 
-      const packWeight =
-        selected.weight;
+/*
+  Product price 1 Kg का है,
+  इसलिए selected quantity के Kg से multiply होगा.
+*/
 
+const productAmount =
+  productPrice * quantityKg;
 
-      const packQuantity =
-        Number(qty.value || 1);
+/*
+  अब quantity खुद total Kg है.
+*/
 
+const totalWeight =
+  quantityKg;
 
-      /*
-        Product amount =
-        Pack price × number of packs
-      */
+/*
+  Delivery total Kg के आधार पर
+*/
 
-      const productAmount =
-        packPrice * packQuantity;
+const delivery =
+  getDeliveryCharge(totalWeight);
 
-
-      /*
-        Total physical weight =
-        Pack weight × number of packs
-      */
-
-      const totalWeight =
-        packWeight * packQuantity;
-
-
-      /*
-        Delivery based on total weight
-      */
-
-      const delivery =
-        getDeliveryCharge(totalWeight);
-
-
-      /*
-        Final amount
-      */
-
-      const grand =
-        productAmount + delivery;
+const grand =
+  productAmount + delivery;
 
 
       productTotal.textContent =
@@ -1403,23 +1383,19 @@
       }
 
 
-      const packQuantity =
-        Number(qty.value || 1);
+      const quantityKg =
+  Number(qty.value || 1);
 
+const totalWeight =
+  quantityKg;
 
-      const totalWeight =
-        selected.weight *
-        packQuantity;
+const delivery =
+  getDeliveryCharge(totalWeight);
 
-
-      const delivery =
-        getDeliveryCharge(totalWeight);
-
-
-      const amount =
-        selected.price *
-        packQuantity +
-        delivery;
+const amount =
+  selected.price *
+  quantityKg +
+  delivery;
 
 
       document
@@ -1712,9 +1688,9 @@
 
 
             /*
-              IMPORTANT:
-              quantity = number of packs
-            */
+  IMPORTANT:
+  quantity = total Kg
+*/
 
             quantity:
               Number(qty.value),
@@ -1816,24 +1792,24 @@
 
 
           /*
-            Quantity अब PACK COUNT है।
-            केवल 1 से 10 packs allowed हैं।
-          */
+  Quantity अब Kg में है.
+  0.5 Kg से 10 Kg तक,
+  केवल 0.5 Kg के अंतर में.
+*/
 
-          if (
-            !Number.isInteger(
-              body.quantity
-            ) ||
-            body.quantity < 1 ||
-            body.quantity > 10
-          ) {
+if (
+  !Number.isFinite(body.quantity) ||
+  body.quantity < 0.5 ||
+  body.quantity > 10 ||
+  !Number.isInteger(body.quantity * 2)
+) {
 
-            alert(
-              "कृपया 1 से 10 Pack के बीच मात्रा चुनें।"
-            );
+  alert(
+    "कृपया 0.5 Kg से 10 Kg के बीच सही मात्रा चुनें।"
+  );
 
-            return;
-          }
+  return;
+}
 
 
           try {
@@ -1931,9 +1907,8 @@
               `Order No: ${data.orderNo}. ` +
               `नाम: ${body.name}, ` +
               `मोबाइल: ${body.phone}, ` +
-              `पैक: ${selectedProduct}, ` +
-              `पैक की संख्या: ${body.quantity}, ` +
-              `कुल वजन: ${formatWeight(totalWeight)}, ` +
+             `लड्डू का प्रकार: ${selectedProduct}, ` +
+          `मात्रा: ${formatWeight(body.quantity)}, ` +
               `पता: ${body.address}, ` +
               `शहर: ${body.city}, ` +
               `राज्य: ${body.state}, ` +
@@ -2248,10 +2223,8 @@
             </span>
 
             <strong>
-              ${Number(
-                order.quantity || 0
-              )} Pack
-            </strong>
+  ${formatWeight(order.quantity)}
+</strong>
 
           </div>
 
@@ -2579,9 +2552,7 @@
 
           <div class="detail-item">
             <strong>Quantity</strong><br>
-            ${Number(
-              order.quantity || 0
-            )} Pack
+            ${formatWeight(order.quantity)}
           </div>
 
 
