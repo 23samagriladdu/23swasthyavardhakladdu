@@ -388,9 +388,65 @@ function getDeliveryCharge(totalWeight) {
 
   }
 
-  /* 2 Kg से ज्यादा */
+  /* 2 Kg से ज्यादा और 3 Kg तक */
 
-  return 300;
+  if (weight <= 3) {
+
+    return 300;
+
+  }
+
+  /* 3 Kg से ज्यादा और 4 Kg तक */
+
+  if (weight <= 4) {
+
+    return 400;
+
+  }
+
+  /* 4 Kg से ज्यादा और 5 Kg तक */
+
+  if (weight <= 5) {
+
+    return 500;
+
+  }
+
+  /* 5 Kg से ज्यादा और 6 Kg तक */
+
+  if (weight <= 6) {
+
+    return 600;
+
+  }
+
+  /* 6 Kg से ज्यादा और 7 Kg तक */
+
+  if (weight <= 7) {
+
+    return 700;
+
+  }
+
+  /* 7 Kg से ज्यादा और 8 Kg तक */
+
+  if (weight <= 8) {
+
+    return 800;
+
+  }
+
+  /* 8 Kg से ज्यादा और 9 Kg तक */
+
+  if (weight <= 9) {
+
+    return 900;
+
+  }
+
+  /* 10 Kg से ज्यादा */
+
+  return 1000;
 
 }
 
@@ -414,7 +470,7 @@ function isValidKgQuantity(quantity) {
 
   if (
     qty < 0.5 ||
-    qty > 50
+    qty > 10
   ) {
 
     return false;
