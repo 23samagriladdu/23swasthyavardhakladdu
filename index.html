@@ -390,13 +390,21 @@
       </div>
 
       <p class="delivery-note">
-        🚚 डिलीवरी चार्ज:
-        <strong>
-          0.5–1 Kg: ₹100 |
-          1.5–2 Kg: ₹200 |
-          2.5 Kg या अधिक: ₹300
-        </strong>
-      </p>
+       <p class="delivery-note">
+  🚚 डिलीवरी चार्ज:
+  <strong>
+    0.5–1 Kg: ₹100 |
+    1.5–2 Kg: ₹200 |
+    2.5–3 Kg: ₹300 |
+    3.5–4 Kg: ₹400 |
+    4.5–5 Kg: ₹500 |
+    5.5–6 Kg: ₹600 |
+    6.5–7 Kg: ₹700 |
+    7.5–8 Kg: ₹800 |
+    8.5–9 Kg: ₹900 |
+    9.5–10 Kg: ₹1000
+  </strong>
+</p>
 
     </section>
 
@@ -1096,16 +1104,16 @@
         return 0;
       }
 
-      if (weight <= 1) {
-        return 100;
-      }
+      function getDeliveryCharge(totalWeight) {
 
-      if (weight <= 2) {
-        return 200;
-      }
+  const weight = Number(totalWeight || 0);
 
-      return 300;
-    }
+  if (!Number.isFinite(weight) || weight <= 0) {
+    return 0;
+  }
+
+  return Math.ceil(weight) * 100;
+}
 
 
     /* =====================================================
