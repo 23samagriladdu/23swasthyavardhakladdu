@@ -1,46 +1,1632 @@
+```html
 <!doctype html>
 <html lang="hi">
+
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Panel | 23 स्वास्थ्यवर्धक सामान</title><link rel="stylesheet" href="style.css">
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1">
+
+<title>
+  Admin Panel | 23 स्वास्थ्यवर्धक सामान
+</title>
+
+<link
+  rel="stylesheet"
+  href="style.css">
+
+<style>
+
+.hidden {
+  display: none !important;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 25px 0;
+}
+
+.admin-tab {
+  border: 0;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  background: #eee;
+}
+
+.admin-tab.active {
+  background: #198754;
+  color: #fff;
+}
+
+.admin-panel {
+  margin-top: 20px;
+}
+
+.review-stats {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.review-stat {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow:
+    0 4px 15px rgba(0,0,0,.05);
+}
+
+.review-stat strong {
+  display: block;
+  font-size: 25px;
+  margin-top: 5px;
+}
+
+.review-list {
+  display: grid;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.review-admin-card {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.06);
+}
+
+.review-admin-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.review-stars {
+  color: #f59e0b;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+.review-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #eee;
+}
+
+.review-status.approved {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.review-status.pending {
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.review-status.hidden-status {
+  background: #f8d7da;
+  color: #842029;
+}
+
+.review-text {
+  margin: 15px 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.review-actions button {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 13px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.approve-btn {
+  background: #198754;
+  color: #fff;
+}
+
+.hide-btn {
+  background: #6c757d;
+  color: #fff;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: #fff;
+}
+
+.pending-btn {
+  background: #ffc107;
+  color: #000;
+}
+
+.small-date {
+  color: #777;
+  font-size: 13px;
+}
+
+@media(max-width:650px) {
+
+  .review-admin-top {
+    flex-direction: column;
+  }
+
+  .review-actions {
+    width: 100%;
+  }
+
+  .review-actions button {
+    flex: 1;
+  }
+
+}
+
+</style>
+
 </head>
+
+
 <body class="admin-body">
-<header class="topbar"><div class="brand">23 <span>Admin Panel</span></div><a class="call-btn" href="/">Store</a></header>
+
+
+<header class="topbar">
+
+  <div class="brand">
+
+    23
+    <span>
+      Admin Panel
+    </span>
+
+  </div>
+
+  <a
+    class="call-btn"
+    href="/">
+
+    Store
+
+  </a>
+
+</header>
+
+
 <main>
-<section id="loginBox" class="admin-login">
-<h1>Admin Login</h1>
-<form id="loginForm"><input id="username" placeholder="Username" required><input id="password" type="password" placeholder="Password" required><button class="primary-btn">Login</button></form>
-<p class="small">Username/password `.env` file में सेट करें।</p>
+
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
+
+<section
+  id="loginBox"
+  class="admin-login">
+
+  <h1>
+    Admin Login
+  </h1>
+
+  <form id="loginForm">
+
+    <input
+      id="username"
+      placeholder="Username"
+      required>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      required>
+
+    <button
+      class="primary-btn">
+
+      Login
+
+    </button>
+
+  </form>
+
+  <p class="small">
+
+    Username/password `.env`
+    file में सेट करें।
+
+  </p>
+
 </section>
 
-<section id="dashboard" class="hidden">
-<div class="admin-head"><div><h1>Orders Dashboard</h1><p>Customer orders, payment और delivery status manage करें।</p></div><button id="logout" class="secondary-btn">Logout</button></div>
-<div class="stats" id="stats"></div>
-<div class="table-wrap"><table><thead><tr><th>Order</th><th>Customer</th><th>Product</th><th>Total</th><th>Payment</th><th>Order Status</th><th>Action</th></tr></thead><tbody id="orders"></tbody></table></div>
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
+<section
+  id="dashboard"
+  class="hidden">
+
+
+<div class="admin-head">
+
+  <div>
+
+    <h1>
+      Admin Dashboard
+    </h1>
+
+    <p>
+      Orders और Customer Reviews manage करें।
+    </p>
+
+  </div>
+
+  <button
+    id="logout"
+    class="secondary-btn">
+
+    Logout
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     TABS
+===================================================== -->
+
+<div class="admin-tabs">
+
+  <button
+    id="ordersTab"
+    class="admin-tab active"
+    type="button"
+    onclick="showPanel('ordersPanel')">
+
+    📦 Orders
+
+  </button>
+
+
+  <button
+    id="reviewsTab"
+    class="admin-tab"
+    type="button"
+    onclick="showPanel('reviewsPanel')">
+
+    ⭐ Reviews
+
+  </button>
+
+</div>
+
+
+<!-- =====================================================
+     ORDERS PANEL
+===================================================== -->
+
+<div
+  id="ordersPanel"
+  class="admin-panel">
+
+
+<div
+  class="stats"
+  id="stats">
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+  Order
+</th>
+
+<th>
+  Customer
+</th>
+
+<th>
+  Product
+</th>
+
+<th>
+  Total
+</th>
+
+<th>
+  Payment
+</th>
+
+<th>
+  Order Status
+</th>
+
+<th>
+  Action
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+  id="orders">
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     REVIEWS PANEL
+===================================================== -->
+
+<div
+  id="reviewsPanel"
+  class="admin-panel hidden">
+
+
+<h2>
+  ⭐ Customer Feedback & Reviews
+</h2>
+
+<p>
+  Customer के reviews यहाँ approve, hide या delete करें।
+</p>
+
+
+<div
+  class="review-stats"
+  id="reviewStats">
+</div>
+
+
+<div
+  id="reviewList"
+  class="review-list">
+
+  <p>
+    Reviews load हो रहे हैं...
+  </p>
+
+</div>
+
+
+</div>
+
+
 </section>
+
 </main>
+
+
 <script>
-async function api(url,opt={}){const r=await fetch(url,opt);const d=await r.json();if(!r.ok)throw new Error(d.error||'Error');return d}
-async function check(){
- const d=await api('/api/admin/me'); if(d.loggedIn) showDash();
+
+
+/* =====================================================
+   API
+===================================================== */
+
+async function api(
+  url,
+  opt = {}
+) {
+
+  const r =
+    await fetch(
+      url,
+      opt
+    );
+
+  const d =
+    await r.json();
+
+  if (!r.ok) {
+
+    throw new Error(
+      d.error ||
+      "Error"
+    );
+
+  }
+
+  return d;
+
 }
-document.getElementById('loginForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:username.value,password:password.value})});showDash()}catch(err){alert(err.message)}}
-async function showDash(){loginBox.classList.add('hidden');dashboard.classList.remove('hidden');await loadOrders()}
-logout.onclick=async()=>{await api('/api/admin/logout',{method:'POST'});location.reload()}
-async function loadOrders(){
- const rows=await api('/api/admin/orders');
- stats.innerHTML=`<div>कुल Orders <b>${rows.length}</b></div><div>Paid <b>${rows.filter(x=>x.payment_status==='paid').length}</b></div><div>New <b>${rows.filter(x=>x.order_status==='new').length}</b></div><div>Delivered <b>${rows.filter(x=>x.order_status==='delivered').length}</b></div>`;
- orders.innerHTML=rows.map(r=>`<tr>
-<td><b>${r.order_no}</b><br><small>${new Date(r.created_at).toLocaleString('hi-IN')}</small></td>
-<td>${esc(r.customer_name)}<br>📞 ${esc(r.phone)}<br>${esc(r.address)}, ${esc(r.pincode)}</td>
-<td>${esc(r.product)}<br>${r.quantity} Kg</td>
-<td>₹${Number(r.total).toLocaleString('en-IN')}</td>
-<td><select onchange="update(${r.id},null,this.value)"><option ${r.payment_status==='pending'?'selected':''}>pending</option><option ${r.payment_status==='submitted'?'selected':''}>submitted</option><option ${r.payment_status==='paid'?'selected':''}>paid</option><option ${r.payment_status==='failed'?'selected':''}>failed</option><option ${r.payment_status==='refunded'?'selected':''}>refunded</option></select><br><small>UTR: ${esc(r.utr||'-')}</small></td>
-<td><select onchange="update(${r.id},this.value,null)"><option value="new" ${r.order_status==='new'?'selected':''}>new</option><option value="confirmed" ${r.order_status==='confirmed'?'selected':''}>confirmed</option><option value="packed" ${r.order_status==='packed'?'selected':''}>packed</option><option value="shipped" ${r.order_status==='shipped'?'selected':''}>shipped</option><option value="delivered" ${r.order_status==='delivered'?'selected':''}>delivered</option><option value="cancelled" ${r.order_status==='cancelled'?'selected':''}>cancelled</option></select></td>
-<td><a class="mini" href="https://wa.me/91${r.phone}" target="_blank">WhatsApp</a></td></tr>`).join('');
+
+
+/* =====================================================
+   LOGIN CHECK
+===================================================== */
+
+async function check() {
+
+  try {
+
+    const d =
+      await api(
+        "/api/admin/me"
+      );
+
+    if (
+      d.loggedIn
+    ) {
+
+      showDash();
+
+    }
+
+  } catch (e) {
+
+    console.error(e);
+
+  }
+
 }
-async function update(id,orderStatus,paymentStatus){const body={};if(orderStatus)body.orderStatus=orderStatus;if(paymentStatus)body.paymentStatus=paymentStatus;try{await api('/api/admin/orders/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});loadOrders()}catch(e){alert(e.message)}}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+document
+  .getElementById(
+    "loginForm"
+  )
+  .onsubmit =
+  async e => {
+
+    e.preventDefault();
+
+    try {
+
+      await api(
+        "/api/admin/login",
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify({
+
+              username:
+                document
+                  .getElementById(
+                    "username"
+                  )
+                  .value,
+
+              password:
+                document
+                  .getElementById(
+                    "password"
+                  )
+                  .value
+
+            })
+
+        }
+      );
+
+      showDash();
+
+    } catch (err) {
+
+      alert(
+        err.message
+      );
+
+    }
+
+  };
+
+
+/* =====================================================
+   SHOW DASHBOARD
+===================================================== */
+
+async function showDash() {
+
+  document
+    .getElementById(
+      "loginBox"
+    )
+    .classList
+    .add("hidden");
+
+  document
+    .getElementById(
+      "dashboard"
+    )
+    .classList
+    .remove("hidden");
+
+  await loadOrders();
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+document
+  .getElementById(
+    "logout"
+  )
+  .onclick =
+  async () => {
+
+    try {
+
+      await api(
+        "/api/admin/logout",
+        {
+          method:
+            "POST"
+        }
+      );
+
+    } catch (e) {}
+
+    location.reload();
+
+  };
+
+
+/* =====================================================
+   TAB PANEL
+===================================================== */
+
+function showPanel(
+  panel
+) {
+
+  const ordersPanel =
+    document.getElementById(
+      "ordersPanel"
+    );
+
+  const reviewsPanel =
+    document.getElementById(
+      "reviewsPanel"
+    );
+
+  const ordersTab =
+    document.getElementById(
+      "ordersTab"
+    );
+
+  const reviewsTab =
+    document.getElementById(
+      "reviewsTab"
+    );
+
+
+  if (
+    panel ===
+    "ordersPanel"
+  ) {
+
+    ordersPanel
+      .classList
+      .remove("hidden");
+
+    reviewsPanel
+      .classList
+      .add("hidden");
+
+    ordersTab
+      .classList
+      .add("active");
+
+    reviewsTab
+      .classList
+      .remove("active");
+
+    loadOrders();
+
+  } else {
+
+    ordersPanel
+      .classList
+      .add("hidden");
+
+    reviewsPanel
+      .classList
+      .remove("hidden");
+
+    ordersTab
+      .classList
+      .remove("active");
+
+    reviewsTab
+      .classList
+      .add("active");
+
+    loadReviews();
+
+  }
+
+}
+
+
+/* =====================================================
+   LOAD ORDERS
+===================================================== */
+
+async function loadOrders() {
+
+  try {
+
+    const rows =
+      await api(
+        "/api/admin/orders"
+      );
+
+    document
+      .getElementById(
+        "stats"
+      )
+      .innerHTML =
+
+      `<div>
+        कुल Orders
+        <b>${rows.length}</b>
+      </div>
+
+      <div>
+        Paid
+        <b>
+          ${
+            rows.filter(
+              x =>
+                x.payment_status ===
+                "paid"
+            ).length
+          }
+        </b>
+      </div>
+
+      <div>
+        New
+        <b>
+          ${
+            rows.filter(
+              x =>
+                x.order_status ===
+                "new"
+            ).length
+          }
+        </b>
+      </div>
+
+      <div>
+        Delivered
+        <b>
+          ${
+            rows.filter(
+              x =>
+                x.order_status ===
+                "delivered"
+            ).length
+          }
+        </b>
+      </div>`;
+
+
+    document
+      .getElementById(
+        "orders"
+      )
+      .innerHTML =
+
+      rows.map(
+        r =>
+
+        `<tr>
+
+          <td>
+
+            <b>
+              ${esc(r.order_no)}
+            </b>
+
+            <br>
+
+            <small>
+              ${
+                new Date(
+                  r.created_at
+                )
+                .toLocaleString(
+                  "hi-IN"
+                )
+              }
+            </small>
+
+          </td>
+
+
+          <td>
+
+            ${esc(
+              r.customer_name
+            )}
+
+            <br>
+
+            📞 ${esc(r.phone)}
+
+            <br>
+
+            ${esc(r.address)},
+            ${esc(r.pincode)}
+
+          </td>
+
+
+          <td>
+
+            ${esc(r.product)}
+
+            <br>
+
+            ${r.quantity}
+            Kg
+
+          </td>
+
+
+          <td>
+
+            ₹${
+              Number(
+                r.total
+              )
+              .toLocaleString(
+                "en-IN"
+              )
+            }
+
+          </td>
+
+
+          <td>
+
+            <select
+              onchange="
+                update(
+                  ${r.id},
+                  null,
+                  this.value
+                )
+              ">
+
+              <option
+                value="pending"
+                ${
+                  r.payment_status ===
+                  "pending"
+                    ? "selected"
+                    : ""
+                }>
+
+                pending
+
+              </option>
+
+              <option
+                value="submitted"
+                ${
+                  r.payment_status ===
+                  "submitted"
+                    ? "selected"
+                    : ""
+                }>
+
+                submitted
+
+              </option>
+
+              <option
+                value="paid"
+                ${
+                  r.payment_status ===
+                  "paid"
+                    ? "selected"
+                    : ""
+                }>
+
+                paid
+
+              </option>
+
+              <option
+                value="failed"
+                ${
+                  r.payment_status ===
+                  "failed"
+                    ? "selected"
+                    : ""
+                }>
+
+                failed
+
+              </option>
+
+              <option
+                value="refunded"
+                ${
+                  r.payment_status ===
+                  "refunded"
+                    ? "selected"
+                    : ""
+                }>
+
+                refunded
+
+              </option>
+
+            </select>
+
+            <br>
+
+            <small>
+              UTR:
+              ${esc(r.utr || "-")}
+            </small>
+
+          </td>
+
+
+          <td>
+
+            <select
+              onchange="
+                update(
+                  ${r.id},
+                  this.value,
+                  null
+                )
+              ">
+
+              <option
+                value="new"
+                ${
+                  r.order_status ===
+                  "new"
+                    ? "selected"
+                    : ""
+                }>
+
+                new
+
+              </option>
+
+              <option
+                value="confirmed"
+                ${
+                  r.order_status ===
+                  "confirmed"
+                    ? "selected"
+                    : ""
+                }>
+
+                confirmed
+
+              </option>
+
+              <option
+                value="packed"
+                ${
+                  r.order_status ===
+                  "packed"
+                    ? "selected"
+                    : ""
+                }>
+
+                packed
+
+              </option>
+
+              <option
+                value="shipped"
+                ${
+                  r.order_status ===
+                  "shipped"
+                    ? "selected"
+                    : ""
+                }>
+
+                shipped
+
+              </option>
+
+              <option
+                value="delivered"
+                ${
+                  r.order_status ===
+                  "delivered"
+                    ? "selected"
+                    : ""
+                }>
+
+                delivered
+
+              </option>
+
+              <option
+                value="cancelled"
+                ${
+                  r.order_status ===
+                  "cancelled"
+                    ? "selected"
+                    : ""
+                }>
+
+                cancelled
+
+              </option>
+
+            </select>
+
+          </td>
+
+
+          <td>
+
+            <a
+              class="mini"
+              href="https://wa.me/91${r.phone}"
+              target="_blank"
+              rel="noopener">
+
+              WhatsApp
+
+            </a>
+
+          </td>
+
+        </tr>`
+
+      )
+      .join("");
+
+  } catch (e) {
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   UPDATE ORDER
+===================================================== */
+
+async function update(
+  id,
+  orderStatus,
+  paymentStatus
+) {
+
+  const body = {};
+
+  if (
+    orderStatus
+  ) {
+
+    body.orderStatus =
+      orderStatus;
+
+  }
+
+  if (
+    paymentStatus
+  ) {
+
+    body.paymentStatus =
+      paymentStatus;
+
+  }
+
+  try {
+
+    await api(
+      "/api/admin/orders/" +
+      id,
+      {
+
+        method:
+          "PATCH",
+
+        headers: {
+
+          "Content-Type":
+            "application/json"
+
+        },
+
+        body:
+          JSON.stringify(
+            body
+          )
+
+      }
+    );
+
+    await loadOrders();
+
+  } catch (e) {
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   LOAD REVIEWS
+===================================================== */
+
+async function loadReviews() {
+
+  const list =
+    document.getElementById(
+      "reviewList"
+    );
+
+  list.innerHTML =
+    "<p>Reviews load हो रहे हैं...</p>";
+
+
+  try {
+
+    const rows =
+      await api(
+        "/api/admin/reviews"
+      );
+
+
+    const approved =
+      rows.filter(
+        x =>
+          x.status ===
+          "approved"
+      );
+
+
+    const pending =
+      rows.filter(
+        x =>
+          x.status ===
+          "pending"
+      );
+
+
+    const hidden =
+      rows.filter(
+        x =>
+          x.status ===
+          "hidden"
+      );
+
+
+    const average =
+      approved.length
+
+        ? (
+            approved.reduce(
+              (
+                sum,
+                x
+              ) =>
+                sum +
+                Number(
+                  x.rating
+                ),
+              0
+            ) /
+            approved.length
+          ).toFixed(1)
+
+        : "0";
+
+
+    document
+      .getElementById(
+        "reviewStats"
+      )
+      .innerHTML =
+
+      `<div
+        class="review-stat">
+
+        Approved Reviews
+
+        <strong>
+          ${approved.length}
+        </strong>
+
+      </div>
+
+      <div
+        class="review-stat">
+
+        Pending
+
+        <strong>
+          ${pending.length}
+        </strong>
+
+      </div>
+
+      <div
+        class="review-stat">
+
+        Hidden
+
+        <strong>
+          ${hidden.length}
+        </strong>
+
+      </div>
+
+      <div
+        class="review-stat">
+
+        Average Rating
+
+        <strong>
+          ⭐ ${average}
+        </strong>
+
+      </div>`;
+
+
+    if (
+      rows.length === 0
+    ) {
+
+      list.innerHTML =
+        "<p>अभी कोई review नहीं आया है।</p>";
+
+      return;
+
+    }
+
+
+    list.innerHTML =
+      rows.map(
+        r =>
+          createReviewAdminCard(
+            r
+          )
+      )
+      .join("");
+
+
+  } catch (e) {
+
+    list.innerHTML =
+      `<p class="error-text">
+        ${esc(e.message)}
+      </p>`;
+
+  }
+
+}
+
+
+/* =====================================================
+   REVIEW ADMIN CARD
+===================================================== */
+
+function createReviewAdminCard(
+  r
+) {
+
+  const stars =
+    "★".repeat(
+      Number(r.rating)
+    ) +
+    "☆".repeat(
+      5 -
+      Number(r.rating)
+    );
+
+
+  let statusClass =
+    "pending";
+
+  if (
+    r.status ===
+    "approved"
+  ) {
+
+    statusClass =
+      "approved";
+
+  } else if (
+    r.status ===
+    "hidden"
+  ) {
+
+    statusClass =
+      "hidden-status";
+
+  }
+
+
+  return `
+
+    <div
+      class="review-admin-card">
+
+
+      <div
+        class="review-admin-top">
+
+        <div>
+
+          <strong>
+            ${esc(r.name)}
+          </strong>
+
+          <div
+            class="review-stars">
+
+            ${stars}
+
+          </div>
+
+        </div>
+
+
+        <span
+          class="
+            review-status
+            ${statusClass}
+          ">
+
+          ${esc(
+            r.status
+          )}
+
+        </span>
+
+      </div>
+
+
+      <div
+        class="review-text">
+
+        ${esc(
+          r.review
+        )}
+
+      </div>
+
+
+      <div
+        class="small-date">
+
+        ${formatDate(
+          r.created_at
+        )}
+
+      </div>
+
+
+      <br>
+
+
+      <div
+        class="review-actions">
+
+        ${
+          r.status !==
+          "approved"
+
+          ? `
+
+            <button
+              class="approve-btn"
+              onclick="
+                updateReview(
+                  ${r.id},
+                  'approved'
+                )
+              ">
+
+              ✅ Approve
+
+            </button>
+
+          `
+
+          : ""
+
+        }
+
+
+        ${
+          r.status !==
+          "hidden"
+
+          ? `
+
+            <button
+              class="hide-btn"
+              onclick="
+                updateReview(
+                  ${r.id},
+                  'hidden'
+                )
+              ">
+
+              👁️ Hide
+
+            </button>
+
+          `
+
+          : ""
+
+        }
+
+
+        ${
+          r.status !==
+          "pending"
+
+          ? `
+
+            <button
+              class="pending-btn"
+              onclick="
+                updateReview(
+                  ${r.id},
+                  'pending'
+                )
+              ">
+
+              ⏳ Pending
+
+            </button>
+
+          `
+
+          : ""
+
+        }
+
+
+        <button
+          class="delete-btn"
+          onclick="
+            deleteReview(
+              ${r.id}
+            )
+          ">
+
+          🗑️ Delete
+
+        </button>
+
+      </div>
+
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   UPDATE REVIEW
+===================================================== */
+
+async function updateReview(
+  id,
+  status
+) {
+
+  try {
+
+    await api(
+      "/api/admin/reviews/" +
+      id,
+      {
+
+        method:
+          "PATCH",
+
+        headers: {
+
+          "Content-Type":
+            "application/json"
+
+        },
+
+        body:
+          JSON.stringify({
+            status
+          })
+
+      }
+    );
+
+    await loadReviews();
+
+  } catch (e) {
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   DELETE REVIEW
+===================================================== */
+
+async function deleteReview(
+  id
+) {
+
+  const ok =
+    confirm(
+      "क्या आप इस review को permanently delete करना चाहते हैं?"
+    );
+
+  if (!ok) {
+    return;
+  }
+
+  try {
+
+    await api(
+      "/api/admin/reviews/" +
+      id,
+      {
+        method:
+          "DELETE"
+      }
+    );
+
+    await loadReviews();
+
+  } catch (e) {
+
+    alert(
+      e.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function formatDate(
+  value
+) {
+
+  try {
+
+    return new Date(
+      value
+    )
+    .toLocaleString(
+      "hi-IN"
+    );
+
+  } catch (e) {
+
+    return String(
+      value || ""
+    );
+
+  }
+
+}
+
+
+function esc(
+  s
+) {
+
+  return String(
+    s ?? ""
+  )
+  .replace(
+    /[&<>"']/g,
+    m =>
+      ({
+        "&":
+          "&amp;",
+        "<":
+          "&lt;",
+        ">":
+          "&gt;",
+        '"':
+          "&quot;",
+        "'":
+          "&#039;"
+      }[m])
+  );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
 check();
+
 </script>
-</body></html>
+
+</body>
+</html>
+```
