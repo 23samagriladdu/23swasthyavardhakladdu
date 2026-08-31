@@ -11,6 +11,365 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
+    ```css
+/* =====================================================
+   CUSTOMER REVIEWS
+===================================================== */
+
+.reviews-section {
+
+  max-width: 1100px;
+
+  margin: auto;
+
+  padding: 60px 20px;
+
+}
+
+.reviews-header {
+
+  text-align: center;
+
+  max-width: 750px;
+
+  margin: 0 auto 30px;
+
+}
+
+.rating-summary {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 18px;
+
+  max-width: 650px;
+
+  margin: 30px auto;
+
+}
+
+.rating-average,
+.rating-total {
+
+  background: #fff;
+
+  border: 1px solid #e5e5e5;
+
+  border-radius: 18px;
+
+  padding: 25px;
+
+  text-align: center;
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.06);
+
+}
+
+.rating-average strong,
+.rating-total strong {
+
+  display: block;
+
+  font-size: 38px;
+
+  margin-bottom: 5px;
+
+}
+
+.rating-average span,
+.rating-total span {
+
+  display: block;
+
+  color: #666;
+
+}
+
+.big-stars {
+
+  color: #f59e0b;
+
+  font-size: 25px;
+
+  letter-spacing: 3px;
+
+  margin-bottom: 5px;
+
+}
+
+
+/* =====================================================
+   REVIEW FORM
+===================================================== */
+
+.review-form-card {
+
+  max-width: 700px;
+
+  margin: 30px auto;
+
+  background: #fff;
+
+  border: 1px solid #e5e5e5;
+
+  border-radius: 18px;
+
+  padding: 25px;
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.06);
+
+}
+
+.review-form {
+
+  display: grid;
+
+  gap: 18px;
+
+}
+
+.review-form label {
+
+  display: grid;
+
+  gap: 8px;
+
+  font-weight: 600;
+
+}
+
+.review-form input,
+.review-form textarea {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 13px;
+
+  border: 1px solid #ccc;
+
+  border-radius: 10px;
+
+  font-size: 16px;
+
+  font-family: inherit;
+
+}
+
+.review-form textarea {
+
+  min-height: 130px;
+
+  resize: vertical;
+
+}
+
+.star-input {
+
+  display: flex;
+
+  gap: 4px;
+
+}
+
+.star-input button {
+
+  border: 0;
+
+  background: transparent;
+
+  padding: 2px;
+
+  cursor: pointer;
+
+  font-size: 38px;
+
+  line-height: 1;
+
+  color: #ccc;
+
+  transition:
+    transform .15s ease,
+    color .15s ease;
+
+}
+
+.star-input button:hover {
+
+  transform: scale(1.08);
+
+}
+
+.star-input button.selected {
+
+  color: #f59e0b;
+
+}
+
+.review-form .primary-btn {
+
+  border: 0;
+
+  cursor: pointer;
+
+}
+
+
+/* =====================================================
+   PUBLIC REVIEW CARDS
+===================================================== */
+
+.public-reviews {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(280px, 1fr)
+    );
+
+  gap: 18px;
+
+  margin-top: 35px;
+
+}
+
+.public-review-card {
+
+  background: #fff;
+
+  border: 1px solid #e5e5e5;
+
+  border-radius: 16px;
+
+  padding: 20px;
+
+  box-shadow:
+    0 5px 18px rgba(0,0,0,.05);
+
+}
+
+.public-review-top {
+
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-start;
+
+  gap: 10px;
+
+}
+
+.public-review-name {
+
+  font-weight: 700;
+
+  font-size: 17px;
+
+}
+
+.public-review-stars {
+
+  color: #f59e0b;
+
+  font-size: 20px;
+
+  letter-spacing: 2px;
+
+}
+
+.public-review-text {
+
+  margin-top: 15px;
+
+  line-height: 1.7;
+
+  color: #333;
+
+  white-space: pre-wrap;
+
+  word-break: break-word;
+
+}
+
+.public-review-date {
+
+  margin-top: 12px;
+
+  font-size: 12px;
+
+  color: #888;
+
+}
+
+.no-reviews {
+
+  text-align: center;
+
+  padding: 30px;
+
+  background: #f8f8f8;
+
+  border-radius: 15px;
+
+  grid-column: 1 / -1;
+
+}
+
+.review-success {
+
+  color: #198754;
+
+  font-weight: 600;
+
+}
+
+.review-error {
+
+  color: #dc3545;
+
+  font-weight: 600;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:650px) {
+
+  .rating-summary {
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+  .review-form-card {
+
+    padding: 18px;
+
+  }
+
+  .star-input button {
+
+    font-size: 34px;
+
+  }
+
+}
+
     /* =====================================================
        CUSTOMER ORDER HISTORY
     ===================================================== */
@@ -971,6 +1330,233 @@
     </section>
 
   </main>
+  ```html
+<!-- =====================================================
+     CUSTOMER FEEDBACK & REVIEWS
+===================================================== -->
+
+<section
+  class="reviews-section"
+  id="reviews">
+
+  <div class="reviews-header">
+
+    <p class="eyebrow">
+      Customer Feedback
+    </p>
+
+    <h2>
+      ⭐ हमारे Customers क्या कहते हैं?
+    </h2>
+
+    <p>
+      आपका Feedback हमारे लिए बहुत महत्वपूर्ण है।
+      अपना अनुभव हमारे साथ जरूर साझा करें।
+    </p>
+
+  </div>
+
+
+  <!-- =================================================
+       RATING SUMMARY
+  ================================================== -->
+
+  <div
+    class="rating-summary"
+    id="ratingSummary">
+
+    <div class="rating-average">
+
+      <strong id="averageRating">
+        0.0
+      </strong>
+
+      <div
+        class="big-stars"
+        id="averageStars">
+
+        ☆☆☆☆☆
+
+      </div>
+
+      <span>
+        Average Rating
+      </span>
+
+    </div>
+
+
+    <div class="rating-total">
+
+      <strong id="totalReviews">
+        0
+      </strong>
+
+      <span>
+        Customer Reviews
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       REVIEW FORM
+  ================================================== -->
+
+  <div class="review-form-card">
+
+    <h3>
+      ✍️ अपना Feedback दें
+    </h3>
+
+    <p class="small">
+      आपका review submit होने के बाद Admin approval
+      के बाद website पर दिखाई देगा।
+    </p>
+
+
+    <form
+      id="reviewForm"
+      class="review-form">
+
+
+      <!-- NAME -->
+
+      <label>
+
+        आपका नाम
+
+        <input
+          id="reviewName"
+          maxlength="80"
+          required
+          placeholder="अपना नाम">
+
+      </label>
+
+
+      <!-- STAR RATING -->
+
+      <label>
+
+        आपकी Rating
+
+        <div
+          class="star-input"
+          id="starInput">
+
+          <button
+            type="button"
+            data-rating="1"
+            aria-label="1 Star">
+
+            ★
+
+          </button>
+
+          <button
+            type="button"
+            data-rating="2"
+            aria-label="2 Stars">
+
+            ★
+
+          </button>
+
+          <button
+            type="button"
+            data-rating="3"
+            aria-label="3 Stars">
+
+            ★
+
+          </button>
+
+          <button
+            type="button"
+            data-rating="4"
+            aria-label="4 Stars">
+
+            ★
+
+          </button>
+
+          <button
+            type="button"
+            data-rating="5"
+            aria-label="5 Stars">
+
+            ★
+
+          </button>
+
+        </div>
+
+        <span
+          id="selectedRatingText"
+          class="small">
+
+          Rating चुनें
+
+        </span>
+
+      </label>
+
+
+      <!-- REVIEW -->
+
+      <label>
+
+        आपका Feedback
+
+        <textarea
+          id="reviewText"
+          maxlength="1000"
+          minlength="5"
+          required
+          placeholder="लड्डू का स्वाद, quality या आपका अनुभव लिखें..."></textarea>
+
+      </label>
+
+
+      <button
+        type="submit"
+        id="reviewSubmitBtn"
+        class="primary-btn">
+
+        ⭐ Review Submit करें
+
+      </button>
+
+
+      <p
+        id="reviewMessage"
+        class="small">
+
+      </p>
+
+    </form>
+
+  </div>
+
+
+  <!-- =================================================
+       PUBLIC REVIEWS
+  ================================================== -->
+
+  <div
+    id="publicReviews"
+    class="public-reviews">
+
+    <p>
+      Customer reviews load हो रहे हैं...
+    </p>
+
+  </div>
+
+</section>
 
 
   <!-- =====================================================
@@ -3087,7 +3673,620 @@ if (
         }
       );
 
+```javascript
+/* =====================================================
+   CUSTOMER REVIEWS SYSTEM
+===================================================== */
 
+let selectedReviewRating = 0;
+
+
+/* =====================================================
+   STAR SELECTION
+===================================================== */
+
+document
+  .querySelectorAll(
+    "#starInput button"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          selectedReviewRating =
+            Number(
+              button.dataset.rating
+            );
+
+
+          document
+            .querySelectorAll(
+              "#starInput button"
+            )
+            .forEach(
+              star => {
+
+                const value =
+                  Number(
+                    star.dataset.rating
+                  );
+
+                star.classList.toggle(
+                  "selected",
+                  value <=
+                  selectedReviewRating
+                );
+
+              }
+            );
+
+
+          document
+            .getElementById(
+              "selectedRatingText"
+            )
+            .textContent =
+
+              `${selectedReviewRating} / 5 Stars`;
+
+        }
+      );
+
+    }
+  );
+
+
+/* =====================================================
+   LOAD PUBLIC REVIEWS
+===================================================== */
+
+async function loadPublicReviews() {
+
+  const container =
+    document.getElementById(
+      "publicReviews"
+    );
+
+  if (!container) {
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/reviews",
+        {
+          cache:
+            "no-store"
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Reviews load नहीं हो सके।"
+      );
+
+    }
+
+
+    /* -----------------------------------------------
+       Average Rating
+    ------------------------------------------------ */
+
+    const average =
+      Number(
+        data.average || 0
+      );
+
+
+    document
+      .getElementById(
+        "averageRating"
+      )
+      .textContent =
+        average.toFixed(1);
+
+
+    document
+      .getElementById(
+        "totalReviews"
+      )
+      .textContent =
+        Number(
+          data.total || 0
+        );
+
+
+    renderAverageStars(
+      average
+    );
+
+
+    /* -----------------------------------------------
+       Reviews
+    ------------------------------------------------ */
+
+    if (
+      !Array.isArray(
+        data.reviews
+      ) ||
+      data.reviews.length === 0
+    ) {
+
+      container.innerHTML = `
+
+        <div
+          class="no-reviews">
+
+          ⭐ अभी कोई approved review नहीं है।
+          <br>
+          सबसे पहले अपना अनुभव साझा करें।
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      data.reviews
+        .map(
+          review =>
+            createPublicReviewCard(
+              review
+            )
+        )
+        .join("");
+
+
+  } catch (error) {
+
+    console.error(
+      "PUBLIC REVIEWS ERROR:",
+      error
+    );
+
+
+    container.innerHTML = `
+
+      <div
+        class="no-reviews">
+
+        Reviews अभी load नहीं हो सके।
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+   AVERAGE STARS
+===================================================== */
+
+function renderAverageStars(
+  rating
+) {
+
+  const container =
+    document.getElementById(
+      "averageStars"
+    );
+
+  if (!container) {
+    return;
+  }
+
+
+  const rounded =
+    Math.round(
+      Number(rating || 0)
+    );
+
+
+  container.textContent =
+    "★".repeat(
+      rounded
+    ) +
+    "☆".repeat(
+      5 - rounded
+    );
+
+}
+
+
+/* =====================================================
+   PUBLIC REVIEW CARD
+===================================================== */
+
+function createPublicReviewCard(
+  review
+) {
+
+  const rating =
+    Number(
+      review.rating || 0
+    );
+
+
+  const stars =
+    "★".repeat(
+      rating
+    ) +
+    "☆".repeat(
+      5 - rating
+    );
+
+
+  return `
+
+    <div
+      class="public-review-card">
+
+
+      <div
+        class="public-review-top">
+
+        <div>
+
+          <div
+            class="public-review-name">
+
+            ${escapeHtml(
+              review.name
+            )}
+
+          </div>
+
+
+          <div
+            class="public-review-stars">
+
+            ${stars}
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="public-review-text">
+
+        ${escapeHtml(
+          review.review
+        )}
+
+      </div>
+
+
+      <div
+        class="public-review-date">
+
+        ${formatDate(
+          review.created_at
+        )}
+
+      </div>
+
+
+    </div>
+
+  `;
+
+}
+
+
+/* =====================================================
+   SUBMIT REVIEW
+===================================================== */
+
+document
+  .getElementById(
+    "reviewForm"
+  )
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const name =
+        document
+          .getElementById(
+            "reviewName"
+          )
+          .value
+          .trim();
+
+
+      const review =
+        document
+          .getElementById(
+            "reviewText"
+          )
+          .value
+          .trim();
+
+
+      const message =
+        document.getElementById(
+          "reviewMessage"
+        );
+
+
+      const submitButton =
+        document.getElementById(
+          "reviewSubmitBtn"
+        );
+
+
+      /* ---------------------------------------------
+         Validation
+      --------------------------------------------- */
+
+      if (
+        name.length < 2 ||
+        name.length > 80
+      ) {
+
+        message.innerHTML =
+          `<span class="review-error">
+            नाम 2 से 80 characters के बीच होना चाहिए।
+          </span>`;
+
+        return;
+
+      }
+
+
+      if (
+        selectedReviewRating <
+          1 ||
+        selectedReviewRating >
+          5
+      ) {
+
+        message.innerHTML =
+          `<span class="review-error">
+            कृपया 1 से 5 Star Rating चुनें।
+          </span>`;
+
+        return;
+
+      }
+
+
+      if (
+        review.length < 5 ||
+        review.length > 1000
+      ) {
+
+        message.innerHTML =
+          `<span class="review-error">
+            Feedback 5 से 1000 characters के बीच होना चाहिए।
+          </span>`;
+
+        return;
+
+      }
+
+
+      try {
+
+        submitButton.disabled =
+          true;
+
+
+        submitButton.textContent =
+          "⏳ Feedback भेजा जा रहा है...";
+
+
+        message.textContent =
+          "";
+
+
+        const response =
+          await fetch(
+            "/api/reviews",
+            {
+
+              method:
+                "POST",
+
+              headers: {
+
+                "Content-Type":
+                  "application/json"
+
+              },
+
+              body:
+                JSON.stringify({
+
+                  name,
+
+                  rating:
+                    selectedReviewRating,
+
+                  review
+
+                })
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Review submit नहीं हुआ।"
+          );
+
+        }
+
+
+        message.innerHTML =
+          `<span
+            class="review-success">
+
+            ✅ ${escapeHtml(
+              data.message ||
+              "Feedback submit हो गया है।"
+            )}
+
+          </span>`;
+
+
+        /* -----------------------------------------
+           Reset Form
+        ----------------------------------------- */
+
+        document
+          .getElementById(
+            "reviewForm"
+          )
+          .reset();
+
+
+        selectedReviewRating =
+          0;
+
+
+        document
+          .querySelectorAll(
+            "#starInput button"
+          )
+          .forEach(
+            star => {
+
+              star.classList.remove(
+                "selected"
+              );
+
+            }
+          );
+
+
+        document
+          .getElementById(
+            "selectedRatingText"
+          )
+          .textContent =
+            "Rating चुनें";
+
+
+        /*
+          Public reviews तुरंत refresh
+          नहीं होंगे क्योंकि review
+          अभी pending है।
+        */
+
+
+      } catch (error) {
+
+        console.error(
+          "SUBMIT REVIEW ERROR:",
+          error
+        );
+
+
+        message.innerHTML =
+          `<span
+            class="review-error">
+
+            ❌ ${escapeHtml(
+              error.message
+            )}
+
+          </span>`;
+
+
+      } finally {
+
+        submitButton.disabled =
+          false;
+
+        submitButton.textContent =
+          "⭐ Review Submit करें";
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   DATE FORMAT
+===================================================== */
+
+function formatDate(
+  value
+) {
+
+  if (!value) {
+    return "";
+  }
+
+
+  try {
+
+    return new Date(
+      value
+    )
+    .toLocaleDateString(
+      "hi-IN",
+      {
+        day:
+          "numeric",
+
+        month:
+          "short",
+
+        year:
+          "numeric"
+      }
+    );
+
+  } catch (error) {
+
+    return "";
+
+  }
+
+}
+
+
+/* =====================================================
+   LOAD REVIEWS ON PAGE LOAD
+===================================================== */
+
+loadPublicReviews();
     /* =====================================================
        START WEBSITE
     ===================================================== */
@@ -3099,4 +4298,3 @@ if (
 </body>
 
 </html>
-```
