@@ -729,10 +729,7 @@ async function createShiprocketOrder(
     await getShiprocketToken();
 
 
-  const paymentMethod =
-    order.payment_method === "COD"
-      ? "COD"
-      : "Prepaid";
+const paymentMethod = "Prepaid";
 
 
   /*
