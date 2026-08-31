@@ -2737,11 +2737,12 @@ app.use(
 /* =========================================================
    START SERVER
 ========================================================= */
-
 app.listen(
   PORT,
   "0.0.0.0",
   () => {
-    console.log(`23 Swasthyavardhak Laddu running on port ${PORT}`);
+    console.log(
+      `23 Swasthyavardhak Laddu running on port ${PORT}`
+    );
   }
 );
