@@ -1243,10 +1243,13 @@ app.post(
          PAYMENT
       ===================================================== */
 
-      const safePayment =
-        paymentMethod === "COD"
-          ? "COD"
-          : "UPI";
+      if (paymentMethod !== "UPI") {
+  return res.status(400).json({
+    error: "अभी केवल UPI payment उपलब्ध है।"
+  });
+}
+
+const safePayment = "UPI";
 
 
       /* =====================================================
