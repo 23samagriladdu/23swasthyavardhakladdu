@@ -50,21 +50,23 @@ db.exec(`
     customer_name TEXT NOT NULL,
     phone TEXT NOT NULL,
     address TEXT NOT NULL,
+    city TEXT DEFAULT '',
+    state TEXT DEFAULT '',
     pincode TEXT NOT NULL,
-    city TEXT NOT NULL,
-    state TEXT NOT NULL,
-    country TEXT DEFAULT 'India',
-    product_id TEXT NOT NULL,
+    product_id TEXT DEFAULT '',
     product TEXT NOT NULL,
-    price REAL NOT NULL,
+    price INTEGER NOT NULL,
     quantity REAL NOT NULL,
-    delivery REAL NOT NULL,
-    total REAL NOT NULL,
-    payment_method TEXT,
-    payment_status TEXT DEFAULT 'pending',
-    utr TEXT,
-    order_status TEXT DEFAULT 'pending'
-  )
+    delivery INTEGER NOT NULL,
+    total INTEGER NOT NULL,
+    payment_method TEXT NOT NULL,
+    payment_status TEXT NOT NULL DEFAULT 'pending',
+    utr TEXT DEFAULT '',
+    order_status TEXT NOT NULL DEFAULT 'new',
+    awb TEXT DEFAULT '',
+    shiprocket_status TEXT DEFAULT '',
+    cancellation_reason TEXT DEFAULT ''
+  );
 `);
 /* =========================================================
    CREATE REVIEWS TABLE
