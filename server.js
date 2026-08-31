@@ -316,14 +316,13 @@ const PRODUCTS = [
   },
 
   {
-    id: "mix-laddu-3",
-    name: "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
-    price: 1050,
-    weight: 1,
-    image: "mix_laddu-3.jpeg",
-    weight: 1,
-    type: "kg"
-  },
+  id: "mix-laddu-3",
+  name: "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
+  price: 1050,
+  weight: 1,
+  type: "kg",
+  image: "mix_laddu-3.jpeg"
+},
 
   {
     id: "mix-laddu-4",
