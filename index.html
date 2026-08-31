@@ -3672,8 +3672,8 @@ if (
 
         }
       );
+<script>
 
-```javascript
 /* =====================================================
    CUSTOMER REVIEWS SYSTEM
 ===================================================== */
@@ -3686,57 +3686,38 @@ let selectedReviewRating = 0;
 ===================================================== */
 
 document
-  .querySelectorAll(
-    "#starInput button"
-  )
-  .forEach(
-    button => {
+  .querySelectorAll("#starInput button")
+  .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+    button.addEventListener("click", () => {
 
-          selectedReviewRating =
-            Number(
-              button.dataset.rating
-            );
+      selectedReviewRating =
+        Number(button.dataset.rating);
 
 
-          document
-            .querySelectorAll(
-              "#starInput button"
-            )
-            .forEach(
-              star => {
+      document
+        .querySelectorAll("#starInput button")
+        .forEach(star => {
 
-                const value =
-                  Number(
-                    star.dataset.rating
-                  );
+          const value =
+            Number(star.dataset.rating);
 
-                star.classList.toggle(
-                  "selected",
-                  value <=
-                  selectedReviewRating
-                );
+          star.classList.toggle(
+            "selected",
+            value <= selectedReviewRating
+          );
 
-              }
-            );
+        });
 
 
-          document
-            .getElementById(
-              "selectedRatingText"
-            )
-            .textContent =
+      document
+        .getElementById("selectedRatingText")
+        .textContent =
+          `${selectedReviewRating} / 5 Stars`;
 
-              `${selectedReviewRating} / 5 Stars`;
+    });
 
-        }
-      );
-
-    }
-  );
+  });
 
 
 /* =====================================================
@@ -3746,9 +3727,7 @@ document
 async function loadPublicReviews() {
 
   const container =
-    document.getElementById(
-      "publicReviews"
-    );
+    document.getElementById("publicReviews");
 
   if (!container) {
     return;
@@ -3758,13 +3737,9 @@ async function loadPublicReviews() {
   try {
 
     const response =
-      await fetch(
-        "/api/reviews",
-        {
-          cache:
-            "no-store"
-        }
-      );
+      await fetch("/api/reviews", {
+        cache: "no-store"
+      });
 
 
     const data =
@@ -3781,57 +3756,52 @@ async function loadPublicReviews() {
     }
 
 
-    /* -----------------------------------------------
-       Average Rating
-    ------------------------------------------------ */
-
     const average =
-      Number(
-        data.average || 0
+      Number(data.average || 0);
+
+
+    const averageRating =
+      document.getElementById(
+        "averageRating"
       );
 
+    if (averageRating) {
 
-    document
-      .getElementById(
-        "averageRating"
-      )
-      .textContent =
+      averageRating.textContent =
         average.toFixed(1);
 
+    }
 
-    document
-      .getElementById(
+
+    const totalReviews =
+      document.getElementById(
         "totalReviews"
-      )
-      .textContent =
-        Number(
-          data.total || 0
-        );
+      );
+
+    if (totalReviews) {
+
+      totalReviews.textContent =
+        Number(data.total || 0);
+
+    }
 
 
-    renderAverageStars(
-      average
-    );
+    renderAverageStars(average);
 
-
-    /* -----------------------------------------------
-       Reviews
-    ------------------------------------------------ */
 
     if (
-      !Array.isArray(
-        data.reviews
-      ) ||
+      !Array.isArray(data.reviews) ||
       data.reviews.length === 0
     ) {
 
       container.innerHTML = `
 
-        <div
-          class="no-reviews">
+        <div class="no-reviews">
 
           ⭐ अभी कोई approved review नहीं है।
+
           <br>
+
           सबसे पहले अपना अनुभव साझा करें।
 
         </div>
@@ -3845,11 +3815,8 @@ async function loadPublicReviews() {
 
     container.innerHTML =
       data.reviews
-        .map(
-          review =>
-            createPublicReviewCard(
-              review
-            )
+        .map(review =>
+          createPublicReviewCard(review)
         )
         .join("");
 
@@ -3864,8 +3831,7 @@ async function loadPublicReviews() {
 
     container.innerHTML = `
 
-      <div
-        class="no-reviews">
+      <div class="no-reviews">
 
         Reviews अभी load नहीं हो सके।
 
@@ -3882,9 +3848,7 @@ async function loadPublicReviews() {
    AVERAGE STARS
 ===================================================== */
 
-function renderAverageStars(
-  rating
-) {
+function renderAverageStars(rating) {
 
   const container =
     document.getElementById(
@@ -3903,12 +3867,8 @@ function renderAverageStars(
 
 
   container.textContent =
-    "★".repeat(
-      rounded
-    ) +
-    "☆".repeat(
-      5 - rounded
-    );
+    "★".repeat(rounded) +
+    "☆".repeat(5 - rounded);
 
 }
 
@@ -3917,48 +3877,33 @@ function renderAverageStars(
    PUBLIC REVIEW CARD
 ===================================================== */
 
-function createPublicReviewCard(
-  review
-) {
+function createPublicReviewCard(review) {
 
   const rating =
-    Number(
-      review.rating || 0
-    );
+    Number(review.rating || 0);
 
 
   const stars =
-    "★".repeat(
-      rating
-    ) +
-    "☆".repeat(
-      5 - rating
-    );
+    "★".repeat(rating) +
+    "☆".repeat(5 - rating);
 
 
   return `
 
-    <div
-      class="public-review-card">
+    <div class="public-review-card">
 
-
-      <div
-        class="public-review-top">
+      <div class="public-review-top">
 
         <div>
 
-          <div
-            class="public-review-name">
+          <div class="public-review-name">
 
-            ${escapeHtml(
-              review.name
-            )}
+            ${escapeHtml(review.name)}
 
           </div>
 
 
-          <div
-            class="public-review-stars">
+          <div class="public-review-stars">
 
             ${stars}
 
@@ -3969,25 +3914,18 @@ function createPublicReviewCard(
       </div>
 
 
-      <div
-        class="public-review-text">
+      <div class="public-review-text">
 
-        ${escapeHtml(
-          review.review
-        )}
+        ${escapeHtml(review.review)}
 
       </div>
 
 
-      <div
-        class="public-review-date">
+      <div class="public-review-date">
 
-        ${formatDate(
-          review.created_at
-        )}
+        ${formatDate(review.created_at)}
 
       </div>
-
 
     </div>
 
@@ -4000,11 +3938,15 @@ function createPublicReviewCard(
    SUBMIT REVIEW
 ===================================================== */
 
-document
-  .getElementById(
+const reviewForm =
+  document.getElementById(
     "reviewForm"
-  )
-  .addEventListener(
+  );
+
+
+if (reviewForm) {
+
+  reviewForm.addEventListener(
     "submit",
     async event => {
 
@@ -4013,18 +3955,14 @@ document
 
       const name =
         document
-          .getElementById(
-            "reviewName"
-          )
+          .getElementById("reviewName")
           .value
           .trim();
 
 
       const review =
         document
-          .getElementById(
-            "reviewText"
-          )
+          .getElementById("reviewText")
           .value
           .trim();
 
@@ -4040,10 +3978,6 @@ document
           "reviewSubmitBtn"
         );
 
-
-      /* ---------------------------------------------
-         Validation
-      --------------------------------------------- */
 
       if (
         name.length < 2 ||
@@ -4061,10 +3995,8 @@ document
 
 
       if (
-        selectedReviewRating <
-          1 ||
-        selectedReviewRating >
-          5
+        selectedReviewRating < 1 ||
+        selectedReviewRating > 5
       ) {
 
         message.innerHTML =
@@ -4094,16 +4026,12 @@ document
 
       try {
 
-        submitButton.disabled =
-          true;
-
+        submitButton.disabled = true;
 
         submitButton.textContent =
           "⏳ Feedback भेजा जा रहा है...";
 
-
-        message.textContent =
-          "";
+        message.textContent = "";
 
 
         const response =
@@ -4111,27 +4039,23 @@ document
             "/api/reviews",
             {
 
-              method:
-                "POST",
+              method: "POST",
 
               headers: {
-
                 "Content-Type":
                   "application/json"
-
               },
 
-              body:
-                JSON.stringify({
+              body: JSON.stringify({
 
-                  name,
+                name: name,
 
-                  rating:
-                    selectedReviewRating,
+                rating:
+                  selectedReviewRating,
 
-                  review
+                review: review
 
-                })
+              })
 
             }
           );
@@ -4152,8 +4076,7 @@ document
 
 
         message.innerHTML =
-          `<span
-            class="review-success">
+          `<span class="review-success">
 
             ✅ ${escapeHtml(
               data.message ||
@@ -4163,34 +4086,23 @@ document
           </span>`;
 
 
-        /* -----------------------------------------
-           Reset Form
-        ----------------------------------------- */
-
-        document
-          .getElementById(
-            "reviewForm"
-          )
-          .reset();
+        reviewForm.reset();
 
 
-        selectedReviewRating =
-          0;
+        selectedReviewRating = 0;
 
 
         document
           .querySelectorAll(
             "#starInput button"
           )
-          .forEach(
-            star => {
+          .forEach(star => {
 
-              star.classList.remove(
-                "selected"
-              );
+            star.classList.remove(
+              "selected"
+            );
 
-            }
-          );
+          });
 
 
         document
@@ -4199,13 +4111,6 @@ document
           )
           .textContent =
             "Rating चुनें";
-
-
-        /*
-          Public reviews तुरंत refresh
-          नहीं होंगे क्योंकि review
-          अभी pending है।
-        */
 
 
       } catch (error) {
@@ -4217,8 +4122,7 @@ document
 
 
         message.innerHTML =
-          `<span
-            class="review-error">
+          `<span class="review-error">
 
             ❌ ${escapeHtml(
               error.message
@@ -4229,8 +4133,7 @@ document
 
       } finally {
 
-        submitButton.disabled =
-          false;
+        submitButton.disabled = false;
 
         submitButton.textContent =
           "⭐ Review Submit करें";
@@ -4240,14 +4143,14 @@ document
     }
   );
 
+}
+
 
 /* =====================================================
    DATE FORMAT
 ===================================================== */
 
-function formatDate(
-  value
-) {
+function formatDate(value) {
 
   if (!value) {
     return "";
@@ -4256,22 +4159,15 @@ function formatDate(
 
   try {
 
-    return new Date(
-      value
-    )
-    .toLocaleDateString(
-      "hi-IN",
-      {
-        day:
-          "numeric",
-
-        month:
-          "short",
-
-        year:
-          "numeric"
-      }
-    );
+    return new Date(value)
+      .toLocaleDateString(
+        "hi-IN",
+        {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        }
+      );
 
   } catch (error) {
 
@@ -4283,8 +4179,12 @@ function formatDate(
 
 
 /* =====================================================
-   LOAD REVIEWS ON PAGE LOAD
+   LOAD REVIEWS
 ===================================================== */
+
+loadPublicReviews();
+
+</script>
 
 loadPublicReviews();
     /* =====================================================
