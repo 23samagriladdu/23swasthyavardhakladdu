@@ -1,3 +1,4 @@
+```javascript
 require("dotenv").config();
 
 const express = require("express");
@@ -93,6 +94,29 @@ db.exec(`
 
 
 /* =========================================================
+   CREATE REVIEWS TABLE
+========================================================= */
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS reviews (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    name TEXT NOT NULL,
+
+    rating INTEGER NOT NULL,
+
+    review TEXT NOT NULL,
+
+    status TEXT NOT NULL DEFAULT 'pending',
+
+    created_at TEXT NOT NULL
+
+  );
+`);
+
+
+/* =========================================================
    DATABASE MIGRATION
 ========================================================= */
 
@@ -180,12 +204,15 @@ addColumnIfMissing(
 ========================================================= */
 
 app.use(
-  express.json()
+  express.json({
+    limit: "100kb"
+  })
 );
 
 app.use(
   express.urlencoded({
-    extended: true
+    extended: true,
+    limit: "100kb"
   })
 );
 
@@ -243,10 +270,6 @@ app.use(
 
 const PRODUCTS = [
 
-  /* =======================================================
-     4 PRODUCTS — 1 KG
-  ======================================================= */
-
   {
     id: "10-dryfruits",
     name: "10 सामग्री - Only Dryfruits",
@@ -282,11 +305,6 @@ const PRODUCTS = [
     type: "kg",
     image: "laddu-main.png"
   },
-
-
-  /* =======================================================
-     NEW MIX PRODUCTS — 1 KG
-  ======================================================= */
 
   {
     id: "besan-laddu",
@@ -329,8 +347,9 @@ const PRODUCTS = [
     name: "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
     price: 1050,
     weight: 1,
-    type: "kg",
-    image: "mix_laddu-3.jpeg"
+    image: "mix_laddu-3.jpeg",
+    weight: 1,
+    type: "kg"
   },
 
   {
@@ -342,7 +361,7 @@ const PRODUCTS = [
     image: "mix_laddu-4.jpeg"
   },
 
-    {
+  {
     id: "mix-laddu-5",
     name: "बेसन (0.5 किलो), 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
     price: 1100,
@@ -367,87 +386,20 @@ function getDeliveryCharge(totalWeight) {
     !Number.isFinite(weight) ||
     weight <= 0
   ) {
-
     return 0;
-
   }
 
-  /* 1 Kg तक */
-
-  if (weight <= 1) {
-
-    return 100;
-
-  }
-
-  /* 1 Kg से ज्यादा और 2 Kg तक */
-
-  if (weight <= 2) {
-
-    return 200;
-
-  }
-
-  /* 2 Kg से ज्यादा और 3 Kg तक */
-
-  if (weight <= 3) {
-
-    return 300;
-
-  }
-
-  /* 3 Kg से ज्यादा और 4 Kg तक */
-
-  if (weight <= 4) {
-
-    return 400;
-
-  }
-
-  /* 4 Kg से ज्यादा और 5 Kg तक */
-
-  if (weight <= 5) {
-
-    return 500;
-
-  }
-
-  /* 5 Kg से ज्यादा और 6 Kg तक */
-
-  if (weight <= 6) {
-
-    return 600;
-
-  }
-
-  /* 6 Kg से ज्यादा और 7 Kg तक */
-
-  if (weight <= 7) {
-
-    return 700;
-
-  }
-
-  /* 7 Kg से ज्यादा और 8 Kg तक */
-
-  if (weight <= 8) {
-
-    return 800;
-
-  }
-
-  /* 8 Kg से ज्यादा और 9 Kg तक */
-
-  if (weight <= 9) {
-
-    return 900;
-
-  }
-
-  /* 10 Kg से ज्यादा */
+  if (weight <= 1) return 100;
+  if (weight <= 2) return 200;
+  if (weight <= 3) return 300;
+  if (weight <= 4) return 400;
+  if (weight <= 5) return 500;
+  if (weight <= 6) return 600;
+  if (weight <= 7) return 700;
+  if (weight <= 8) return 800;
+  if (weight <= 9) return 900;
 
   return 1000;
-
 }
 
 
@@ -463,37 +415,19 @@ function isValidKgQuantity(quantity) {
   if (
     !Number.isFinite(qty)
   ) {
-
     return false;
-
   }
 
   if (
     qty < 0.5 ||
     qty > 10
   ) {
-
     return false;
-
   }
-
-  /*
-    केवल:
-
-    0.5
-    1
-    1.5
-    2
-    2.5
-    ...
-
-    allowed
-  */
 
   return Number.isInteger(
     qty * 2
   );
-
 }
 
 
@@ -511,7 +445,6 @@ function isValidPackQuantity(quantity) {
     qty >= 1 &&
     qty <= 50
   );
-
 }
 
 
@@ -525,7 +458,6 @@ function getProduct(productId) {
     p =>
       p.id === String(productId)
   );
-
 }
 
 
@@ -534,18 +466,27 @@ function getProduct(productId) {
 ========================================================= */
 
 app.get("/api/config", (req, res) => {
+
   res.json({
+
     upiId: UPI_ID,
+
     upiName: UPI_NAME,
 
     products: PRODUCTS,
 
     deliveryRules: {
+
       upTo1Kg: 100,
+
       upTo2Kg: 200,
+
       above2Kg: 300
+
     }
+
   });
+
 });
 
 
@@ -584,7 +525,6 @@ function createOrderNumber() {
   );
 
   return orderNo;
-
 }
 
 
@@ -592,11 +532,9 @@ function createOrderNumber() {
    SHIPROCKET TOKEN
 ========================================================= */
 
-let shiprocketToken =
-  null;
+let shiprocketToken = null;
 
-let shiprocketTokenTime =
-  0;
+let shiprocketTokenTime = 0;
 
 
 async function getShiprocketToken() {
@@ -607,20 +545,12 @@ async function getShiprocketToken() {
   const password =
     process.env.SHIPROCKET_PASSWORD;
 
-
   if (
     !email ||
     !password
   ) {
-
     return null;
-
   }
-
-
-  /*
-    Token को 24 घंटे cache करेंगे।
-  */
 
   if (
     shiprocketToken &&
@@ -633,38 +563,29 @@ async function getShiprocketToken() {
 
   }
 
-
   const response =
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
 
-        method:
-          "POST",
+        method: "POST",
 
         headers: {
-
           "Content-Type":
             "application/json"
-
         },
 
         body:
           JSON.stringify({
-
             email,
-
             password
-
           })
 
       }
     );
 
-
   const data =
     await response.json();
-
 
   if (
     !response.ok ||
@@ -678,16 +599,13 @@ async function getShiprocketToken() {
 
   }
 
-
   shiprocketToken =
     data.token;
 
   shiprocketTokenTime =
     Date.now();
 
-
   return shiprocketToken;
-
 }
 
 
@@ -695,13 +613,10 @@ async function getShiprocketToken() {
    CREATE SHIPROCKET ORDER
 ========================================================= */
 
-async function createShiprocketOrder(
-  order
-) {
+async function createShiprocketOrder(order) {
 
   const pickupLocation =
     process.env.SHIPROCKET_PICKUP_LOCATION;
-
 
   if (
     !process.env.SHIPROCKET_EMAIL ||
@@ -711,11 +626,9 @@ async function createShiprocketOrder(
 
     return {
 
-      success:
-        false,
+      success: false,
 
-      skipped:
-        true,
+      skipped: true,
 
       message:
         "Shiprocket environment variables not configured"
@@ -724,33 +637,15 @@ async function createShiprocketOrder(
 
   }
 
-
   const token =
     await getShiprocketToken();
 
-
-const paymentMethod = "Prepaid";
-
-
-  /*
-    Product information से actual product निकालना
-  */
+  const paymentMethod = "Prepaid";
 
   const product =
     getProduct(
       order.product_id
     );
-
-
-  /*
-    KG product:
-      quantity = Kg
-
-    PACK product:
-      quantity = number of packs
-
-    Pack weight = 0.8 Kg
-  */
 
   const totalWeight =
     product
@@ -762,7 +657,6 @@ const paymentMethod = "Prepaid";
         )
       : Number(order.quantity);
 
-
   const shiprocketBody = {
 
     order_id:
@@ -773,11 +667,6 @@ const paymentMethod = "Prepaid";
 
     pickup_location:
       pickupLocation,
-
-
-    /* =====================================================
-       BILLING
-    ===================================================== */
 
     billing_customer_name:
       order.customer_name,
@@ -809,11 +698,6 @@ const paymentMethod = "Prepaid";
 
     billing_phone:
       Number(order.phone),
-
-
-    /* =====================================================
-       SHIPPING
-    ===================================================== */
 
     shipping_is_billing:
       true,
@@ -849,11 +733,6 @@ const paymentMethod = "Prepaid";
     shipping_phone:
       Number(order.phone),
 
-
-    /* =====================================================
-       ORDER ITEM
-    ===================================================== */
-
     order_items: [
 
       {
@@ -865,30 +744,21 @@ const paymentMethod = "Prepaid";
           order.product_id ||
           order.order_no,
 
-        /*
-          Pack में number of packs जाएगा
-          Kg में Kg quantity जाएगी
-        */
-
         units:
           Number(order.quantity),
 
         selling_price:
           Number(order.price),
 
-        discount:
-          0,
+        discount: 0,
 
-        tax:
-          0,
+        tax: 0,
 
-        hsn:
-          ""
+        hsn: ""
 
       }
 
     ],
-
 
     payment_method:
       paymentMethod,
@@ -896,57 +766,33 @@ const paymentMethod = "Prepaid";
     shipping_charges:
       Number(order.delivery),
 
-    giftwrap_charges:
-      0,
+    giftwrap_charges: 0,
 
-    transaction_charges:
-      0,
+    transaction_charges: 0,
 
-    total_discount:
-      0,
-
-    /*
-      Product price × quantity
-    */
+    total_discount: 0,
 
     sub_total:
       Number(order.price) *
       Number(order.quantity),
 
+    length: 20,
 
-    /*
-      Package dimensions
-    */
+    breadth: 20,
 
-    length:
-      20,
-
-    breadth:
-      20,
-
-    height:
-      10,
-
-
-    /*
-      IMPORTANT:
-      Shiprocket को actual total weight
-      भेजना है।
-    */
+    height: 10,
 
     weight:
       Number(totalWeight)
 
   };
 
-
   const response =
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       {
 
-        method:
-          "POST",
+        method: "POST",
 
         headers: {
 
@@ -966,10 +812,8 @@ const paymentMethod = "Prepaid";
       }
     );
 
-
   const data =
     await response.json();
-
 
   if (
     !response.ok
@@ -982,16 +826,13 @@ const paymentMethod = "Prepaid";
 
   }
 
-
   return {
 
-    success:
-      true,
+    success: true,
 
     data
 
   };
-
 }
 
 
@@ -1008,92 +849,60 @@ app.post(
       const {
 
         name,
-
         phone,
-
         address,
-
         city,
-
         state,
-
         pincode,
-
         productId,
-
         quantity,
-
         paymentMethod,
-
         utr
 
       } = req.body;
-
-
-      /* =====================================================
-         CLEAN INPUT
-      ===================================================== */
 
       const cleanName =
         String(name || "")
           .trim();
 
-
       const cleanPhone =
         String(phone || "")
           .replace(/\D/g, "");
-
 
       const cleanAddress =
         String(address || "")
           .trim();
 
-
       const cleanCity =
         String(city || "")
           .trim();
-
 
       const cleanState =
         String(state || "")
           .trim();
 
-
       const cleanPincode =
         String(pincode || "")
           .replace(/\D/g, "");
-
 
       const cleanUtr =
         String(utr || "")
           .trim();
 
-
       const product =
         getProduct(productId);
-
 
       const qty =
         Number(quantity);
 
-
-      /* =====================================================
-         CUSTOMER VALIDATION
-      ===================================================== */
-
-      if (
-        !cleanName
-      ) {
+      if (!cleanName) {
 
         return res.status(400).json({
-
           error:
             "कृपया नाम डालें।"
-
         });
 
       }
-
 
       if (
         !/^\d{10}$/.test(
@@ -1102,56 +911,38 @@ app.post(
       ) {
 
         return res.status(400).json({
-
           error:
             "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
-
         });
 
       }
 
-
-      if (
-        !cleanAddress
-      ) {
+      if (!cleanAddress) {
 
         return res.status(400).json({
-
           error:
             "कृपया पूरा पता डालें।"
-
         });
 
       }
 
-
-      if (
-        !cleanCity
-      ) {
+      if (!cleanCity) {
 
         return res.status(400).json({
-
           error:
             "कृपया शहर का नाम डालें।"
-
         });
 
       }
 
-
-      if (
-        !cleanState
-      ) {
+      if (!cleanState) {
 
         return res.status(400).json({
-
           error:
             "कृपया राज्य का नाम डालें।"
-
         });
 
       }
-
 
       if (
         !/^\d{6}$/.test(
@@ -1160,61 +951,32 @@ app.post(
       ) {
 
         return res.status(400).json({
-
           error:
             "कृपया 6 अंकों का सही पिनकोड डालें।"
-
         });
 
       }
 
-
-      /* =====================================================
-         PRODUCT VALIDATION
-      ===================================================== */
-
-      if (
-        !product
-      ) {
+      if (!product) {
 
         return res.status(400).json({
-
           error:
             "कृपया सही product चुनें।"
-
         });
 
       }
-
-
-      /* =====================================================
-         QUANTITY VALIDATION
-      =====================================================
-
-         KG PRODUCT
-         -----------
-         0.5 Kg से 50 Kg
-
-         PACK PRODUCT
-         ------------
-         1 Pack से 50 Pack
-      ===================================================== */
 
       if (
         product.type === "kg"
       ) {
 
         if (
-          !isValidKgQuantity(
-            qty
-          )
+          !isValidKgQuantity(qty)
         ) {
 
           return res.status(400).json({
-
             error:
-              "Kg मात्रा 0.5 Kg से 50 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
-
+              "Kg मात्रा 0.5 Kg से 10 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
           });
 
         }
@@ -1222,56 +984,34 @@ app.post(
       } else {
 
         if (
-          !isValidPackQuantity(
-            qty
-          )
+          !isValidPackQuantity(qty)
         ) {
 
           return res.status(400).json({
-
             error:
               "Pack की संख्या 1 से 50 तक होनी चाहिए।"
-
           });
 
         }
 
       }
 
+      if (
+        paymentMethod !== "UPI"
+      ) {
 
-      /* =====================================================
-         PAYMENT
-      ===================================================== */
+        return res.status(400).json({
+          error:
+            "अभी केवल UPI payment उपलब्ध है।"
+        });
 
-      if (paymentMethod !== "UPI") {
-  return res.status(400).json({
-    error: "अभी केवल UPI payment उपलब्ध है।"
-  });
-}
+      }
 
-const safePayment = "UPI";
-
-
-      /* =====================================================
-         SERVER-SIDE PRICE
-      ===================================================== */
+      const safePayment = "UPI";
 
       const productTotal =
         Number(product.price) *
         qty;
-
-
-      /* =====================================================
-         TOTAL WEIGHT
-      =====================================================
-
-         KG:
-           quantity = actual Kg
-
-         PACK:
-           quantity = number of packs
-           प्रत्येक pack = 0.8 Kg
-      ===================================================== */
 
       const totalWeight =
         product.type === "kg"
@@ -1279,42 +1019,21 @@ const safePayment = "UPI";
           : Number(product.weight) *
             qty;
 
-
-      /* =====================================================
-         DELIVERY
-      ===================================================== */
-
       const delivery =
         getDeliveryCharge(
           totalWeight
         );
 
-
-      /* =====================================================
-         FINAL TOTAL
-      ===================================================== */
-
       const total =
         productTotal +
         delivery;
 
-
-      /* =====================================================
-         ORDER NUMBER
-      ===================================================== */
-
       const orderNo =
         createOrderNumber();
-
 
       const createdAt =
         new Date()
           .toISOString();
-
-
-      /* =====================================================
-         PAYMENT STATUS
-      ===================================================== */
 
       const paymentStatus =
         safePayment === "UPI" &&
@@ -1322,56 +1041,31 @@ const safePayment = "UPI";
           ? "submitted"
           : "pending";
 
-
-      /* =====================================================
-         SAVE ORDER
-      ===================================================== */
-
       const stmt =
         db.prepare(`
 
           INSERT INTO orders (
 
             order_no,
-
             created_at,
-
             customer_name,
-
             phone,
-
             address,
-
             city,
-
             state,
-
             pincode,
-
             product_id,
-
             product,
-
             price,
-
             quantity,
-
             delivery,
-
             total,
-
             payment_method,
-
             payment_status,
-
             utr,
-
             order_status,
-
             awb,
-
             shiprocket_status,
-
             cancellation_reason
 
           )
@@ -1404,57 +1098,31 @@ const safePayment = "UPI";
 
         `);
 
-
       stmt.run(
 
         orderNo,
-
         createdAt,
-
         cleanName,
-
         cleanPhone,
-
         cleanAddress,
-
         cleanCity,
-
         cleanState,
-
         cleanPincode,
-
         product.id,
-
         product.name,
-
         product.price,
-
         qty,
-
         delivery,
-
         total,
-
         safePayment,
-
         paymentStatus,
-
         cleanUtr,
-
         "new",
-
         "",
-
         "",
-
         ""
 
       );
-
-
-      /* =====================================================
-         GET SAVED ORDER
-      ===================================================== */
 
       let savedOrder =
         db
@@ -1463,14 +1131,7 @@ const safePayment = "UPI";
           )
           .get(orderNo);
 
-
-      /* =====================================================
-         SHIPROCKET
-      ===================================================== */
-
-      let shiprocketMessage =
-        "";
-
+      let shiprocketMessage = "";
 
       try {
 
@@ -1478,7 +1139,6 @@ const safePayment = "UPI";
           await createShiprocketOrder(
             savedOrder
           );
-
 
         if (
           sr &&
@@ -1488,17 +1148,14 @@ const safePayment = "UPI";
           const srData =
             sr.data || {};
 
-
           const awb =
             srData.awb_code ||
             "";
-
 
           const srStatus =
             srData.status ||
             srData.shipment_status ||
             "Created";
-
 
           db.prepare(`
 
@@ -1522,9 +1179,8 @@ const safePayment = "UPI";
 
           );
 
-
           shiprocketMessage =
-            " Shipment में भेज दिया गया है।";
+            " Shipment में भेज दिया गया है.";
 
         }
 
@@ -1537,25 +1193,13 @@ const safePayment = "UPI";
           shiprocketError.message
         );
 
-        /*
-          Shiprocket fail होने पर भी
-          customer का order database में save रहेगा।
-        */
-
-        shiprocketMessage =
-          "";
+        shiprocketMessage = "";
 
       }
 
-
-      /* =====================================================
-         SUCCESS RESPONSE
-      ===================================================== */
-
       return res.json({
 
-        success:
-          true,
+        success: true,
 
         orderNo,
 
@@ -1565,8 +1209,7 @@ const safePayment = "UPI";
 
         delivery,
 
-        quantity:
-          qty,
+        quantity: qty,
 
         productType:
           product.type,
@@ -1581,32 +1224,18 @@ const safePayment = "UPI";
         paymentStatus,
 
         message:
-          safePayment === "UPI"
-
-            ? (
-                "ऑर्डर सेव हो गया है। " +
-                "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
-                shiprocketMessage
-              )
-
-            : (
-                "ऑर्डर सेव हो गया है। " +
-                "Cash on Delivery चुना गया है." +
-                shiprocketMessage
-              )
+          "ऑर्डर सेव हो गया है। " +
+          "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
+          shiprocketMessage
 
       });
 
-
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
       console.error(
         "ORDER ERROR:",
         error
       );
-
 
       return res.status(500).json({
 
@@ -1637,7 +1266,6 @@ app.get(
         )
           .replace(/\D/g, "");
 
-
       if (
         !/^\d{10}$/.test(
           phone
@@ -1653,7 +1281,6 @@ app.get(
 
       }
 
-
       const rows =
         db.prepare(`
 
@@ -1667,12 +1294,10 @@ app.get(
 
         `).all(phone);
 
-
       const orders =
         rows.map(
           mapOrderForCustomer
         );
-
 
       return res.json({
 
@@ -1683,16 +1308,12 @@ app.get(
 
       });
 
-
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
       console.error(
         "HISTORY ERROR:",
         error
       );
-
 
       return res.status(500).json({
 
@@ -1722,19 +1343,15 @@ app.post(
           req.body.orderNo || ""
         ).trim();
 
-
       const phone =
         String(
           req.body.phone || ""
         )
           .replace(/\D/g, "");
 
-
       if (
         !orderNo ||
-        !/^\d{10}$/.test(
-          phone
-        )
+        !/^\d{10}$/.test(phone)
       ) {
 
         return res.status(400).json({
@@ -1745,7 +1362,6 @@ app.post(
         });
 
       }
-
 
       const row =
         db.prepare(`
@@ -1766,7 +1382,6 @@ app.post(
 
         );
 
-
       if (!row) {
 
         return res.status(404).json({
@@ -1778,7 +1393,6 @@ app.post(
 
       }
 
-
       return res.json({
 
         order:
@@ -1786,16 +1400,12 @@ app.post(
 
       });
 
-
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
       console.error(
         "DETAIL ERROR:",
         error
       );
-
 
       return res.status(500).json({
 
@@ -1825,23 +1435,18 @@ app.post(
           req.body.orderNo || ""
         ).trim();
 
-
       const phone =
         String(
           req.body.phone || ""
         )
           .replace(/\D/g, "");
 
-
       const reason =
         String(
           req.body.reason || ""
         ).trim();
 
-
-      if (
-        !orderNo
-      ) {
+      if (!orderNo) {
 
         return res.status(400).json({
 
@@ -1852,11 +1457,8 @@ app.post(
 
       }
 
-
       if (
-        !/^\d{10}$/.test(
-          phone
-        )
+        !/^\d{10}$/.test(phone)
       ) {
 
         return res.status(400).json({
@@ -1867,7 +1469,6 @@ app.post(
         });
 
       }
-
 
       const order =
         db.prepare(`
@@ -1888,7 +1489,6 @@ app.post(
 
         );
 
-
       if (!order) {
 
         return res.status(404).json({
@@ -1900,17 +1500,13 @@ app.post(
 
       }
 
-
       const cancellableStatuses = [
 
         "new",
-
         "confirmed",
-
         "packed"
 
       ];
-
 
       if (
         !cancellableStatuses.includes(
@@ -1926,7 +1522,6 @@ app.post(
         });
 
       }
-
 
       db.prepare(`
 
@@ -1946,18 +1541,14 @@ app.post(
       `).run(
 
         reason,
-
         orderNo,
-
         phone
 
       );
 
-
       return res.json({
 
-        success:
-          true,
+        success: true,
 
         orderNo,
 
@@ -1966,16 +1557,12 @@ app.post(
 
       });
 
-
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
       console.error(
         "CANCEL ERROR:",
         error
       );
-
 
       return res.status(500).json({
 
@@ -1994,16 +1581,12 @@ app.post(
    CAN CANCEL ORDER
 ========================================================= */
 
-function canCancelOrder(
-  order
-) {
+function canCancelOrder(order) {
 
   return [
 
     "new",
-
     "confirmed",
-
     "packed"
 
   ].includes(
@@ -2017,42 +1600,33 @@ function canCancelOrder(
    GET PRODUCT TYPE / WEIGHT
 ========================================================= */
 
-function getOrderProductInfo(
-  order
-) {
+function getOrderProductInfo(order) {
 
   const product =
     getProduct(
       order.product_id
     );
 
-
   if (!product) {
 
     return {
 
-      type:
-        "kg",
+      type: "kg",
 
-      packWeight:
-        null,
+      packWeight: null,
 
       totalWeight:
-        Number(
-          order.quantity
-        )
+        Number(order.quantity)
 
     };
 
   }
-
 
   const totalWeight =
     product.type === "kg"
       ? Number(order.quantity)
       : Number(product.weight) *
         Number(order.quantity);
-
 
   return {
 
@@ -2075,15 +1649,12 @@ function getOrderProductInfo(
    CUSTOMER ORDER MAPPER
 ========================================================= */
 
-function mapOrderForCustomer(
-  order
-) {
+function mapOrderForCustomer(order) {
 
   const productInfo =
     getOrderProductInfo(
       order
     );
-
 
   return {
 
@@ -2171,15 +1742,12 @@ function mapOrderForCustomer(
    CUSTOMER ORDER DETAILS MAPPER
 ========================================================= */
 
-function mapOrderDetails(
-  order
-) {
+function mapOrderDetails(order) {
 
   const productInfo =
     getOrderProductInfo(
       order
     );
-
 
   return {
 
@@ -2282,7 +1850,6 @@ function requireAdmin(
 
   }
 
-
   return res.status(401).json({
 
     error:
@@ -2302,13 +1869,9 @@ app.post(
   (req, res) => {
 
     const {
-
       username,
-
       password
-
     } = req.body;
-
 
     if (
 
@@ -2323,7 +1886,6 @@ app.post(
       req.session.admin =
         true;
 
-
       return res.json({
 
         success:
@@ -2332,7 +1894,6 @@ app.post(
       });
 
     }
-
 
     return res.status(401).json({
 
@@ -2416,13 +1977,6 @@ app.get(
 
         `).all();
 
-
-      /*
-        Admin में भी product type,
-        pack weight और total weight
-        भेजेंगे।
-      */
-
       const orders =
         rows.map(
           order => {
@@ -2431,7 +1985,6 @@ app.get(
               getOrderProductInfo(
                 order
               );
-
 
             return {
 
@@ -2451,21 +2004,16 @@ app.get(
           }
         );
 
-
       res.json(
         orders
       );
 
-
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
       console.error(
         "ADMIN ORDERS ERROR:",
         error
       );
-
 
       res.status(500).json({
 
@@ -2496,60 +2044,39 @@ app.patch(
           req.params.id
         );
 
-
       const {
-
         orderStatus,
-
         paymentStatus,
-
         awb,
-
         shiprocketStatus
-
       } = req.body;
-
 
       const allowedOrder = [
 
         "new",
-
         "confirmed",
-
         "packed",
-
         "shipped",
-
         "delivered",
-
         "cancelled"
 
       ];
 
-
       const allowedPayment = [
 
         "pending",
-
         "submitted",
-
         "paid",
-
         "failed",
-
         "refunded"
 
       ];
 
-
       if (
-
         orderStatus &&
-
         !allowedOrder.includes(
           orderStatus
         )
-
       ) {
 
         return res.status(400).json({
@@ -2561,15 +2088,11 @@ app.patch(
 
       }
 
-
       if (
-
         paymentStatus &&
-
         !allowedPayment.includes(
           paymentStatus
         )
-
       ) {
 
         return res.status(400).json({
@@ -2581,12 +2104,10 @@ app.patch(
 
       }
 
-
       const row =
         db.prepare(
           "SELECT * FROM orders WHERE id = ?"
         ).get(id);
-
 
       if (!row) {
 
@@ -2598,7 +2119,6 @@ app.patch(
         });
 
       }
-
 
       db.prepare(`
 
@@ -2652,7 +2172,6 @@ app.patch(
 
       );
 
-
       return res.json({
 
         success:
@@ -2660,21 +2179,512 @@ app.patch(
 
       });
 
-
-    } catch (
-      error
-    ) {
+    } catch (error) {
 
       console.error(
         "ADMIN UPDATE ERROR:",
         error
       );
 
-
       return res.status(500).json({
 
         error:
           "Order update नहीं हुआ।"
+
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   PUBLIC REVIEWS
+========================================================= */
+
+app.get(
+  "/api/reviews",
+  (req, res) => {
+
+    try {
+
+      const rows =
+        db.prepare(`
+
+          SELECT
+
+            id,
+            name,
+            rating,
+            review,
+            created_at
+
+          FROM reviews
+
+          WHERE status = 'approved'
+
+          ORDER BY id DESC
+
+          LIMIT 100
+
+        `).all();
+
+      const stats =
+        db.prepare(`
+
+          SELECT
+
+            COUNT(*) AS total,
+
+            COALESCE(
+              ROUND(
+                AVG(rating),
+                1
+              ),
+              0
+            ) AS average
+
+          FROM reviews
+
+          WHERE status = 'approved'
+
+        `).get();
+
+      return res.json({
+
+        success: true,
+
+        total:
+          Number(stats.total || 0),
+
+        average:
+          Number(stats.average || 0),
+
+        reviews:
+          rows
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "PUBLIC REVIEWS ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+
+        error:
+          "Reviews load नहीं हो सके।"
+
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CUSTOMER SUBMIT REVIEW
+========================================================= */
+
+app.post(
+  "/api/reviews",
+  (req, res) => {
+
+    try {
+
+      let name =
+        String(
+          req.body.name || ""
+        ).trim();
+
+      let review =
+        String(
+          req.body.review || ""
+        ).trim();
+
+      const rating =
+        Number(
+          req.body.rating
+        );
+
+      /* -----------------------------------------------
+         Basic length protection
+      ------------------------------------------------ */
+
+      if (
+        name.length < 2 ||
+        name.length > 80
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "नाम 2 से 80 characters के बीच होना चाहिए।"
+
+        });
+
+      }
+
+      if (
+        review.length < 5 ||
+        review.length > 1000
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Feedback 5 से 1000 characters के बीच होना चाहिए।"
+
+        });
+
+      }
+
+      if (
+        !Number.isInteger(rating) ||
+        rating < 1 ||
+        rating > 5
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "कृपया 1 से 5 Star Rating चुनें।"
+
+        });
+
+      }
+
+      /*
+        HTML/script जैसी चीजें हटाने के लिए
+        basic character cleaning.
+      */
+
+      name =
+        name
+          .replace(/[<>]/g, "")
+          .trim();
+
+      review =
+        review
+          .replace(/[<>]/g, "")
+          .trim();
+
+      if (
+        name.length < 2 ||
+        review.length < 5
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "कृपया सही नाम और feedback लिखें।"
+
+        });
+
+      }
+
+      const createdAt =
+        new Date()
+          .toISOString();
+
+      db.prepare(`
+
+        INSERT INTO reviews (
+
+          name,
+          rating,
+          review,
+          status,
+          created_at
+
+        )
+
+        VALUES (
+
+          ?,
+          ?,
+          ?,
+          'pending',
+          ?
+
+        )
+
+      `).run(
+
+        name,
+        rating,
+        review,
+        createdAt
+
+      );
+
+      return res.json({
+
+        success: true,
+
+        message:
+          "धन्यवाद! आपका Feedback मिल गया है। Admin approval के बाद यह website पर दिखाई देगा।"
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "SUBMIT REVIEW ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+
+        error:
+          "Feedback submit नहीं हो सका। कृपया दोबारा कोशिश करें।"
+
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ADMIN GET ALL REVIEWS
+========================================================= */
+
+app.get(
+  "/api/admin/reviews",
+  requireAdmin,
+  (req, res) => {
+
+    try {
+
+      const rows =
+        db.prepare(`
+
+          SELECT *
+
+          FROM reviews
+
+          ORDER BY id DESC
+
+        `).all();
+
+      return res.json(
+        rows
+      );
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN REVIEWS ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+
+        error:
+          "Reviews load नहीं हो सके।"
+
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ADMIN UPDATE REVIEW STATUS
+========================================================= */
+
+app.patch(
+  "/api/admin/reviews/:id",
+  requireAdmin,
+  (req, res) => {
+
+    try {
+
+      const id =
+        Number(
+          req.params.id
+        );
+
+      const status =
+        String(
+          req.body.status || ""
+        ).trim();
+
+      const allowedStatuses = [
+
+        "pending",
+        "approved",
+        "hidden"
+
+      ];
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Invalid review ID"
+
+        });
+
+      }
+
+      if (
+        !allowedStatuses.includes(
+          status
+        )
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Invalid review status"
+
+        });
+
+      }
+
+      const review =
+        db.prepare(
+          "SELECT * FROM reviews WHERE id = ?"
+        ).get(id);
+
+      if (!review) {
+
+        return res.status(404).json({
+
+          error:
+            "Review not found"
+
+        });
+
+      }
+
+      db.prepare(`
+
+        UPDATE reviews
+
+        SET status = ?
+
+        WHERE id = ?
+
+      `).run(
+
+        status,
+        id
+
+      );
+
+      return res.json({
+
+        success: true,
+
+        message:
+          "Review status update हो गया।"
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "UPDATE REVIEW ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+
+        error:
+          "Review update नहीं हुआ।"
+
+      });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ADMIN DELETE REVIEW
+========================================================= */
+
+app.delete(
+  "/api/admin/reviews/:id",
+  requireAdmin,
+  (req, res) => {
+
+    try {
+
+      const id =
+        Number(
+          req.params.id
+        );
+
+      if (
+        !Number.isInteger(id) ||
+        id <= 0
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "Invalid review ID"
+
+        });
+
+      }
+
+      const review =
+        db.prepare(
+          "SELECT id FROM reviews WHERE id = ?"
+        ).get(id);
+
+      if (!review) {
+
+        return res.status(404).json({
+
+          error:
+            "Review not found"
+
+        });
+
+      }
+
+      db.prepare(
+        "DELETE FROM reviews WHERE id = ?"
+      ).run(id);
+
+      return res.json({
+
+        success: true,
+
+        message:
+          "Review delete हो गया।"
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "DELETE REVIEW ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+
+        error:
+          "Review delete नहीं हुआ।"
 
       });
 
@@ -2739,7 +2749,6 @@ app.use(
       err
     );
 
-
     res.status(500).json({
 
       error:
@@ -2766,3 +2775,4 @@ app.listen(
 
   }
 );
+```
