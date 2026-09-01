@@ -26,7 +26,6 @@ const UPI_ID =
 const UPI_NAME =
   process.env.UPI_NAME || "23 Swasthyavardhak Samaan";
 
-
 /* =========================================================
    DATABASE
 ========================================================= */
@@ -42,54 +41,46 @@ db.pragma("journal_mode = WAL");
    CREATE ORDERS TABLE
 ========================================================= */
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_no TEXT UNIQUE NOT NULL,
-    created_at TEXT NOT NULL,
-    customer_name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    address TEXT NOT NULL,
-    city TEXT DEFAULT '',
-    state TEXT DEFAULT '',
-    pincode TEXT NOT NULL,
-    product_id TEXT DEFAULT '',
-    product TEXT NOT NULL,
-    price INTEGER NOT NULL,
-    quantity REAL NOT NULL,
-    delivery INTEGER NOT NULL,
-    total INTEGER NOT NULL,
-    payment_method TEXT NOT NULL,
-    payment_status TEXT NOT NULL DEFAULT 'pending',
-    utr TEXT DEFAULT '',
-    order_status TEXT NOT NULL DEFAULT 'new',
-    awb TEXT DEFAULT '',
-    shiprocket_status TEXT DEFAULT '',
-    cancellation_reason TEXT DEFAULT ''
-  );
-`);
+db.exec(
+  "CREATE TABLE IF NOT EXISTS orders (" +
+  "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+  "order_no TEXT UNIQUE NOT NULL," +
+  "created_at TEXT NOT NULL," +
+  "customer_name TEXT NOT NULL," +
+  "phone TEXT NOT NULL," +
+  "address TEXT NOT NULL," +
+  "pincode TEXT NOT NULL," +
+  "city TEXT NOT NULL," +
+  "state TEXT NOT NULL," +
+  "country TEXT DEFAULT 'India'," +
+  "product_id TEXT NOT NULL," +
+  "product TEXT NOT NULL," +
+  "price REAL NOT NULL," +
+  "quantity REAL NOT NULL," +
+  "delivery REAL NOT NULL," +
+  "total REAL NOT NULL," +
+  "payment_method TEXT," +
+  "payment_status TEXT DEFAULT 'pending'," +
+  "utr TEXT," +
+  "order_status TEXT DEFAULT 'pending'" +
+  ")"
+);
+
 
 /* =========================================================
    CREATE REVIEWS TABLE
 ========================================================= */
 
-db.exec(`
-  CREATE TABLE IF NOT EXISTS reviews (
-
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    name TEXT NOT NULL,
-
-    rating INTEGER NOT NULL,
-
-    review TEXT NOT NULL,
-
-    status TEXT NOT NULL DEFAULT 'pending',
-
-    created_at TEXT NOT NULL
-
-  );
-`);
+db.exec(
+  "CREATE TABLE IF NOT EXISTS reviews (" +
+  "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+  "name TEXT NOT NULL," +
+  "rating INTEGER NOT NULL," +
+  "review TEXT NOT NULL," +
+  "status TEXT NOT NULL DEFAULT 'pending'," +
+  "created_at TEXT NOT NULL" +
+  ")"
+);
 
 /* =========================================================
    DATABASE MIGRATION
