@@ -41,46 +41,47 @@ db.pragma("journal_mode = WAL");
    CREATE ORDERS TABLE
 ========================================================= */
 
-db.exec(
-  "CREATE TABLE IF NOT EXISTS orders (" +
-  "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-  "order_no TEXT UNIQUE NOT NULL," +
-  "created_at TEXT NOT NULL," +
-  "customer_name TEXT NOT NULL," +
-  "phone TEXT NOT NULL," +
-  "address TEXT NOT NULL," +
-  "pincode TEXT NOT NULL," +
-  "city TEXT NOT NULL," +
-  "state TEXT NOT NULL," +
-  "country TEXT DEFAULT 'India'," +
-  "product_id TEXT NOT NULL," +
-  "product TEXT NOT NULL," +
-  "price REAL NOT NULL," +
-  "quantity REAL NOT NULL," +
-  "delivery REAL NOT NULL," +
-  "total REAL NOT NULL," +
-  "payment_method TEXT," +
-  "payment_status TEXT DEFAULT 'pending'," +
-  "utr TEXT," +
-  "order_status TEXT DEFAULT 'pending'" +
-  ")"
-);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_no TEXT UNIQUE NOT NULL,
+    created_at TEXT NOT NULL,
+    customer_name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    address TEXT NOT NULL,
+    pincode TEXT NOT NULL,
+    city TEXT NOT NULL,
+    state TEXT NOT NULL,
+    country TEXT DEFAULT 'India',
+    product_id TEXT NOT NULL,
+    product TEXT NOT NULL,
+    price REAL NOT NULL,
+    quantity REAL NOT NULL,
+    delivery REAL NOT NULL,
+    total REAL NOT NULL,
+    payment_method TEXT,
+    payment_status TEXT DEFAULT 'pending',
+    utr TEXT,
+    order_status TEXT DEFAULT 'pending'
+  )
+`);
 
 
 /* =========================================================
    CREATE REVIEWS TABLE
 ========================================================= */
 
-db.exec(
-  "CREATE TABLE IF NOT EXISTS reviews (" +
-  "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-  "name TEXT NOT NULL," +
-  "rating INTEGER NOT NULL," +
-  "review TEXT NOT NULL," +
-  "status TEXT NOT NULL DEFAULT 'pending'," +
-  "created_at TEXT NOT NULL" +
-  ")"
-);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    rating INTEGER NOT NULL,
+    review TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at TEXT NOT NULL
+  )
+`);
+
 
 /* =========================================================
    DATABASE MIGRATION
@@ -92,29 +93,25 @@ function addColumnIfMissing(
   definition
 ) {
 
-  const columns =
-    db
-      .prepare(`PRAGMA table_info(${table})`)
-      .all();
+  const columns = db
+    .prepare(`PRAGMA table_info(${table})`)
+    .all();
 
-  const exists =
-    columns.some(
-      c => c.name === column
-    );
+  const exists = columns.some(
+    c => c.name === column
+  );
 
   if (!exists) {
 
-    db.exec(
-      `ALTER TABLE ${table}
-       ADD COLUMN ${column} ${definition}`
-    );
+    db.exec(`
+      ALTER TABLE ${table}
+      ADD COLUMN ${column} ${definition}
+    `);
 
     console.log(
       `Database column added: ${column}`
     );
-
   }
-
 }
 
 
@@ -163,7 +160,6 @@ addColumnIfMissing(
   "cancellation_reason",
   "TEXT DEFAULT ''"
 );
-
 
 /* =========================================================
    MIDDLEWARE
