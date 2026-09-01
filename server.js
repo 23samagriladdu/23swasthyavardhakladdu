@@ -2085,11 +2085,10 @@ app.patch(
 
       }
 
-      db.prepare(`
-
-        UPDATE orders
-
-        SET
+     db.prepare(`
+  UPDATE orders
+  SET awb = ?
+`)
 
           order_status =
             COALESCE(
