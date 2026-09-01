@@ -1,373 +1,221 @@
-```html
 <!doctype html>
 <html lang="hi">
 
 <head>
+
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1">
 
   <title>23 स्वास्थ्यवर्धक लड्डू</title>
 
   <link rel="stylesheet" href="style.css">
 
   <style>
-/* =====================================================
-   CUSTOMER REVIEWS
-===================================================== */
 
-.reviews-section {
+    /* =====================================================
+       CUSTOMER REVIEWS
+    ===================================================== */
+
+    .reviews-section {
+      max-width: 1100px;
+      margin: auto;
+      padding: 60px 20px;
+    }
+
+    .reviews-header {
+      text-align: center;
+      max-width: 750px;
+      margin: 0 auto 30px;
+    }
+
+    .rating-summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      max-width: 650px;
+      margin: 30px auto;
+    }
+
+    .rating-average,
+    .rating-total {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+    }
+
+    .rating-average strong,
+    .rating-total strong {
+      display: block;
+      font-size: 38px;
+      margin-bottom: 5px;
+    }
+
+    .rating-average span,
+    .rating-total span {
+      display: block;
+      color: #666;
+    }
+
+    .big-stars {
+      color: #f59e0b;
+      font-size: 25px;
+      letter-spacing: 3px;
+      margin-bottom: 5px;
+    }
+
+
+    /* =====================================================
+       REVIEW FORM
+    ===================================================== */
+
+    .review-form-card {
+      max-width: 700px;
+      margin: 30px auto;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
+    }
+
+    .review-form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .review-form label {
+      display: grid;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .review-form input,
+    .review-form textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+    }
+
+    .review-form textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .star-input {
+      display: flex;
+      gap: 4px;
+    }
+
+    .star-input button {
+      border: 0;
+      background: transparent;
+      padding: 2px;
+      cursor: pointer;
+      font-size: 38px;
+      line-height: 1;
+      color: #ccc;
+      transition:
+        transform .15s ease,
+        color .15s ease;
+    }
+
+    .star-input button:hover {
+      transform: scale(1.08);
+    }
+
+    .star-input button.selected {
+      color: #f59e0b;
+    }
+
+    .review-form .primary-btn {
+      border: 0;
+      cursor: pointer;
+    }
+
+
+    /* =====================================================
+       PUBLIC REVIEW CARDS
+    ===================================================== */
+
+    .public-reviews {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(280px, 1fr)
+        );
+      gap: 18px;
+      margin-top: 35px;
+    }
+
+    .public-review-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .05);
+    }
+
+    .public-review-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .public-review-name {
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .public-review-stars {
+      color: #f59e0b;
+      font-size: 20px;
+      letter-spacing: 2px;
+    }
+
+    .public-review-text {
+      margin-top: 15px;
+      line-height: 1.7;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .public-review-date {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    .no-reviews {
+      text-align: center;
+      padding: 30px;
+      background: #f8f8f8;
+      border-radius: 15px;
+      grid-column: 1 / -1;
+    }
+
+    .review-success {
+      color: #198754;
+      font-weight: 600;
+    }
+
+    .review-error {
+      color: #dc3545;
+      font-weight: 600;
+    }
 
-  max-width: 1100px;
-
-  margin: auto;
-
-  padding: 60px 20px;
-
-}
-
-.reviews-header {
-
-  text-align: center;
-
-  max-width: 750px;
-
-  margin: 0 auto 30px;
-
-}
-
-.rating-summary {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(2, 1fr);
-
-  gap: 18px;
-
-  max-width: 650px;
-
-  margin: 30px auto;
-
-}
-
-.rating-average,
-.rating-total {
-
-  background: #fff;
-
-  border: 1px solid #e5e5e5;
-
-  border-radius: 18px;
-
-  padding: 25px;
-
-  text-align: center;
-
-  box-shadow:
-    0 5px 20px rgba(0,0,0,.06);
-
-}
-
-.rating-average strong,
-.rating-total strong {
-
-  display: block;
-
-  font-size: 38px;
-
-  margin-bottom: 5px;
-
-}
-
-.rating-average span,
-.rating-total span {
-
-  display: block;
-
-  color: #666;
-
-}
-
-.big-stars {
-
-  color: #f59e0b;
-
-  font-size: 25px;
-
-  letter-spacing: 3px;
-
-  margin-bottom: 5px;
-
-}
-
-
-/* =====================================================
-   REVIEW FORM
-===================================================== */
-
-.review-form-card {
-
-  max-width: 700px;
-
-  margin: 30px auto;
-
-  background: #fff;
-
-  border: 1px solid #e5e5e5;
-
-  border-radius: 18px;
-
-  padding: 25px;
-
-  box-shadow:
-    0 5px 20px rgba(0,0,0,.06);
-
-}
-
-.review-form {
-
-  display: grid;
-
-  gap: 18px;
-
-}
-
-.review-form label {
-
-  display: grid;
-
-  gap: 8px;
-
-  font-weight: 600;
-
-}
-
-.review-form input,
-.review-form textarea {
-
-  width: 100%;
-
-  box-sizing: border-box;
-
-  padding: 13px;
-
-  border: 1px solid #ccc;
-
-  border-radius: 10px;
-
-  font-size: 16px;
-
-  font-family: inherit;
-
-}
-
-.review-form textarea {
-
-  min-height: 130px;
-
-  resize: vertical;
-
-}
-
-.star-input {
-
-  display: flex;
-
-  gap: 4px;
-
-}
-
-.star-input button {
-
-  border: 0;
-
-  background: transparent;
-
-  padding: 2px;
-
-  cursor: pointer;
-
-  font-size: 38px;
-
-  line-height: 1;
-
-  color: #ccc;
-
-  transition:
-    transform .15s ease,
-    color .15s ease;
-
-}
-
-.star-input button:hover {
-
-  transform: scale(1.08);
-
-}
-
-.star-input button.selected {
-
-  color: #f59e0b;
-
-}
-
-.review-form .primary-btn {
-
-  border: 0;
-
-  cursor: pointer;
-
-}
-
-
-/* =====================================================
-   PUBLIC REVIEW CARDS
-===================================================== */
-
-.public-reviews {
-
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(280px, 1fr)
-    );
-
-  gap: 18px;
-
-  margin-top: 35px;
-
-}
-
-.public-review-card {
-
-  background: #fff;
-
-  border: 1px solid #e5e5e5;
-
-  border-radius: 16px;
-
-  padding: 20px;
-
-  box-shadow:
-    0 5px 18px rgba(0,0,0,.05);
-
-}
-
-.public-review-top {
-
-  display: flex;
-
-  justify-content:
-    space-between;
-
-  align-items:
-    flex-start;
-
-  gap: 10px;
-
-}
-
-.public-review-name {
-
-  font-weight: 700;
-
-  font-size: 17px;
-
-}
-
-.public-review-stars {
-
-  color: #f59e0b;
-
-  font-size: 20px;
-
-  letter-spacing: 2px;
-
-}
-
-.public-review-text {
-
-  margin-top: 15px;
-
-  line-height: 1.7;
-
-  color: #333;
-
-  white-space: pre-wrap;
-
-  word-break: break-word;
-
-}
-
-.public-review-date {
-
-  margin-top: 12px;
-
-  font-size: 12px;
-
-  color: #888;
-
-}
-
-.no-reviews {
-
-  text-align: center;
-
-  padding: 30px;
-
-  background: #f8f8f8;
-
-  border-radius: 15px;
-
-  grid-column: 1 / -1;
-
-}
-
-.review-success {
-
-  color: #198754;
-
-  font-weight: 600;
-
-}
-
-.review-error {
-
-  color: #dc3545;
-
-  font-weight: 600;
-
-}
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media(max-width:650px) {
-
-  .rating-summary {
-
-    grid-template-columns:
-      1fr;
-
-  }
-
-  .review-form-card {
-
-    padding: 18px;
-
-  }
-
-  .star-input button {
-
-    font-size: 34px;
-
-  }
-
-}
 
     /* =====================================================
        CUSTOMER ORDER HISTORY
@@ -418,7 +266,11 @@
 
     .history-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(290px, 1fr)
+        );
       gap: 18px;
       margin-top: 25px;
     }
@@ -510,6 +362,7 @@
       grid-column: 1 / -1;
     }
 
+
     /* =====================================================
        MODAL
     ===================================================== */
@@ -596,7 +449,24 @@
       line-height: 1.7;
     }
 
-    @media(max-width: 650px) {
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media(max-width:650px) {
+
+      .rating-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .review-form-card {
+        padding: 18px;
+      }
+
+      .star-input button {
+        font-size: 34px;
+      }
 
       .history-search {
         grid-template-columns: 1fr;
@@ -619,12 +489,16 @@
         max-height: 90vh;
         overflow-y: auto;
       }
+
     }
+
   </style>
+
 </head>
 
 
 <body>
+
 
   <!-- =====================================================
        HEADER
@@ -633,17 +507,25 @@
   <header class="topbar">
 
     <div class="brand">
-      23 <span>स्वास्थ्यवर्धक सामान</span>
+      23
+      <span>
+        स्वास्थ्यवर्धक सामान
+      </span>
     </div>
 
-    <a class="call-btn" href="tel:9643185255">
+    <a
+      class="call-btn"
+      href="tel:9643185255">
+
       📞 9643185255
+
     </a>
 
   </header>
 
 
   <main>
+
 
     <!-- =====================================================
          HERO
@@ -658,22 +540,33 @@
         </p>
 
         <h1>
-          23<br>
+
+          23
+
+          <br>
+
           <span>
             (एनर्जी लड्डू मिश्रित Sugar free)
           </span>
+
         </h1>
 
         <p class="hero-text">
+
           23 चुनिंदा ड्रायफ्रूट्स और सीड्स से तैयार
           स्वादिष्ट लड्डू। ऑनलाइन ऑर्डर करें और
           घर तक डिलीवरी पाएं।
+
         </p>
 
         <div class="hero-actions">
 
-          <a class="primary-btn" href="#order">
+          <a
+            class="primary-btn"
+            href="#order">
+
             ऑर्डर करें
+
           </a>
 
           <a
@@ -681,7 +574,9 @@
             href="https://wa.me/919643185255"
             target="_blank"
             rel="noopener">
+
             WhatsApp
+
           </a>
 
         </div>
@@ -743,25 +638,38 @@
         हमारे लड्डू पैक
       </h2>
 
-     <div id="productGrid" class="product-grid">
-  <p>उत्पाद उपलब्ध हैं।</p>
-</div>
 
-       <p class="delivery-note">
-  🚚 डिलीवरी चार्ज:
-  <strong>
-    0.5–1 Kg: ₹100 |
-    1.5–2 Kg: ₹200 |
-    2.5–3 Kg: ₹300 |
-    3.5–4 Kg: ₹400 |
-    4.5–5 Kg: ₹500 |
-    5.5–6 Kg: ₹600 |
-    6.5–7 Kg: ₹700 |
-    7.5–8 Kg: ₹800 |
-    8.5–9 Kg: ₹900 |
-    9.5–10 Kg: ₹1000
-  </strong>
-</p>
+      <div
+        id="productGrid"
+        class="product-grid">
+
+        <p>
+          उत्पाद load हो रहे हैं...
+        </p>
+
+      </div>
+
+
+      <p class="delivery-note">
+
+        🚚 डिलीवरी चार्ज:
+
+        <strong>
+
+          0.5–1 Kg: ₹100 |
+          1.5–2 Kg: ₹200 |
+          2.5–3 Kg: ₹300 |
+          3.5–4 Kg: ₹400 |
+          4.5–5 Kg: ₹500 |
+          5.5–6 Kg: ₹600 |
+          6.5–7 Kg: ₹700 |
+          7.5–8 Kg: ₹800 |
+          8.5–9 Kg: ₹900 |
+          9.5–10 Kg: ₹1000
+
+        </strong>
+
+      </p>
 
     </section>
 
@@ -770,7 +678,10 @@
          ORDER SECTION
     ===================================================== -->
 
-    <section class="order-section" id="order">
+    <section
+      class="order-section"
+      id="order">
+
 
       <div class="order-copy">
 
@@ -783,23 +694,34 @@
         </h2>
 
         <p>
-  अपनी जानकारी भरें और UPI से ऑनलाइन भुगतान करें।
-</p>
+          अपनी जानकारी भरें और UPI से ऑनलाइन भुगतान करें।
+        </p>
 
         <div class="contact-box">
-          📱 <strong>9643185255</strong>
+
+          📱
+          <strong>
+            9643185255
+          </strong>
+
           <br>
+
           कॉल या WhatsApp करें
+
         </div>
 
       </div>
 
 
-      <form id="orderForm" class="order-form">
+      <form
+        id="orderForm"
+        class="order-form">
+
 
         <!-- NAME -->
 
         <label>
+
           नाम
 
           <input
@@ -807,12 +729,14 @@
             required
             autocomplete="name"
             placeholder="अपना नाम">
+
         </label>
 
 
         <!-- PHONE -->
 
         <label>
+
           मोबाइल
 
           <input
@@ -823,6 +747,7 @@
             maxlength="10"
             autocomplete="tel"
             placeholder="10 अंकों का मोबाइल">
+
         </label>
 
 
@@ -875,102 +800,182 @@
 
         <label>
 
-  पिनकोड
+          पिनकोड
 
-  <input
-    id="pincode"
-    required
-    inputmode="numeric"
-    pattern="[0-9]{6}"
-    maxlength="6"
-    autocomplete="postal-code"
-    placeholder="6 अंकों का पिनकोड">
+          <input
+            id="pincode"
+            required
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            maxlength="6"
+            autocomplete="postal-code"
+            placeholder="6 अंकों का पिनकोड">
 
-</label>
+        </label>
 
 
-<!-- LADDU TYPE -->
+        <!-- =================================================
+             LADDU TYPE
+        ================================================== -->
 
-<label>
+        <label>
 
-  लड्डू का प्रकार
+          लड्डू का प्रकार
 
-  <select id="product" required>
+          <select
+            id="product"
+            required>
 
-    <option value="">
-      लड्डू का प्रकार चुनें
-    </option>
+            <option value="">
+              लड्डू का प्रकार चुनें
+            </option>
 
-  </select>
+          </select>
 
-</label>
+        </label>
 
-<!-- KG QUANTITY -->
 
-<label for="quantity">
+        <!-- =================================================
+             KG QUANTITY
+        ================================================== -->
 
-  Kg मात्रा
+        <label for="quantity">
 
-  <select id="quantity" required>
+          Kg मात्रा
 
-    <option value="0.5">0.5 Kg</option>
-    <option value="1" selected>1 Kg</option>
-    <option value="1.5">1.5 Kg</option>
-    <option value="2">2 Kg</option>
-    <option value="2.5">2.5 Kg</option>
-    <option value="3">3 Kg</option>
-    <option value="3.5">3.5 Kg</option>
-    <option value="4">4 Kg</option>
-    <option value="4.5">4.5 Kg</option>
-    <option value="5">5 Kg</option>
-    <option value="5.5">5.5 Kg</option>
-    <option value="6">6 Kg</option>
-    <option value="6.5">6.5 Kg</option>
-    <option value="7">7 Kg</option>
-    <option value="7.5">7.5 Kg</option>
-    <option value="8">8 Kg</option>
-    <option value="8.5">8.5 Kg</option>
-    <option value="9">9 Kg</option>
-    <option value="9.5">9.5 Kg</option>
-    <option value="10">10 Kg</option>
+          <select
+            id="quantity"
+            required>
 
-  </select>
+            <option value="0.5">
+              0.5 Kg
+            </option>
 
-</label>
+            <option
+              value="1"
+              selected>
+              1 Kg
+            </option>
+
+            <option value="1.5">
+              1.5 Kg
+            </option>
+
+            <option value="2">
+              2 Kg
+            </option>
+
+            <option value="2.5">
+              2.5 Kg
+            </option>
+
+            <option value="3">
+              3 Kg
+            </option>
+
+            <option value="3.5">
+              3.5 Kg
+            </option>
+
+            <option value="4">
+              4 Kg
+            </option>
+
+            <option value="4.5">
+              4.5 Kg
+            </option>
+
+            <option value="5">
+              5 Kg
+            </option>
+
+            <option value="5.5">
+              5.5 Kg
+            </option>
+
+            <option value="6">
+              6 Kg
+            </option>
+
+            <option value="6.5">
+              6.5 Kg
+            </option>
+
+            <option value="7">
+              7 Kg
+            </option>
+
+            <option value="7.5">
+              7.5 Kg
+            </option>
+
+            <option value="8">
+              8 Kg
+            </option>
+
+            <option value="8.5">
+              8.5 Kg
+            </option>
+
+            <option value="9">
+              9 Kg
+            </option>
+
+            <option value="9.5">
+              9.5 Kg
+            </option>
+
+            <option value="10">
+              10 Kg
+            </option>
+
+          </select>
+
+        </label>
+
 
         <!-- PAYMENT -->
 
         <label>
 
-  Payment Method
+          Payment Method
 
-  <select id="paymentMethod">
-    <option value="UPI">
-      UPI / Online Payment
-    </option>
-  </select>
+          <select id="paymentMethod">
 
-</label>
+            <option value="UPI">
+              UPI / Online Payment
+            </option>
+
+          </select>
+
+        </label>
 
 
         <!-- =================================================
              UPI
-        ================================================= -->
+        ================================================== -->
 
-        <div id="upiBox" class="payment-box full">
+        <div
+          id="upiBox"
+          class="payment-box full">
 
           <strong>
             UPI Payment
           </strong>
 
           <p>
+
             UPI ID:
+
             <span id="upiId">
-  UPI ID उपलब्ध नहीं है
-</span>
+              UPI ID उपलब्ध नहीं है
+            </span>
+
           </p>
 
+
           <div id="qr"></div>
+
 
           <button
             type="button"
@@ -999,7 +1004,7 @@
 
         <!-- =================================================
              TOTAL
-        ================================================= -->
+        ================================================== -->
 
         <div class="total">
 
@@ -1044,9 +1049,9 @@
 
         <p class="small">
 
-  UPI payment verification admin द्वारा की जाएगी।
+          UPI payment verification admin द्वारा की जाएगी।
 
-</p>
+        </p>
 
       </form>
 
@@ -1057,7 +1062,9 @@
          CUSTOMER ORDER HISTORY
     ===================================================== -->
 
-    <section class="history-section" id="order-history">
+    <section
+      class="history-section"
+      id="order-history">
 
       <p class="eyebrow">
         My Orders
@@ -1131,6 +1138,7 @@
       class="order-section"
       id="cancel-order">
 
+
       <div class="order-copy">
 
         <p class="eyebrow">
@@ -1142,20 +1150,27 @@
         </h2>
 
         <p>
+
           यदि आपने order किया है और अब उसे cancel करना चाहते हैं,
           तो अपना Order No. और वही mobile number डालें
           जिससे order किया था।
+
         </p>
 
         <div class="contact-box">
+
           ⚠️ Shipment courier को Out for Pickup होने के बाद
           cancellation संभव नहीं हो सकती।
+
         </div>
 
       </div>
 
 
-      <form id="cancelForm" class="order-form">
+      <form
+        id="cancelForm"
+        class="order-form">
+
 
         <label>
 
@@ -1228,331 +1243,420 @@
       </h2>
 
       <p class="gallery-subtitle">
+
         हमारे स्वादिष्ट लड्डू और प्राकृतिक सामग्री की कुछ तस्वीरें
+
       </p>
+
 
       <div class="gallery-grid">
 
+
         <div class="gallery-item">
+
           <img
             src="/besan.jpeg"
             alt="बेसन लड्डू"
             loading="lazy">
-          <p>बेसन लड्डू</p>
+
+          <p>
+            बेसन लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/dry_fruit.jpeg"
             alt="ड्राय फ्रूट"
             loading="lazy">
-          <p>ड्राय फ्रूट</p>
+
+          <p>
+            ड्राय फ्रूट
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/mix_ladd-2.jpeg"
             alt="मिक्स लड्डू"
             loading="lazy">
-          <p>मिक्स लड्डू</p>
+
+          <p>
+            मिक्स लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/mix_laddu-.jpeg"
             alt="मिक्स लड्डू"
             loading="lazy">
-          <p>मिक्स लड्डू</p>
+
+          <p>
+            मिक्स लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/mix_laddu-3.jpeg"
             alt="मिक्स लड्डू"
             loading="lazy">
-          <p>मिक्स लड्डू</p>
+
+          <p>
+            मिक्स लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/mix_laddu-4.jpeg"
             alt="मिक्स लड्डू"
             loading="lazy">
-          <p>मिक्स लड्डू</p>
+
+          <p>
+            मिक्स लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/mix_laddu-5.jpeg"
             alt="मिक्स लड्डू"
             loading="lazy">
-          <p>मिक्स लड्डू</p>
+
+          <p>
+            मिक्स लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/mix_laddu-6.jpeg"
             alt="मिक्स लड्डू"
             loading="lazy">
-          <p>मिक्स लड्डू</p>
+
+          <p>
+            मिक्स लड्डू
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="/seeds_dryfruit.jpeg"
             alt="सीड्स और ड्राय फ्रूट"
             loading="lazy">
-          <p>सीड्स और ड्राय फ्रूट</p>
+
+          <p>
+            सीड्स और ड्राय फ्रूट
+          </p>
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="product-details-hindi.png"
             alt="हिंदी उत्पाद विवरण"
             loading="lazy">
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="product-poster-english.png"
             alt="English Product Poster"
             loading="lazy">
+
         </div>
 
+
         <div class="gallery-item">
+
           <img
             src="product-poster-hindi.png"
             alt="Hindi Product Poster"
             loading="lazy">
+
         </div>
+
 
       </div>
 
     </section>
 
-  </main>
-  ```html
-<!-- =====================================================
-     CUSTOMER FEEDBACK & REVIEWS
-===================================================== -->
 
-<section
-  class="reviews-section"
-  id="reviews">
+    <!-- =====================================================
+         CUSTOMER FEEDBACK & REVIEWS
+    ===================================================== -->
 
-  <div class="reviews-header">
-
-    <p class="eyebrow">
-      Customer Feedback
-    </p>
-
-    <h2>
-      ⭐ हमारे Customers क्या कहते हैं?
-    </h2>
-
-    <p>
-      आपका Feedback हमारे लिए बहुत महत्वपूर्ण है।
-      अपना अनुभव हमारे साथ जरूर साझा करें।
-    </p>
-
-  </div>
-
-<!-- =================================================
-     RATING SUMMARY
-================================================= -->
-
-<div
-  class="rating-summary"
-  id="ratingSummary">
-
-  <div class="rating-average">
-
-    <strong id="averageRating">
-      0.0
-    </strong>
-
-    <div
-      class="big-stars"
-      id="averageStars">
-      ☆☆☆☆☆
-    </div>
-
-    <span>
-      Average Rating
-    </span>
-
-  </div>
-
-  <div class="rating-total">
-
-    <strong id="totalReviews">
-      0
-    </strong>
-
-    <span>
-      Customer Reviews
-    </span>
-
-  </div>
-
-</div>
-
-  <!-- =================================================
-       REVIEW FORM
-  ================================================== -->
-
-  <div class="review-form-card">
-
-    <h3>
-      ✍️ अपना Feedback दें
-    </h3>
-
-    <p class="small">
-      आपका review submit होने के बाद Admin approval
-      के बाद website पर दिखाई देगा।
-    </p>
+    <section
+      class="reviews-section"
+      id="reviews">
 
 
-    <form
-      id="reviewForm"
-      class="review-form">
+      <div class="reviews-header">
+
+        <p class="eyebrow">
+          Customer Feedback
+        </p>
+
+        <h2>
+          ⭐ हमारे Customers क्या कहते हैं?
+        </h2>
+
+        <p>
+
+          आपका Feedback हमारे लिए बहुत महत्वपूर्ण है।
+          अपना अनुभव हमारे साथ जरूर साझा करें।
+
+        </p>
+
+      </div>
 
 
-      <!-- NAME -->
+      <!-- =================================================
+           RATING SUMMARY
+      ================================================= -->
 
-      <label>
-
-        आपका नाम
-
-        <input
-          id="reviewName"
-          maxlength="80"
-          required
-          placeholder="अपना नाम">
-
-      </label>
+      <div
+        class="rating-summary"
+        id="ratingSummary">
 
 
-      <!-- STAR RATING -->
+        <div class="rating-average">
 
-      <label>
+          <strong id="averageRating">
+            0.0
+          </strong>
 
-        आपकी Rating
+          <div
+            class="big-stars"
+            id="averageStars">
 
-        <div
-          class="star-input"
-          id="starInput">
+            ☆☆☆☆☆
 
-          <button
-            type="button"
-            data-rating="1"
-            aria-label="1 Star">
+          </div>
 
-            ★
-
-          </button>
-
-          <button
-            type="button"
-            data-rating="2"
-            aria-label="2 Stars">
-
-            ★
-
-          </button>
-
-          <button
-            type="button"
-            data-rating="3"
-            aria-label="3 Stars">
-
-            ★
-
-          </button>
-
-          <button
-            type="button"
-            data-rating="4"
-            aria-label="4 Stars">
-
-            ★
-
-          </button>
-
-          <button
-            type="button"
-            data-rating="5"
-            aria-label="5 Stars">
-
-            ★
-
-          </button>
+          <span>
+            Average Rating
+          </span>
 
         </div>
 
-        <span
-          id="selectedRatingText"
-          class="small">
 
-          Rating चुनें
+        <div class="rating-total">
 
-        </span>
+          <strong id="totalReviews">
+            0
+          </strong>
 
-      </label>
+          <span>
+            Customer Reviews
+          </span>
 
-
-      <!-- REVIEW -->
-
-      <label>
-
-        आपका Feedback
-
-        <textarea
-          id="reviewText"
-          maxlength="1000"
-          minlength="5"
-          required
-          placeholder="लड्डू का स्वाद, quality या आपका अनुभव लिखें..."></textarea>
-
-      </label>
+        </div>
 
 
-      <button
-        type="submit"
-        id="reviewSubmitBtn"
-        class="primary-btn">
-
-        ⭐ Review Submit करें
-
-      </button>
+      </div>
 
 
-      <p
-        id="reviewMessage"
-        class="small">
+      <!-- =================================================
+           REVIEW FORM
+      ================================================== -->
 
-      </p>
+      <div class="review-form-card">
 
-    </form>
+        <h3>
+          ✍️ अपना Feedback दें
+        </h3>
 
-  </div>
+        <p class="small">
+
+          आपका review submit होने के बाद Admin approval
+          के बाद website पर दिखाई देगा।
+
+        </p>
 
 
-  <!-- =================================================
-       PUBLIC REVIEWS
-  ================================================== -->
+        <form
+          id="reviewForm"
+          class="review-form">
 
-  <div
-    id="publicReviews"
-    class="public-reviews">
 
-    <p>
-      Customer reviews load हो रहे हैं...
-    </p>
+          <!-- NAME -->
 
-  </div>
+          <label>
 
-</section>
+            आपका नाम
+
+            <input
+              id="reviewName"
+              maxlength="80"
+              required
+              placeholder="अपना नाम">
+
+          </label>
+
+
+          <!-- STAR RATING -->
+
+          <label>
+
+            आपकी Rating
+
+            <div
+              class="star-input"
+              id="starInput">
+
+
+              <button
+                type="button"
+                data-rating="1"
+                aria-label="1 Star">
+
+                ★
+
+              </button>
+
+
+              <button
+                type="button"
+                data-rating="2"
+                aria-label="2 Stars">
+
+                ★
+
+              </button>
+
+
+              <button
+                type="button"
+                data-rating="3"
+                aria-label="3 Stars">
+
+                ★
+
+              </button>
+
+
+              <button
+                type="button"
+                data-rating="4"
+                aria-label="4 Stars">
+
+                ★
+
+              </button>
+
+
+              <button
+                type="button"
+                data-rating="5"
+                aria-label="5 Stars">
+
+                ★
+
+              </button>
+
+
+            </div>
+
+
+            <span
+              id="selectedRatingText"
+              class="small">
+
+              Rating चुनें
+
+            </span>
+
+          </label>
+
+
+          <!-- REVIEW -->
+
+          <label>
+
+            आपका Feedback
+
+            <textarea
+              id="reviewText"
+              maxlength="1000"
+              minlength="5"
+              required
+              placeholder="लड्डू का स्वाद, quality या आपका अनुभव लिखें..."></textarea>
+
+          </label>
+
+
+          <button
+            type="submit"
+            id="reviewSubmitBtn"
+            class="primary-btn">
+
+            ⭐ Review Submit करें
+
+          </button>
+
+
+          <p
+            id="reviewMessage"
+            class="small">
+          </p>
+
+
+        </form>
+
+      </div>
+
+
+      <!-- =================================================
+           PUBLIC REVIEWS
+      ================================================== -->
+
+      <div
+        id="publicReviews"
+        class="public-reviews">
+
+        <p>
+          Customer reviews load हो रहे हैं...
+        </p>
+
+      </div>
+
+
+    </section>
+
+
+  </main>
 
 
   <!-- =====================================================
@@ -1584,7 +1688,10 @@
        SUCCESS MODAL
   ===================================================== -->
 
-  <div id="successModal" class="modal hidden">
+  <div
+    id="successModal"
+    class="modal hidden">
+
 
     <div class="modal-card">
 
@@ -1592,7 +1699,9 @@
         🎉 Order Confirmed
       </h2>
 
+
       <p id="successText"></p>
+
 
       <button
         type="button"
@@ -1612,6 +1721,7 @@
 
       </a>
 
+
     </div>
 
   </div>
@@ -1626,6 +1736,10 @@
   </script>
 
 
+  <!-- =====================================================
+       MAIN WEBSITE JAVASCRIPT
+  ===================================================== -->
+
   <script>
 
     /* =====================================================
@@ -1637,8 +1751,8 @@
     const product =
       document.getElementById("product");
 
-  const qty =
-  document.getElementById("quantity");
+    const qty =
+      document.getElementById("quantity");
 
     const productTotal =
       document.getElementById("productTotal");
@@ -1666,81 +1780,131 @@
         Number(n || 0).toLocaleString("en-IN");
 
     }
-/* =====================================================
-   DELIVERY CALCULATION
-===================================================== */
-
-function getDeliveryCharge(totalWeight) {
-
-  const weight =
-    Number(totalWeight || 0);
-
-  if (
-    !Number.isFinite(weight) ||
-    weight <= 0
-  ) {
-    return 0;
-  }
-
-  if (weight <= 1) {
-    return 100;
-  }
-
-  if (weight <= 2) {
-    return 200;
-  }
-
-  if (weight <= 3) {
-    return 300;
-  }
-
-  if (weight <= 4) {
-    return 400;
-  }
-
-  if (weight <= 5) {
-    return 500;
-  }
-
-  if (weight <= 6) {
-    return 600;
-  }
-
-  if (weight <= 7) {
-    return 700;
-  }
-
-  if (weight <= 8) {
-    return 800;
-  }
-
-  if (weight <= 9) {
-    return 900;
-  }
-
-  return 1000;
-}
 
 
-/* =====================================================
-   PRICE
-===================================================== */
+    /* =====================================================
+       DELIVERY CALCULATION
+    ===================================================== */
 
-function getSelectedProduct() {
+    function getDeliveryCharge(totalWeight) {
+
+      const weight =
+        Number(totalWeight || 0);
+
+
+      if (
+        !Number.isFinite(weight) ||
+        weight <= 0
+      ) {
+
+        return 0;
+
+      }
+
+
+      if (weight <= 1) {
+        return 100;
+      }
+
+      if (weight <= 2) {
+        return 200;
+      }
+
+      if (weight <= 3) {
+        return 300;
+      }
+
+      if (weight <= 4) {
+        return 400;
+      }
+
+      if (weight <= 5) {
+        return 500;
+      }
+
+      if (weight <= 6) {
+        return 600;
+      }
+
+      if (weight <= 7) {
+        return 700;
+      }
+
+      if (weight <= 8) {
+        return 800;
+      }
+
+      if (weight <= 9) {
+        return 900;
+      }
+
+      return 1000;
+
+    }
+
+
+    /* =====================================================
+       WEIGHT FORMAT
+    ===================================================== */
+
+    function formatWeight(weight) {
+
+      const n =
+        Number(weight || 0);
+
+
+      if (Number.isInteger(n)) {
+
+        return `${n} Kg`;
+
+      }
+
+
+      return `${n.toFixed(1)} Kg`;
+
+    }
+
+
+    /* =====================================================
+       GET SELECTED PRODUCT
+    ===================================================== */
+
+    function getSelectedProduct() {
 
       const selected =
         product.options[product.selectedIndex];
 
-      if (!selected || !selected.value) {
+
+      if (
+        !selected ||
+        !selected.value
+      ) {
+
         return null;
+
       }
 
+
       return {
-        id: selected.value,
-        price: Number(selected.dataset.price || 0),
-        weight: Number(selected.dataset.weight || 1),
-        name: selected.textContent.trim()
+
+        id:
+          selected.value,
+
+        price:
+          Number(
+            selected.dataset.price || 0
+          ),
+
+        weight:
+          Number(
+            selected.dataset.weight || 1
+          ),
+
+        name:
+          selected.textContent.trim()
+
       };
+
     }
 
 
@@ -1752,6 +1916,7 @@ function getSelectedProduct() {
 
       const selected =
         getSelectedProduct();
+
 
       if (!selected) {
 
@@ -1767,39 +1932,41 @@ function getSelectedProduct() {
         renderUPI();
 
         return;
+
       }
 
 
       const productPrice =
-  selected.price;
+        selected.price;
 
-const quantityKg =
-  Number(qty.value || 1);
 
-/*
-  Product price 1 Kg का है,
-  इसलिए selected quantity के Kg से multiply होगा.
-*/
+      const quantityKg =
+        Number(qty.value || 1);
 
-const productAmount =
-  productPrice * quantityKg;
 
-/*
-  अब quantity खुद total Kg है.
-*/
+      /*
+        Product price 1 Kg का है,
+        इसलिए quantity Kg से multiply होगी.
+      */
 
-const totalWeight =
-  quantityKg;
+      const productAmount =
+        productPrice *
+        quantityKg;
 
-/*
-  Delivery total Kg के आधार पर
-*/
 
-const delivery =
-  getDeliveryCharge(totalWeight);
+      const totalWeight =
+        quantityKg;
 
-const grand =
-  productAmount + delivery;
+
+      const delivery =
+        getDeliveryCharge(
+          totalWeight
+        );
+
+
+      const grand =
+        productAmount +
+        delivery;
 
 
       productTotal.textContent =
@@ -1815,23 +1982,57 @@ const grand =
 
 
       renderUPI();
+
     }
 
 
     /* =====================================================
-       WEIGHT FORMAT
+       ESCAPE HTML
     ===================================================== */
 
-    function formatWeight(weight) {
+    function escapeHtml(value) {
 
-      const n =
-        Number(weight || 0);
+      return String(value ?? "")
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
 
-      if (Number.isInteger(n)) {
-        return `${n} Kg`;
-      }
+    }
 
-      return `${n.toFixed(1)} Kg`;
+
+    /* =====================================================
+       ESCAPE JS
+    ===================================================== */
+
+    function escapeJs(value) {
+
+      return String(value ?? "")
+        .replace(
+          /\\/g,
+          "\\\\"
+        )
+        .replace(
+          /'/g,
+          "\\'"
+        );
+
     }
 
 
@@ -1842,67 +2043,90 @@ const grand =
     function renderProducts() {
 
       const grid =
-        document.getElementById("productGrid");
+        document.getElementById(
+          "productGrid"
+        );
 
-      if (!config ||
-          !Array.isArray(config.products)) {
+
+      if (
+        !config ||
+        !Array.isArray(
+          config.products
+        )
+      ) {
 
         grid.innerHTML =
-          "<p>Products उपलब्ध नहीं हैं।</p>";
+          "<p class='error-text'>" +
+          "Products उपलब्ध नहीं हैं।" +
+          "</p>";
 
         return;
+
       }
 
 
-      if (config.products.length === 0) {
+      if (
+        config.products.length === 0
+      ) {
 
         grid.innerHTML =
-          "<p>अभी कोई product उपलब्ध नहीं है।</p>";
+          "<p>" +
+          "अभी कोई product उपलब्ध नहीं है।" +
+          "</p>";
 
         return;
+
       }
 
 
       grid.innerHTML =
-        config.products.map(p => {
+        config.products
+          .map(p => {
 
-          const weight =
-            Number(p.weight || 1);
+            const weight =
+              Number(
+                p.weight || 1
+              );
 
 
-          const weightText =
-            formatWeight(weight);
+            const weightText =
+              formatWeight(weight);
 
 
-          return `
+            return `
 
-            <div class="product-card">
+              <div class="product-card">
 
-              <h3>
-                ${escapeHtml(p.name)}
-              </h3>
+                <h3>
+                  ${escapeHtml(p.name)}
+                </h3>
 
-              <p>
-                <strong>
-                  ${money(p.price)}
-                </strong>
-                / ${weightText}
-              </p>
+                <p>
 
-              <button
-                type="button"
-                class="primary-btn"
-                onclick="selectProduct('${escapeJs(p.id)}')">
+                  <strong>
+                    ${money(p.price)}
+                  </strong>
 
-                यह पैक चुनें
+                  / ${weightText}
 
-              </button>
+                </p>
 
-            </div>
+                <button
+                  type="button"
+                  class="primary-btn"
+                  onclick="selectProduct('${escapeJs(p.id)}')">
 
-          `;
+                  यह पैक चुनें
 
-        }).join("");
+                </button>
+
+              </div>
+
+            `;
+
+          })
+          .join("");
+
     }
 
 
@@ -1915,40 +2139,16 @@ const grand =
       product.value =
         id;
 
+
       updateTotal();
+
 
       document
         .getElementById("order")
         .scrollIntoView({
           behavior: "smooth"
         });
-    }
 
-
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
-    function escapeHtml(value) {
-
-      return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-
-    /* =====================================================
-       ESCAPE JS
-    ===================================================== */
-
-    function escapeJs(value) {
-
-      return String(value ?? "")
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'");
     }
 
 
@@ -1969,8 +2169,12 @@ const grand =
           : "none";
 
 
-      if (paymentMethod.value !== "UPI") {
+      if (
+        paymentMethod.value !== "UPI"
+      ) {
+
         return;
+
       }
 
 
@@ -1979,11 +2183,15 @@ const grand =
 
 
       const qr =
-        document.getElementById("qr");
+        document.getElementById(
+          "qr"
+        );
 
 
       const payBtn =
-        document.getElementById("payBtn");
+        document.getElementById(
+          "payBtn"
+        );
 
 
       if (!selected) {
@@ -1994,22 +2202,28 @@ const grand =
           '</div>';
 
         return;
+
       }
 
 
       const quantityKg =
-  Number(qty.value || 1);
+        Number(qty.value || 1);
 
-const totalWeight =
-  quantityKg;
 
-const delivery =
-  getDeliveryCharge(totalWeight);
+      const totalWeight =
+        quantityKg;
 
-const amount =
-  selected.price *
-  quantityKg +
-  delivery;
+
+      const delivery =
+        getDeliveryCharge(
+          totalWeight
+        );
+
+
+      const amount =
+        selected.price *
+        quantityKg +
+        delivery;
 
 
       document
@@ -2025,12 +2239,17 @@ const amount =
 
       if (
         config.upiId &&
-        !String(config.upiId).startsWith("YOUR-")
+        !String(
+          config.upiId
+        ).startsWith("YOUR-")
       ) {
+
 
         const url =
           `upi://pay?pa=${
-            encodeURIComponent(config.upiId)
+            encodeURIComponent(
+              config.upiId
+            )
           }&pn=${
             encodeURIComponent(
               config.upiName ||
@@ -2042,7 +2261,8 @@ const amount =
 
 
         if (
-          typeof QRCode !== "undefined"
+          typeof QRCode !==
+          "undefined"
         ) {
 
           new QRCode(
@@ -2060,6 +2280,7 @@ const amount =
             '<div class="qr-placeholder">' +
             'QR Code library load नहीं हुई।' +
             '</div>';
+
         }
 
 
@@ -2073,6 +2294,7 @@ const amount =
 
 
       } else {
+
 
         qr.innerHTML =
           '<div class="qr-placeholder">' +
@@ -2088,7 +2310,9 @@ const amount =
             );
 
           };
+
       }
+
     }
 
 
@@ -2114,6 +2338,7 @@ const amount =
           throw new Error(
             "Config API failed"
           );
+
         }
 
 
@@ -2123,27 +2348,40 @@ const amount =
 
         if (
           !config ||
-          !Array.isArray(config.products)
+          !Array.isArray(
+            config.products
+          )
         ) {
 
           throw new Error(
             "Products configuration missing"
           );
+
         }
 
 
-        /*
-          Product dropdown
-        */
+        console.log(
+          "CONFIG LOADED:",
+          config
+        );
+
+
+        /* =================================================
+           PRODUCT DROPDOWN
+        ================================================== */
 
         product.innerHTML =
-          '<option value="">पैक चुनें</option>' +
+          '<option value="">' +
+          'लड्डू का प्रकार चुनें' +
+          '</option>' +
 
           config.products
             .map(p => {
 
               const weight =
-                Number(p.weight || 1);
+                Number(
+                  p.weight || 1
+                );
 
 
               return `
@@ -2163,11 +2401,9 @@ const amount =
             .join("");
 
 
-        /*
-          Default product:
-          दूसरा product उपलब्ध हो तो
-          दूसरा product select होगा।
-        */
+        /* =================================================
+           DEFAULT PRODUCT
+        ================================================== */
 
         if (
           config.products.length > 1
@@ -2182,6 +2418,7 @@ const amount =
 
           product.value =
             config.products[0].id;
+
         }
 
 
@@ -2199,16 +2436,26 @@ const amount =
 
 
         document
-          .getElementById("productGrid")
+          .getElementById(
+            "productGrid"
+          )
           .innerHTML =
-            '<p class="error-text">' +
-            'Website configuration load नहीं हो सकी।' +
-            '</p>';
+
+          '<p class="error-text">' +
+          'Website configuration load नहीं हो सकी।' +
+          '<br><br>' +
+          'कृपया page refresh करें।' +
+          '</p>';
 
 
         product.innerHTML =
-          '<option value="">Product load नहीं हुआ</option>';
+
+          '<option value="">' +
+          'Product load नहीं हुआ' +
+          '</option>';
+
       }
+
     }
 
 
@@ -2266,7 +2513,10 @@ const amount =
               document
                 .getElementById("phone")
                 .value
-                .replace(/\D/g, ""),
+                .replace(
+                  /\D/g,
+                  ""
+                ),
 
 
             address:
@@ -2294,20 +2544,20 @@ const amount =
               document
                 .getElementById("pincode")
                 .value
-                .replace(/\D/g, ""),
+                .replace(
+                  /\D/g,
+                  ""
+                ),
 
 
             productId:
               product.value,
 
 
-            /*
-  IMPORTANT:
-  quantity = total Kg
-*/
-
             quantity:
-              Number(qty.value),
+              Number(
+                qty.value
+              ),
 
 
             paymentMethod:
@@ -2324,7 +2574,7 @@ const amount =
 
 
           /* ================================================
-             FRONTEND VALIDATION
+             VALIDATION
           ================================================ */
 
           if (!body.name) {
@@ -2334,6 +2584,7 @@ const amount =
             );
 
             return;
+
           }
 
 
@@ -2348,6 +2599,7 @@ const amount =
             );
 
             return;
+
           }
 
 
@@ -2358,6 +2610,7 @@ const amount =
             );
 
             return;
+
           }
 
 
@@ -2368,6 +2621,7 @@ const amount =
             );
 
             return;
+
           }
 
 
@@ -2378,6 +2632,7 @@ const amount =
             );
 
             return;
+
           }
 
 
@@ -2392,38 +2647,39 @@ const amount =
             );
 
             return;
+
           }
 
 
           if (!body.productId) {
 
             alert(
-              "कृपया पैक चुनें।"
+              "कृपया लड्डू का प्रकार चुनें।"
             );
 
             return;
+
           }
 
 
-          /*
-  Quantity अब Kg में है.
-  0.5 Kg से 10 Kg तक,
-  केवल 0.5 Kg के अंतर में.
-*/
+          if (
+            !Number.isFinite(
+              body.quantity
+            ) ||
+            body.quantity < 0.5 ||
+            body.quantity > 10 ||
+            !Number.isInteger(
+              body.quantity * 2
+            )
+          ) {
 
-if (
-  !Number.isFinite(body.quantity) ||
-  body.quantity < 0.5 ||
-  body.quantity > 10 ||
-  !Number.isInteger(body.quantity * 2)
-) {
+            alert(
+              "कृपया 0.5 Kg से 10 Kg के बीच सही मात्रा चुनें।"
+            );
 
-  alert(
-    "कृपया 0.5 Kg से 10 Kg के बीच सही मात्रा चुनें।"
-  );
+            return;
 
-  return;
-}
+          }
 
 
           try {
@@ -2445,6 +2701,7 @@ if (
               await fetch(
                 "/api/orders",
                 {
+
                   method: "POST",
 
                   headers: {
@@ -2453,7 +2710,10 @@ if (
                   },
 
                   body:
-                    JSON.stringify(body)
+                    JSON.stringify(
+                      body
+                    )
+
                 }
               );
 
@@ -2470,11 +2730,12 @@ if (
               );
 
               return;
+
             }
 
 
             /* ==============================================
-               SUCCESS MESSAGE
+               SUCCESS
             ============================================== */
 
             document
@@ -2505,21 +2766,13 @@ if (
               ]?.text || "";
 
 
-            const selected =
-              getSelectedProduct();
-
-
-            const totalWeight =
-  body.quantity;
-
-
             const wa =
               `नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। ` +
               `Order No: ${data.orderNo}. ` +
               `नाम: ${body.name}, ` +
               `मोबाइल: ${body.phone}, ` +
-             `लड्डू का प्रकार: ${selectedProduct}, ` +
-          `मात्रा: ${formatWeight(body.quantity)}, ` +
+              `लड्डू का प्रकार: ${selectedProduct}, ` +
+              `मात्रा: ${formatWeight(body.quantity)}, ` +
               `पता: ${body.address}, ` +
               `शहर: ${body.city}, ` +
               `राज्य: ${body.state}, ` +
@@ -2534,8 +2787,11 @@ if (
                 "successWa"
               )
               .href =
-                "https://wa.me/919643185255?text=" +
-                encodeURIComponent(wa);
+
+              "https://wa.me/919643185255?text=" +
+              encodeURIComponent(
+                wa
+              );
 
 
             document
@@ -2546,16 +2802,12 @@ if (
               .remove("hidden");
 
 
-            /*
-              Form reset
-            */
+            /* ==============================================
+               RESET
+            ============================================== */
 
             e.target.reset();
 
-
-            /*
-              Default product वापस select करें
-            */
 
             if (
               config &&
@@ -2572,6 +2824,7 @@ if (
 
               product.value =
                 config.products[0].id;
+
             }
 
 
@@ -2584,7 +2837,9 @@ if (
 
 
             document
-              .getElementById("utr")
+              .getElementById(
+                "utr"
+              )
               .value =
               "";
 
@@ -2618,6 +2873,7 @@ if (
 
             submitBtn.textContent =
               "✅ Order Confirm करें";
+
           }
 
         }
@@ -2629,7 +2885,9 @@ if (
     ===================================================== */
 
     document
-      .getElementById("historyBtn")
+      .getElementById(
+        "historyBtn"
+      )
       .addEventListener(
         "click",
         loadOrderHistory
@@ -2637,16 +2895,21 @@ if (
 
 
     document
-      .getElementById("historyPhone")
+      .getElementById(
+        "historyPhone"
+      )
       .addEventListener(
         "keydown",
         e => {
 
-          if (e.key === "Enter") {
+          if (
+            e.key === "Enter"
+          ) {
 
             e.preventDefault();
 
             loadOrderHistory();
+
           }
 
         }
@@ -2661,7 +2924,10 @@ if (
             "historyPhone"
           )
           .value
-          .replace(/\D/g, "");
+          .replace(
+            /\D/g,
+            ""
+          );
 
 
       const message =
@@ -2700,6 +2966,7 @@ if (
           "कृपया 10 अंकों का सही मोबाइल नंबर डालें।";
 
         return;
+
       }
 
 
@@ -2729,6 +2996,7 @@ if (
             "Orders load नहीं हो सके।";
 
           return;
+
         }
 
 
@@ -2741,6 +3009,7 @@ if (
             "इस मोबाइल नंबर से कोई order नहीं मिला।";
 
           return;
+
         }
 
 
@@ -2770,7 +3039,9 @@ if (
 
         message.textContent =
           "Server से connection नहीं हो सका।";
+
       }
+
     }
 
 
@@ -2806,9 +3077,11 @@ if (
         <div class="history-card">
 
           <h3>
+
             📦 ${escapeHtml(
               order.orderNo
             )}
+
           </h3>
 
 
@@ -2834,8 +3107,10 @@ if (
             </span>
 
             <strong>
-  ${formatWeight(order.quantity)}
-</strong>
+              ${formatWeight(
+                order.quantity
+              )}
+            </strong>
 
           </div>
 
@@ -2877,9 +3152,11 @@ if (
             </span>
 
             <strong class="status">
+
               ${escapeHtml(
                 status
               )}
+
             </strong>
 
           </div>
@@ -2888,6 +3165,7 @@ if (
           ${
             order.awb
               ? `
+
                 <div class="history-row">
 
                   <span>
@@ -2895,18 +3173,22 @@ if (
                   </span>
 
                   <strong>
+
                     ${escapeHtml(
                       order.awb
                     )}
+
                   </strong>
 
                 </div>
+
               `
               : ""
           }
 
 
           <div class="history-actions">
+
 
             <button
               type="button"
@@ -2928,6 +3210,7 @@ if (
             ${
               canCancel
                 ? `
+
                   <button
                     type="button"
                     class="cancel-btn"
@@ -2943,8 +3226,10 @@ if (
                     ❌ Cancel
 
                   </button>
+
                 `
                 : `
+
                   <button
                     type="button"
                     class="disabled-btn"
@@ -2953,14 +3238,17 @@ if (
                     Cancellation बंद
 
                   </button>
+
                 `
             }
+
 
           </div>
 
         </div>
 
       `;
+
     }
 
 
@@ -2998,6 +3286,7 @@ if (
       return map[status] ||
         status ||
         "Unknown";
+
     }
 
 
@@ -3028,6 +3317,7 @@ if (
       return map[status] ||
         status ||
         "Unknown";
+
     }
 
 
@@ -3072,6 +3362,7 @@ if (
           await fetch(
             "/api/orders/details",
             {
+
               method: "POST",
 
               headers: {
@@ -3084,6 +3375,7 @@ if (
                   orderNo,
                   phone
                 })
+
             }
           );
 
@@ -3095,14 +3387,18 @@ if (
         if (!response.ok) {
 
           detailContent.innerHTML =
+
             `<p class="error-text">
+
               ${escapeHtml(
                 data.error ||
                 "Order details नहीं मिली।"
               )}
+
             </p>`;
 
           return;
+
         }
 
 
@@ -3116,138 +3412,249 @@ if (
             "<p>Order details उपलब्ध नहीं हैं।</p>";
 
           return;
+
         }
 
 
         detailContent.innerHTML = `
 
           <div class="detail-item">
-            <strong>Order No.</strong><br>
+
+            <strong>
+              Order No.
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.orderNo
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Date</strong><br>
-            ${formatDate(
+
+            <strong>
+              Date
+            </strong>
+
+            <br>
+
+            ${formatHistoryDate(
               order.createdAt
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Customer</strong><br>
+
+            <strong>
+              Customer
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.customerName
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Mobile</strong><br>
+
+            <strong>
+              Mobile
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.phone
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Product</strong><br>
+
+            <strong>
+              Product
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.product
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Quantity</strong><br>
-            ${formatWeight(order.quantity)}
+
+            <strong>
+              Quantity
+            </strong>
+
+            <br>
+
+            ${formatWeight(
+              order.quantity
+            )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Product Price</strong><br>
+
+            <strong>
+              Product Price
+            </strong>
+
+            <br>
+
             ${money(
               order.price
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Delivery</strong><br>
+
+            <strong>
+              Delivery
+            </strong>
+
+            <br>
+
             ${money(
               order.delivery
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Total</strong><br>
+
             <strong>
+              Total
+            </strong>
+
+            <br>
+
+            <strong>
+
               ${money(
                 order.total
               )}
+
             </strong>
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Payment</strong><br>
+
+            <strong>
+              Payment
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               getPaymentStatusText(
                 order.paymentStatus
               )
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Order Status</strong><br>
+
+            <strong>
+              Order Status
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               getStatusText(
                 order.orderStatus
               )
             )}
+
           </div>
 
 
           <div class="detail-item full-width">
-            <strong>Address</strong><br>
+
+            <strong>
+              Address
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.address
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>City</strong><br>
+
+            <strong>
+              City
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.city
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>State</strong><br>
+
+            <strong>
+              State
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.state
             )}
+
           </div>
 
 
           <div class="detail-item">
-            <strong>Pincode</strong><br>
+
+            <strong>
+              Pincode
+            </strong>
+
+            <br>
+
             ${escapeHtml(
               order.pincode
             )}
+
           </div>
 
 
           ${
             order.awb
               ? `
+
                 <div class="detail-item">
 
                   <strong>
@@ -3261,6 +3668,7 @@ if (
                   )}
 
                 </div>
+
               `
               : ""
           }
@@ -3269,6 +3677,7 @@ if (
           ${
             order.shiprocketStatus
               ? `
+
                 <div class="detail-item">
 
                   <strong>
@@ -3282,6 +3691,7 @@ if (
                   )}
 
                 </div>
+
               `
               : ""
           }
@@ -3290,6 +3700,7 @@ if (
           ${
             order.cancellationReason
               ? `
+
                 <div class="detail-item full-width">
 
                   <strong>
@@ -3303,6 +3714,7 @@ if (
                   )}
 
                 </div>
+
               `
               : ""
           }
@@ -3311,6 +3723,7 @@ if (
           ${
             order.canCancel
               ? `
+
                 <div class="detail-item full-width">
 
                   <strong>
@@ -3336,6 +3749,7 @@ if (
                   </button>
 
                 </div>
+
               `
               : ""
           }
@@ -3355,15 +3769,17 @@ if (
           "<p class='error-text'>" +
           "Server से connection नहीं हो सका।" +
           "</p>";
+
       }
+
     }
 
 
     /* =====================================================
-       DATE
+       HISTORY DATE
     ===================================================== */
 
-    function formatDate(
+    function formatHistoryDate(
       value
     ) {
 
@@ -3386,7 +3802,9 @@ if (
       } catch (error) {
 
         return String(value);
+
       }
+
     }
 
 
@@ -3404,7 +3822,7 @@ if (
           "cancelOrderNo"
         )
         .value =
-          orderNo;
+        orderNo;
 
 
       document
@@ -3412,7 +3830,7 @@ if (
           "cancelPhone"
         )
         .value =
-          phone;
+        phone;
 
 
       document
@@ -3422,6 +3840,7 @@ if (
         .scrollIntoView({
           behavior: "smooth"
         });
+
     }
 
 
@@ -3486,6 +3905,7 @@ if (
               "Order No. डालें।";
 
             return;
+
           }
 
 
@@ -3499,6 +3919,7 @@ if (
               "सही 10 अंकों का mobile number डालें।";
 
             return;
+
           }
 
 
@@ -3514,6 +3935,7 @@ if (
               "Cancellation रोक दी गई।";
 
             return;
+
           }
 
 
@@ -3523,6 +3945,7 @@ if (
               await fetch(
                 "/api/orders/cancel",
                 {
+
                   method: "POST",
 
                   headers: {
@@ -3536,6 +3959,7 @@ if (
                       phone,
                       reason
                     })
+
                 }
               );
 
@@ -3557,6 +3981,7 @@ if (
                 </span>`;
 
               return;
+
             }
 
 
@@ -3573,10 +3998,12 @@ if (
                 Order No:
 
                 <strong>
+
                   ${escapeHtml(
                     data.orderNo ||
                     orderNo
                   )}
+
                 </strong>
 
               </span>`;
@@ -3608,6 +4035,7 @@ if (
             ) {
 
               loadOrderHistory();
+
             }
 
 
@@ -3625,6 +4053,7 @@ if (
                 Server से connection नहीं हो सका।
 
               </span>`;
+
           }
 
         }
@@ -3643,6 +4072,7 @@ if (
         )
         .classList
         .add("hidden");
+
     }
 
 
@@ -3664,394 +4094,117 @@ if (
           ) {
 
             closeModal();
+
           }
 
         }
       );
 
-/* =====================================================
-   CUSTOMER REVIEWS SYSTEM
-===================================================== */
 
-let selectedReviewRating = 0;
+    /* =====================================================
+       START WEBSITE
+    ===================================================== */
 
+    init();
 
-/* =====================================================
-   STAR SELECTION
-===================================================== */
-
-document
-  .querySelectorAll("#starInput button")
-  .forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      selectedReviewRating =
-        Number(button.dataset.rating);
+  </script>
 
 
-      document
-        .querySelectorAll("#starInput button")
-        .forEach(star => {
+  <!-- =====================================================
+       CUSTOMER REVIEWS JAVASCRIPT
+  ===================================================== -->
 
-          const value =
-            Number(star.dataset.rating);
+  <script>
 
-          star.classList.toggle(
-            "selected",
-            value <= selectedReviewRating
+    /* =====================================================
+       CUSTOMER REVIEWS SYSTEM
+    ===================================================== */
+
+    let selectedReviewRating = 0;
+
+
+    /* =====================================================
+       STAR SELECTION
+    ===================================================== */
+
+    document
+      .querySelectorAll(
+        "#starInput button"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              selectedReviewRating =
+                Number(
+                  button.dataset.rating
+                );
+
+
+              document
+                .querySelectorAll(
+                  "#starInput button"
+                )
+                .forEach(
+                  star => {
+
+                    const value =
+                      Number(
+                        star.dataset.rating
+                      );
+
+
+                    star.classList.toggle(
+                      "selected",
+                      value <=
+                      selectedReviewRating
+                    );
+
+                  }
+                );
+
+
+              document
+                .getElementById(
+                  "selectedRatingText"
+                )
+                .textContent =
+                `${selectedReviewRating} / 5 Stars`;
+
+            }
           );
 
-        });
-
-
-      document
-        .getElementById("selectedRatingText")
-        .textContent =
-          `${selectedReviewRating} / 5 Stars`;
-
-    });
-
-  });
-
-
-/* =====================================================
-   LOAD PUBLIC REVIEWS
-===================================================== */
-
-async function loadPublicReviews() {
-
-  const container =
-    document.getElementById("publicReviews");
-
-  if (!container) {
-    return;
-  }
-
-
-  try {
-
-    const response =
-      await fetch("/api/reviews", {
-        cache: "no-store"
-      });
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "Reviews load नहीं हो सके।"
+        }
       );
 
-    }
 
+    /* =====================================================
+       LOAD PUBLIC REVIEWS
+    ===================================================== */
 
-    const average =
-      Number(data.average || 0);
+    async function loadPublicReviews() {
 
-
-    const averageRating =
-      document.getElementById(
-        "averageRating"
-      );
-
-    if (averageRating) {
-
-      averageRating.textContent =
-        average.toFixed(1);
-
-    }
-
-
-    const totalReviews =
-      document.getElementById(
-        "totalReviews"
-      );
-
-    if (totalReviews) {
-
-      totalReviews.textContent =
-        Number(data.total || 0);
-
-    }
-
-
-    renderAverageStars(average);
-
-
-    if (
-      !Array.isArray(data.reviews) ||
-      data.reviews.length === 0
-    ) {
-
-      container.innerHTML = `
-
-        <div class="no-reviews">
-
-          ⭐ अभी कोई approved review नहीं है।
-
-          <br>
-
-          सबसे पहले अपना अनुभव साझा करें।
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    container.innerHTML =
-      data.reviews
-        .map(review =>
-          createPublicReviewCard(review)
-        )
-        .join("");
-
-
-  } catch (error) {
-
-    console.error(
-      "PUBLIC REVIEWS ERROR:",
-      error
-    );
-
-
-    container.innerHTML = `
-
-      <div class="no-reviews">
-
-        Reviews अभी load नहीं हो सके।
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-/* =====================================================
-   AVERAGE STARS
-===================================================== */
-
-function renderAverageStars(rating) {
-
-  const container =
-    document.getElementById(
-      "averageStars"
-    );
-
-  if (!container) {
-    return;
-  }
-
-
-  const rounded =
-    Math.round(
-      Number(rating || 0)
-    );
-
-
-  container.textContent =
-    "★".repeat(rounded) +
-    "☆".repeat(5 - rounded);
-
-}
-
-
-/* =====================================================
-   PUBLIC REVIEW CARD
-===================================================== */
-
-function createPublicReviewCard(review) {
-
-  const rating =
-    Number(review.rating || 0);
-
-
-  const stars =
-    "★".repeat(rating) +
-    "☆".repeat(5 - rating);
-
-
-  return `
-
-    <div class="public-review-card">
-
-      <div class="public-review-top">
-
-        <div>
-
-          <div class="public-review-name">
-
-            ${escapeHtml(review.name)}
-
-          </div>
-
-
-          <div class="public-review-stars">
-
-            ${stars}
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="public-review-text">
-
-        ${escapeHtml(review.review)}
-
-      </div>
-
-
-      <div class="public-review-date">
-
-        ${formatDate(review.created_at)}
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   SUBMIT REVIEW
-===================================================== */
-
-const reviewForm =
-  document.getElementById(
-    "reviewForm"
-  );
-
-
-if (reviewForm) {
-
-  reviewForm.addEventListener(
-    "submit",
-    async event => {
-
-      event.preventDefault();
-
-
-      const name =
-        document
-          .getElementById("reviewName")
-          .value
-          .trim();
-
-
-      const review =
-        document
-          .getElementById("reviewText")
-          .value
-          .trim();
-
-
-      const message =
+      const container =
         document.getElementById(
-          "reviewMessage"
+          "publicReviews"
         );
 
 
-      const submitButton =
-        document.getElementById(
-          "reviewSubmitBtn"
-        );
-
-
-      if (
-        name.length < 2 ||
-        name.length > 80
-      ) {
-
-        message.innerHTML =
-          `<span class="review-error">
-            नाम 2 से 80 characters के बीच होना चाहिए।
-          </span>`;
-
+      if (!container) {
         return;
-
-      }
-
-
-      if (
-        selectedReviewRating < 1 ||
-        selectedReviewRating > 5
-      ) {
-
-        message.innerHTML =
-          `<span class="review-error">
-            कृपया 1 से 5 Star Rating चुनें।
-          </span>`;
-
-        return;
-
-      }
-
-
-      if (
-        review.length < 5 ||
-        review.length > 1000
-      ) {
-
-        message.innerHTML =
-          `<span class="review-error">
-            Feedback 5 से 1000 characters के बीच होना चाहिए।
-          </span>`;
-
-        return;
-
       }
 
 
       try {
 
-        submitButton.disabled = true;
-
-        submitButton.textContent =
-          "⏳ Feedback भेजा जा रहा है...";
-
-        message.textContent = "";
-
-
         const response =
           await fetch(
             "/api/reviews",
             {
-
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body: JSON.stringify({
-
-                name: name,
-
-                rating:
-                  selectedReviewRating,
-
-                review: review
-
-              })
-
+              cache: "no-store"
             }
           );
 
@@ -4064,131 +4217,512 @@ if (reviewForm) {
 
           throw new Error(
             data.error ||
-            "Review submit नहीं हुआ।"
+            "Reviews load नहीं हो सके।"
           );
 
         }
 
 
-        message.innerHTML =
-          `<span class="review-success">
-
-            ✅ ${escapeHtml(
-              data.message ||
-              "Feedback submit हो गया है।"
-            )}
-
-          </span>`;
+        const average =
+          Number(
+            data.average || 0
+          );
 
 
-        reviewForm.reset();
+        const averageRating =
+          document.getElementById(
+            "averageRating"
+          );
 
 
-        selectedReviewRating = 0;
+        if (averageRating) {
+
+          averageRating.textContent =
+            average.toFixed(1);
+
+        }
 
 
-        document
-          .querySelectorAll(
-            "#starInput button"
-          )
-          .forEach(star => {
+        const totalReviews =
+          document.getElementById(
+            "totalReviews"
+          );
 
-            star.classList.remove(
-              "selected"
+
+        if (totalReviews) {
+
+          totalReviews.textContent =
+            Number(
+              data.total || 0
             );
 
-          });
+        }
 
 
-        document
-          .getElementById(
-            "selectedRatingText"
-          )
-          .textContent =
-            "Rating चुनें";
+        renderAverageStars(
+          average
+        );
+
+
+        if (
+          !Array.isArray(
+            data.reviews
+          ) ||
+          data.reviews.length === 0
+        ) {
+
+          container.innerHTML = `
+
+            <div class="no-reviews">
+
+              ⭐ अभी कोई approved review नहीं है।
+
+              <br>
+
+              सबसे पहले अपना अनुभव साझा करें।
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        container.innerHTML =
+          data.reviews
+            .map(
+              review =>
+                createPublicReviewCard(
+                  review
+                )
+            )
+            .join("");
 
 
       } catch (error) {
 
         console.error(
-          "SUBMIT REVIEW ERROR:",
+          "PUBLIC REVIEWS ERROR:",
           error
         );
 
 
-        message.innerHTML =
-          `<span class="review-error">
+        container.innerHTML = `
 
-            ❌ ${escapeHtml(
-              error.message
-            )}
+          <div class="no-reviews">
 
-          </span>`;
+            Reviews अभी load नहीं हो सके।
 
+          </div>
 
-      } finally {
-
-        submitButton.disabled = false;
-
-        submitButton.textContent =
-          "⭐ Review Submit करें";
+        `;
 
       }
 
     }
-  );
-
-}
 
 
-/* =====================================================
-   DATE FORMAT
-===================================================== */
+    /* =====================================================
+       AVERAGE STARS
+    ===================================================== */
 
-function formatDate(value) {
+    function renderAverageStars(
+      rating
+    ) {
 
-  if (!value) {
-    return "";
-  }
+      const container =
+        document.getElementById(
+          "averageStars"
+        );
 
 
-  try {
+      if (!container) {
+        return;
+      }
 
-    return new Date(value)
-      .toLocaleDateString(
-        "hi-IN",
-        {
-          day: "numeric",
-          month: "short",
-          year: "numeric"
+
+      const rounded =
+        Math.round(
+          Number(
+            rating || 0
+          )
+        );
+
+
+      container.textContent =
+        "★".repeat(
+          rounded
+        ) +
+        "☆".repeat(
+          5 - rounded
+        );
+
+    }
+
+
+    /* =====================================================
+       PUBLIC REVIEW CARD
+    ===================================================== */
+
+    function createPublicReviewCard(
+      review
+    ) {
+
+      const rating =
+        Number(
+          review.rating || 0
+        );
+
+
+      const safeRating =
+        Math.max(
+          0,
+          Math.min(
+            5,
+            rating
+          )
+        );
+
+
+      const stars =
+        "★".repeat(
+          safeRating
+        ) +
+        "☆".repeat(
+          5 - safeRating
+        );
+
+
+      return `
+
+        <div class="public-review-card">
+
+          <div class="public-review-top">
+
+            <div>
+
+              <div class="public-review-name">
+
+                ${escapeHtml(
+                  review.name
+                )}
+
+              </div>
+
+
+              <div class="public-review-stars">
+
+                ${stars}
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="public-review-text">
+
+            ${escapeHtml(
+              review.review
+            )}
+
+          </div>
+
+
+          <div class="public-review-date">
+
+            ${formatReviewDate(
+              review.created_at
+            )}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =====================================================
+       SUBMIT REVIEW
+    ===================================================== */
+
+    const reviewForm =
+      document.getElementById(
+        "reviewForm"
+      );
+
+
+    if (reviewForm) {
+
+      reviewForm.addEventListener(
+        "submit",
+        async event => {
+
+          event.preventDefault();
+
+
+          const name =
+            document
+              .getElementById(
+                "reviewName"
+              )
+              .value
+              .trim();
+
+
+          const review =
+            document
+              .getElementById(
+                "reviewText"
+              )
+              .value
+              .trim();
+
+
+          const message =
+            document.getElementById(
+              "reviewMessage"
+            );
+
+
+          const submitButton =
+            document.getElementById(
+              "reviewSubmitBtn"
+            );
+
+
+          if (
+            name.length < 2 ||
+            name.length > 80
+          ) {
+
+            message.innerHTML =
+              `<span class="review-error">
+
+                नाम 2 से 80 characters के बीच होना चाहिए।
+
+              </span>`;
+
+            return;
+
+          }
+
+
+          if (
+            selectedReviewRating < 1 ||
+            selectedReviewRating > 5
+          ) {
+
+            message.innerHTML =
+              `<span class="review-error">
+
+                कृपया 1 से 5 Star Rating चुनें।
+
+              </span>`;
+
+            return;
+
+          }
+
+
+          if (
+            review.length < 5 ||
+            review.length > 1000
+          ) {
+
+            message.innerHTML =
+              `<span class="review-error">
+
+                Feedback 5 से 1000 characters के बीच होना चाहिए।
+
+              </span>`;
+
+            return;
+
+          }
+
+
+          try {
+
+            submitButton.disabled =
+              true;
+
+
+            submitButton.textContent =
+              "⏳ Feedback भेजा जा रहा है...";
+
+
+            message.textContent =
+              "";
+
+
+            const response =
+              await fetch(
+                "/api/reviews",
+                {
+
+                  method: "POST",
+
+                  headers: {
+                    "Content-Type":
+                      "application/json"
+                  },
+
+                  body:
+                    JSON.stringify({
+
+                      name:
+                        name,
+
+                      rating:
+                        selectedReviewRating,
+
+                      review:
+                        review
+
+                    })
+
+                }
+              );
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data.error ||
+                "Review submit नहीं हुआ।"
+              );
+
+            }
+
+
+            message.innerHTML =
+              `<span class="review-success">
+
+                ✅ ${escapeHtml(
+                  data.message ||
+                  "Feedback submit हो गया है।"
+                )}
+
+              </span>`;
+
+
+            reviewForm.reset();
+
+
+            selectedReviewRating =
+              0;
+
+
+            document
+              .querySelectorAll(
+                "#starInput button"
+              )
+              .forEach(
+                star => {
+
+                  star.classList.remove(
+                    "selected"
+                  );
+
+                }
+              );
+
+
+            document
+              .getElementById(
+                "selectedRatingText"
+              )
+              .textContent =
+              "Rating चुनें";
+
+
+          } catch (error) {
+
+            console.error(
+              "SUBMIT REVIEW ERROR:",
+              error
+            );
+
+
+            message.innerHTML =
+              `<span class="review-error">
+
+                ❌ ${escapeHtml(
+                  error.message
+                )}
+
+              </span>`;
+
+
+          } finally {
+
+            submitButton.disabled =
+              false;
+
+
+            submitButton.textContent =
+              "⭐ Review Submit करें";
+
+          }
+
         }
       );
 
-  } catch (error) {
-
-    return "";
-
-  }
-
-}
+    }
 
 
-/* =====================================================
-   LOAD REVIEWS
-===================================================== */
-
-loadPublicReviews();
-
-</script>
-
-loadPublicReviews();
     /* =====================================================
-       START WEBSITE
+       REVIEW DATE
     ===================================================== */
 
-    init();
+    function formatReviewDate(
+      value
+    ) {
+
+      if (!value) {
+        return "";
+      }
+
+
+      try {
+
+        return new Date(value)
+          .toLocaleDateString(
+            "hi-IN",
+            {
+              day: "numeric",
+              month: "short",
+              year: "numeric"
+            }
+          );
+
+      } catch (error) {
+
+        return "";
+
+      }
+
+    }
+
+
+    /* =====================================================
+       LOAD REVIEWS
+    ===================================================== */
+
+    loadPublicReviews();
 
   </script>
+
 
 </body>
 
