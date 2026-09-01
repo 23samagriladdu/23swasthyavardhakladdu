@@ -63,7 +63,6 @@ db.exec(`
     payment_status TEXT DEFAULT 'pending',
     utr TEXT,
     order_status TEXT DEFAULT 'pending'
-  )
 `);
 
 
@@ -81,7 +80,6 @@ db.exec(`
     created_at TEXT NOT NULL
   )
 `);
-
 
 /* =========================================================
    DATABASE MIGRATION
@@ -2083,55 +2081,21 @@ app.patch(
 
      db.prepare(`
   UPDATE orders
-  SET awb = ?
-`)
-
-          order_status =
-            COALESCE(
-              ?,
-              order_status
-            ),
-
-          payment_status =
-            COALESCE(
-              ?,
-              payment_status
-            ),
-
-          awb =
-            COALESCE(
-              ?,
-              awb
-            ),
-
-          shiprocket_status =
-            COALESCE(
-              ?,
-              shiprocket_status
-            )
-
-        WHERE id = ?
-
-      `).run(
-
-        orderStatus ||
-          null,
-
-        paymentStatus ||
-          null,
-
-        awb !== undefined
-          ? String(awb)
-          : null,
-
-        shiprocketStatus !== undefined
-          ? String(shiprocketStatus)
-          : null,
-
-        id
-
-      );
-
+  SET
+    order_status = COALESCE(?, order_status),
+    payment_status = COALESCE(?, payment_status),
+    awb = COALESCE(?, awb),
+    shiprocket_status = COALESCE(?, shiprocket_status)
+  WHERE id = ?
+`).run(
+  orderStatus || null,
+  paymentStatus || null,
+  awb !== undefined ? String(awb) : null,
+  shiprocketStatus !== undefined
+    ? String(shiprocketStatus)
+    : null,
+  id
+);
       return res.json({
 
         success:
