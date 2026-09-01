@@ -1356,36 +1356,45 @@
 
   </div>
 
-
-  <!-- =================================================
-       RATING SUMMARY
-  ================================================== -->
-
-  <h2>
-  <strong>Customer Reviews</strong>
-</h2>
+<!-- =================================================
+     RATING SUMMARY
+================================================= -->
 
 <div
-  class="big-stars"
-  id="averageStars">
-  ☆☆☆☆☆
+  class="rating-summary"
+  id="ratingSummary">
+
+  <div class="rating-average">
+
+    <strong id="averageRating">
+      0.0
+    </strong>
+
+    <div
+      class="big-stars"
+      id="averageStars">
+      ☆☆☆☆☆
+    </div>
+
+    <span>
+      Average Rating
+    </span>
+
+  </div>
+
+  <div class="rating-total">
+
+    <strong id="totalReviews">
+      0
+    </strong>
+
+    <span>
+      Customer Reviews
+    </span>
+
+  </div>
+
 </div>
-
-<span>
-  Average Rating
-</span>
-
-<div class="rating-total">
-  <span id="ratingTotal">0 Reviews</span>
-</div>
-
-<p id="successText"></p>
-
-<button
-  type="button"
-  onclick="closeModal()">
-  Close
-</button>
 
   <!-- =================================================
        REVIEW FORM
