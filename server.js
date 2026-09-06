@@ -406,7 +406,14 @@ app.get("/api/config", (req, res) => {
     deliveryRules: {
       upTo1Kg: 100,
       upTo2Kg: 200,
-      above2Kg: 300
+      upTo3Kg: 300,
+      upTo4Kg: 400,
+      upTo5Kg: 500,
+      upTo6Kg: 600,
+      upTo7Kg: 700,
+      upTo8Kg: 800,
+      upTo9Kg: 900,
+      above9Kg: 1000
     }
 
   });
