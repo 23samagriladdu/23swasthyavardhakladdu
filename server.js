@@ -2300,9 +2300,7 @@ app.patch(
     try {
 
       const id =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const status =
         String(
@@ -2315,34 +2313,38 @@ app.patch(
         "hidden"
       ];
 
+      /* -----------------------------------------------
+         Validate ID
+      ----------------------------------------------- */
+
       if (
         !Number.isInteger(id) ||
         id <= 0
       ) {
 
         return res.status(400).json({
-
-          error:
-            "Invalid review ID"
-
+          error: "Invalid review ID"
         });
 
       }
 
+      /* -----------------------------------------------
+         Validate Status
+      ----------------------------------------------- */
+
       if (
-        !allowedStatuses.includes(
-          status
-        )
+        !allowedStatuses.includes(status)
       ) {
 
         return res.status(400).json({
-
-          error:
-            "Invalid review status"
-
+          error: "Invalid review status"
         });
 
       }
+
+      /* -----------------------------------------------
+         Check Review Exists
+      ----------------------------------------------- */
 
       const review =
         db.prepare(
@@ -2352,29 +2354,78 @@ app.patch(
       if (!review) {
 
         return res.status(404).json({
-
-          error:
-            "Review not found"
-
+          error: "Review not found"
         });
 
       }
 
-      db.prepare(`
-        UPDATE reviews
-        SET status = ?
-        WHERE id = ?
-      `).run(
-        status,
-        id
-      );
+      /* -----------------------------------------------
+         UPDATE STATUS
+      ----------------------------------------------- */
+
+      const result =
+        db.prepare(`
+          UPDATE reviews
+          SET status = ?
+          WHERE id = ?
+        `).run(
+          status,
+          id
+        );
+
+      /* -----------------------------------------------
+         Verify Update
+      ----------------------------------------------- */
+
+      if (result.changes !== 1) {
+
+        return res.status(500).json({
+          error: "Review status update नहीं हुआ।"
+        });
+
+      }
+
+      /* -----------------------------------------------
+         GET UPDATED REVIEW
+      ----------------------------------------------- */
+
+      const updatedReview =
+        db.prepare(`
+          SELECT
+            id,
+            name,
+            rating,
+            review,
+            status,
+            created_at
+          FROM reviews
+          WHERE id = ?
+        `).get(id);
+
+      if (!updatedReview) {
+
+        return res.status(500).json({
+          error: "Updated review वापस नहीं मिली।"
+        });
+
+      }
+
+      /* -----------------------------------------------
+         RESPONSE
+      ----------------------------------------------- */
 
       return res.json({
 
         success: true,
 
         message:
-          "Review status update हो गया।"
+          status === "approved"
+            ? "Review approve हो गया।"
+            : status === "hidden"
+              ? "Review hide हो गया।"
+              : "Review वापस pending में चला गया।",
+
+        review: updatedReview
 
       });
 
