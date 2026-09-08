@@ -1513,35 +1513,48 @@ async function updateReview(
 
   try {
 
-    await api(
-      "/api/admin/reviews/" +
-      id,
-      {
+    const response =
+      await api(
+        "/api/admin/reviews/" + id,
+        {
 
-        method:
-          "PATCH",
+          method: "PATCH",
 
-        headers: {
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
 
-          "Content-Type":
-            "application/json"
+          body:
+            JSON.stringify({
+              status
+            })
 
-        },
+        }
+      );
 
-        body:
-          JSON.stringify({
-            status
-          })
-
-      }
+    console.log(
+      "Review updated:",
+      response.review
     );
+
+    /*
+      Server से updated review मिलने के बाद
+      पूरा review list दोबारा load करेंगे।
+    */
 
     await loadReviews();
 
   } catch (e) {
 
+    console.error(
+      "Review update error:",
+      e
+    );
+
     alert(
-      e.message
+      e.message ||
+      "Review update नहीं हुआ।"
     );
 
   }
