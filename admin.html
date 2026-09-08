@@ -19,6 +19,62 @@
   href="style.css">
 
 <style>
+  .review-section {
+  margin-bottom: 28px;
+}
+
+.review-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #f5f5f5;
+}
+
+.review-section-title span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 20px;
+  background: #ddd;
+  font-size: 13px;
+}
+
+.review-stat {
+  display: inline-flex;
+  flex-direction: column;
+  margin: 5px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #f5f5f5;
+}
+
+.review-stat strong {
+  font-size: 22px;
+}
+
+.review-stat span {
+  font-size: 13px;
+}
+
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  background: #f7f7f7;
+  border-radius: 12px;
+  color: #666;
+}
+
+.empty-state.error {
+  color: #b00020;
+}
 
 .hidden {
   display: none !important;
@@ -1122,151 +1178,121 @@ async function update(
 ===================================================== */
 
 async function loadReviews() {
-
-  const list =
-    document.getElementById(
-      "reviewList"
-    );
-
-  list.innerHTML =
-    "<p>Reviews load हो रहे हैं...</p>";
-
+  const list = document.getElementById("reviewList");
+  const stats = document.getElementById("reviewStats");
 
   try {
+    const rows = await api("/api/admin/reviews");
 
-    const rows =
-      await api(
-        "/api/admin/reviews"
-      );
+    const allReviews = Array.isArray(rows) ? rows : [];
 
+    const pending = allReviews.filter(r => r.status === "pending");
+    const approved = allReviews.filter(r => r.status === "approved");
+    const hidden = allReviews.filter(r => r.status === "hidden");
 
-    const approved =
-      rows.filter(
-        x =>
-          x.status ===
-          "approved"
-      );
+    /* =========================
+       REVIEW STATS
+    ========================= */
 
-
-    const pending =
-      rows.filter(
-        x =>
-          x.status ===
-          "pending"
-      );
-
-
-    const hidden =
-      rows.filter(
-        x =>
-          x.status ===
-          "hidden"
-      );
-
-
-    const average =
-      approved.length
-
-        ? (
-            approved.reduce(
-              (
-                sum,
-                x
-              ) =>
-                sum +
-                Number(
-                  x.rating
-                ),
-              0
-            ) /
-            approved.length
-          ).toFixed(1)
-
-        : "0";
-
-
-    document
-      .getElementById(
-        "reviewStats"
-      )
-      .innerHTML =
-
-      `<div
-        class="review-stat">
-
-        Approved Reviews
-
-        <strong>
-          ${approved.length}
-        </strong>
-
+    stats.innerHTML = `
+      <div class="review-stat">
+        <strong>${allReviews.length}</strong>
+        <span>कुल Reviews</span>
       </div>
 
-      <div
-        class="review-stat">
-
-        Pending
-
-        <strong>
-          ${pending.length}
-        </strong>
-
+      <div class="review-stat pending-stat">
+        <strong>${pending.length}</strong>
+        <span>Pending</span>
       </div>
 
-      <div
-        class="review-stat">
-
-        Hidden
-
-        <strong>
-          ${hidden.length}
-        </strong>
-
+      <div class="review-stat approved-stat">
+        <strong>${approved.length}</strong>
+        <span>Approved</span>
       </div>
 
-      <div
-        class="review-stat">
+      <div class="review-stat hidden-stat">
+        <strong>${hidden.length}</strong>
+        <span>Hidden</span>
+      </div>
+    `;
 
-        Average Rating
+    /* =========================
+       NO REVIEWS
+    ========================= */
 
-        <strong>
-          ⭐ ${average}
-        </strong>
-
-      </div>`;
-
-
-    if (
-      rows.length === 0
-    ) {
-
-      list.innerHTML =
-        "<p>अभी कोई review नहीं आया है।</p>";
-
+    if (allReviews.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          अभी कोई Feedback उपलब्ध नहीं है।
+        </div>
+      `;
       return;
-
     }
 
+    /* =========================
+       GROUP REVIEWS
+    ========================= */
 
-    list.innerHTML =
-      rows.map(
-        r =>
-          createReviewAdminCard(
-            r
-          )
-      )
-      .join("");
+    let html = "";
 
+    /* ---------- PENDING ---------- */
 
-  } catch (e) {
+    if (pending.length > 0) {
+      html += `
+        <div class="review-section">
+          <div class="review-section-title">
+            🟡 Pending Reviews
+            <span>${pending.length}</span>
+          </div>
 
-    list.innerHTML =
-      `<p class="error-text">
-        ${esc(e.message)}
-      </p>`;
+          ${pending.map(r => createReviewAdminCard(r)).join("")}
+        </div>
+      `;
+    }
 
+    /* ---------- APPROVED ---------- */
+
+    if (approved.length > 0) {
+      html += `
+        <div class="review-section">
+          <div class="review-section-title">
+            🟢 Approved Reviews
+            <span>${approved.length}</span>
+          </div>
+
+          ${approved.map(r => createReviewAdminCard(r)).join("")}
+        </div>
+      `;
+    }
+
+    /* ---------- HIDDEN ---------- */
+
+    if (hidden.length > 0) {
+      html += `
+        <div class="review-section">
+          <div class="review-section-title">
+            ⚪ Hidden Reviews
+            <span>${hidden.length}</span>
+          </div>
+
+          ${hidden.map(r => createReviewAdminCard(r)).join("")}
+        </div>
+      `;
+    }
+
+    list.innerHTML = html;
+
+  } catch (error) {
+    console.error("Reviews load error:", error);
+
+    list.innerHTML = `
+      <div class="empty-state error">
+        Reviews load नहीं हो सके।
+        <br>
+        <small>${error.message || ""}</small>
+      </div>
+    `;
   }
-
 }
 
 
