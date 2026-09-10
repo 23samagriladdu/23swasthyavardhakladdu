@@ -2,16 +2,17 @@
   "name": "23-swasthyavardhak-laddu-store",
   "version": "1.0.0",
   "private": true,
-  "description": "Online ordering, UPI payment, PostgreSQL database and admin panel for 23 Swasthyavardhak Laddu",
+  "description": "Online ordering, UPI payment, PostgreSQL database, Shiprocket and admin panel for 23 Swasthyavardhak Laddu",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
   },
   "dependencies": {
-  "better-sqlite3": "^11.8.1",
-  "connect-pg-simple": "^10.0.0",
-  "dotenv": "^16.4.7",
-  "express": "^4.21.2",
-  "express-session": "^1.18.1"
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "pg": "^8.13.1"
+  }
 }
