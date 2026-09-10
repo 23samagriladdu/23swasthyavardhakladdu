@@ -2922,99 +2922,87 @@ app.patch(
    ADMIN DELETE REVIEW
 ========================================================= */
 
-      if (
-        !Number.isInteger(id) ||
-        id <= 0
-      ) {
+app.delete("/api/admin/reviews/:id", requireAdmin, async (req, res) => {
 
-        return res.status(400).json({
+  try {
 
-          error:
-            "Invalid review ID"
+    const id = Number(req.params.id);
 
-        });
+    if (
+      !Number.isInteger(id) ||
+      id <= 0
+    ) {
 
-      }
-
-      const existing =
-        await pool.query(
-          `
-          SELECT id
-          FROM reviews
-          WHERE id = $1
-          `,
-          [id]
-        );
-
-      if (
-        existing.rows.length === 0
-      ) {
-
-        return res.status(404).json({
-
-          error:
-            "Review not found"
-
-        });
-
-      }
-
-      const result =
-        await pool.query(
-          `
-          DELETE FROM reviews
-          WHERE id = $1
-          `,
-          [id]
-        );
-
-      if (
-        result.rowCount !== 1
-      ) {
-
-        return res.status(500).json({
-
-          error:
-            "Review delete नहीं हुआ।"
-
-        });
-
-      }
-
-      console.log(
-        "REVIEW DELETED:",
-        id
-      );
-
-      return res.json({
-
-        success:
-          true,
-
-        message:
-          "Review delete हो गया।"
-
-      });
-
-    } catch (error) {
-
-      console.error(
-        "DELETE REVIEW ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-
-        error:
-          "Review delete नहीं हुआ।"
-
+      return res.status(400).json({
+        error: "Invalid review ID"
       });
 
     }
 
-  }
-);
+    const existing = await pool.query(
+      `
+      SELECT id
+      FROM reviews
+      WHERE id = $1
+      `,
+      [id]
+    );
 
+    if (existing.rows.length === 0) {
+
+      return res.status(404).json({
+        error: "Review not found"
+      });
+
+    }
+
+    const result = await pool.query(
+      `
+      DELETE FROM reviews
+      WHERE id = $1
+      `,
+      [id]
+    );
+
+    if (result.rowCount !== 1) {
+
+      return res.status(500).json({
+        error: "Review delete नहीं हुआ।"
+      });
+
+    }
+
+    console.log(
+      "REVIEW DELETED:",
+      id
+    );
+
+    return res.json({
+
+      success: true,
+
+      message:
+        "Review delete हो गया।"
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "DELETE REVIEW ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+
+      error:
+        "Review delete नहीं हुआ।"
+
+    });
+
+  }
+
+});
 /* =========================================================
    ADMIN PAGE
 ========================================================= */
