@@ -2,8 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
 const path = require("path");
-const Database = require("better-sqlite3");
+const { Pool } = require("pg");
 
 const app = express();
 
@@ -26,138 +27,165 @@ const UPI_NAME =
   process.env.UPI_NAME || "23 Swasthyavardhak Samaan";
 
 /* =========================================================
-   DATABASE
+   POSTGRESQL DATABASE
 ========================================================= */
 
-const db = new Database(
-  path.join(__dirname, "orders.db")
-);
-
-db.pragma("journal_mode = WAL");
-
-/* =========================================================
-   CREATE ORDERS TABLE
-========================================================= */
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    order_no TEXT UNIQUE NOT NULL,
-    created_at TEXT NOT NULL,
-    customer_name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    address TEXT NOT NULL,
-    pincode TEXT NOT NULL,
-    city TEXT NOT NULL,
-    state TEXT NOT NULL,
-    country TEXT DEFAULT 'India',
-    product_id TEXT NOT NULL,
-    product TEXT NOT NULL,
-    price REAL NOT NULL,
-    quantity REAL NOT NULL,
-    delivery REAL NOT NULL,
-    total REAL NOT NULL,
-    payment_method TEXT,
-    payment_status TEXT DEFAULT 'pending',
-    utr TEXT,
-    order_status TEXT DEFAULT 'pending',
-    awb TEXT DEFAULT '',
-    shiprocket_status TEXT DEFAULT '',
-    cancellation_reason TEXT DEFAULT ''
-  )
-`);
-
-/* =========================================================
-   CREATE REVIEWS TABLE
-========================================================= */
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS reviews (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    rating INTEGER NOT NULL,
-    review TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    created_at TEXT NOT NULL
-  )
-`);
-
-/* =========================================================
-   DATABASE MIGRATION
-========================================================= */
-
-function addColumnIfMissing(table, column, definition) {
-  const allowedTables = ["orders", "reviews"];
-
-  if (!allowedTables.includes(table)) {
-    throw new Error(`Invalid table name: ${table}`);
-  }
-
-  const columns = db
-    .prepare(`PRAGMA table_info(${table})`)
-    .all();
-
-  const exists = columns.some(
-    (c) => c.name === column
+if (!process.env.DATABASE_URL) {
+  console.error(
+    "ERROR: DATABASE_URL environment variable is missing."
   );
 
-  if (!exists) {
-    db.exec(`
-      ALTER TABLE ${table}
-      ADD COLUMN ${column} ${definition}
-    `);
-
-    console.log(
-      `Database column added: ${table}.${column}`
-    );
-  }
+  process.exit(1);
 }
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
+
+  max: 10,
+
+  idleTimeoutMillis: 30000,
+
+  connectionTimeoutMillis: 10000
+});
+
+pool.on("error", (error) => {
+  console.error(
+    "POSTGRES POOL ERROR:",
+    error
+  );
+});
+
 /* =========================================================
-   OLD DATABASE MIGRATION
+   DATABASE INITIALIZATION
 ========================================================= */
 
-addColumnIfMissing(
-  "orders",
-  "city",
-  "TEXT DEFAULT ''"
-);
+async function initializeDatabase() {
+  const client = await pool.connect();
 
-addColumnIfMissing(
-  "orders",
-  "state",
-  "TEXT DEFAULT ''"
-);
+  try {
+    await client.query("BEGIN");
 
-addColumnIfMissing(
-  "orders",
-  "product_id",
-  "TEXT DEFAULT ''"
-);
+    /* -------------------------------------------------------
+       ORDERS TABLE
+    ------------------------------------------------------- */
 
-addColumnIfMissing(
-  "orders",
-  "quantity",
-  "REAL NOT NULL DEFAULT 1"
-);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
 
-addColumnIfMissing(
-  "orders",
-  "awb",
-  "TEXT DEFAULT ''"
-);
+        order_no TEXT UNIQUE NOT NULL,
 
-addColumnIfMissing(
-  "orders",
-  "shiprocket_status",
-  "TEXT DEFAULT ''"
-);
+        created_at TEXT NOT NULL,
 
-addColumnIfMissing(
-  "orders",
-  "cancellation_reason",
-  "TEXT DEFAULT ''"
-);
+        customer_name TEXT NOT NULL,
+
+        phone TEXT NOT NULL,
+
+        address TEXT NOT NULL,
+
+        pincode TEXT NOT NULL,
+
+        city TEXT NOT NULL,
+
+        state TEXT NOT NULL,
+
+        country TEXT DEFAULT 'India',
+
+        product_id TEXT NOT NULL,
+
+        product TEXT NOT NULL,
+
+        price NUMERIC NOT NULL,
+
+        quantity NUMERIC NOT NULL,
+
+        delivery NUMERIC NOT NULL,
+
+        total NUMERIC NOT NULL,
+
+        payment_method TEXT,
+
+        payment_status TEXT DEFAULT 'pending',
+
+        utr TEXT,
+
+        order_status TEXT DEFAULT 'pending',
+
+        awb TEXT DEFAULT '',
+
+        shiprocket_status TEXT DEFAULT '',
+
+        cancellation_reason TEXT DEFAULT ''
+      )
+    `);
+
+    /* -------------------------------------------------------
+       REVIEWS TABLE
+    ------------------------------------------------------- */
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS reviews (
+        id SERIAL PRIMARY KEY,
+
+        name TEXT NOT NULL,
+
+        rating INTEGER NOT NULL,
+
+        review TEXT NOT NULL,
+
+        status TEXT NOT NULL DEFAULT 'pending',
+
+        created_at TEXT NOT NULL
+      )
+    `);
+
+    /* -------------------------------------------------------
+       INDEXES
+    ------------------------------------------------------- */
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_orders_phone
+      ON orders(phone)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_orders_order_no
+      ON orders(order_no)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_reviews_status
+      ON reviews(status)
+    `);
+
+    await client.query("COMMIT");
+
+    console.log(
+      "PostgreSQL database initialized successfully."
+    );
+
+  } catch (error) {
+
+    await client.query("ROLLBACK");
+
+    console.error(
+      "DATABASE INITIALIZATION ERROR:",
+      error
+    );
+
+    throw error;
+
+  } finally {
+
+    client.release();
+
+  }
+}
 
 /* =========================================================
    MIDDLEWARE
@@ -178,12 +206,20 @@ app.use(
 
 /* =========================================================
    SESSION
+   PostgreSQL SESSION STORE
 ========================================================= */
 
 app.set("trust proxy", 1);
 
 app.use(
   session({
+
+    store: new pgSession({
+      pool,
+      tableName: "user_sessions",
+      createTableIfMissing: true
+    }),
+
     secret:
       process.env.SESSION_SECRET ||
       "replace-this-session-secret",
@@ -193,6 +229,7 @@ app.use(
     saveUninitialized: false,
 
     cookie: {
+
       httpOnly: true,
 
       sameSite: "lax",
@@ -203,6 +240,7 @@ app.use(
       maxAge:
         8 * 60 * 60 * 1000
     }
+
   })
 );
 
@@ -355,7 +393,10 @@ function isValidKgQuantity(quantity) {
     return false;
   }
 
-  if (qty < 0.5 || qty > 10) {
+  if (
+    qty < 0.5 ||
+    qty > 10
+  ) {
     return false;
   }
 
@@ -385,7 +426,8 @@ function isValidPackQuantity(quantity) {
 function getProduct(productId) {
 
   return PRODUCTS.find(
-    (p) => p.id === String(productId)
+    (p) =>
+      p.id === String(productId)
   );
 }
 
@@ -393,38 +435,54 @@ function getProduct(productId) {
    CONFIG API
 ========================================================= */
 
-app.get("/api/config", (req, res) => {
+app.get(
+  "/api/config",
+  (req, res) => {
 
-  res.json({
+    res.json({
 
-    upiId: UPI_ID,
+      upiId:
+        UPI_ID,
 
-    upiName: UPI_NAME,
+      upiName:
+        UPI_NAME,
 
-    products: PRODUCTS,
+      products:
+        PRODUCTS,
 
-    deliveryRules: {
-      upTo1Kg: 100,
-      upTo2Kg: 200,
-      upTo3Kg: 300,
-      upTo4Kg: 400,
-      upTo5Kg: 500,
-      upTo6Kg: 600,
-      upTo7Kg: 700,
-      upTo8Kg: 800,
-      upTo9Kg: 900,
-      above9Kg: 1000
-    }
+      deliveryRules: {
 
-  });
+        upTo1Kg: 100,
 
-});
+        upTo2Kg: 200,
+
+        upTo3Kg: 300,
+
+        upTo4Kg: 400,
+
+        upTo5Kg: 500,
+
+        upTo6Kg: 600,
+
+        upTo7Kg: 700,
+
+        upTo8Kg: 800,
+
+        upTo9Kg: 900,
+
+        above9Kg: 1000
+      }
+
+    });
+
+  }
+);
 
 /* =========================================================
    CREATE UNIQUE ORDER NUMBER
 ========================================================= */
 
-function createOrderNumber() {
+async function createOrderNumber() {
 
   let orderNo;
 
@@ -444,15 +502,23 @@ function createOrderNumber() {
         random
       ).slice(-9);
 
-  } while (
-    db
-      .prepare(
-        "SELECT id FROM orders WHERE order_no = ?"
-      )
-      .get(orderNo)
-  );
+    const existing =
+      await pool.query(
+        `
+        SELECT id
+        FROM orders
+        WHERE order_no = $1
+        `,
+        [orderNo]
+      );
 
-  return orderNo;
+    if (
+      existing.rows.length === 0
+    ) {
+      return orderNo;
+    }
+
+  } while (true);
 }
 
 /* =========================================================
@@ -460,6 +526,7 @@ function createOrderNumber() {
 ========================================================= */
 
 let shiprocketToken = null;
+
 let shiprocketTokenTime = 0;
 
 async function getShiprocketToken() {
@@ -470,32 +537,42 @@ async function getShiprocketToken() {
   const password =
     process.env.SHIPROCKET_PASSWORD;
 
-  if (!email || !password) {
+  if (
+    !email ||
+    !password
+  ) {
     return null;
   }
 
   if (
     shiprocketToken &&
-    Date.now() - shiprocketTokenTime <
+    Date.now() -
+      shiprocketTokenTime <
       24 * 60 * 60 * 1000
   ) {
+
     return shiprocketToken;
+
   }
 
   const response =
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
+
         method: "POST",
 
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type":
+            "application/json"
         },
 
-        body: JSON.stringify({
-          email,
-          password
-        })
+        body:
+          JSON.stringify({
+            email,
+            password
+          })
+
       }
     );
 
@@ -511,6 +588,7 @@ async function getShiprocketToken() {
       data.message ||
       "Shiprocket login failed"
     );
+
   }
 
   shiprocketToken =
@@ -526,7 +604,9 @@ async function getShiprocketToken() {
    CREATE SHIPROCKET ORDER
 ========================================================= */
 
-async function createShiprocketOrder(order) {
+async function createShiprocketOrder(
+  order
+) {
 
   const pickupLocation =
     process.env.SHIPROCKET_PICKUP_LOCATION;
@@ -538,10 +618,14 @@ async function createShiprocketOrder(order) {
   ) {
 
     return {
+
       success: false,
+
       skipped: true,
+
       message:
         "Shiprocket environment variables not configured"
+
     };
 
   }
@@ -550,7 +634,9 @@ async function createShiprocketOrder(order) {
     await getShiprocketToken();
 
   const product =
-    getProduct(order.product_id);
+    getProduct(
+      order.product_id
+    );
 
   const totalWeight =
     product
@@ -641,6 +727,7 @@ async function createShiprocketOrder(order) {
     order_items: [
 
       {
+
         name:
           order.product,
 
@@ -654,11 +741,14 @@ async function createShiprocketOrder(order) {
         selling_price:
           Number(order.price),
 
-        discount: 0,
+        discount:
+          0,
 
-        tax: 0,
+        tax:
+          0,
 
-        hsn: ""
+        hsn:
+          ""
       }
 
     ],
@@ -682,11 +772,14 @@ async function createShiprocketOrder(order) {
       Number(order.price) *
       Number(order.quantity),
 
-    length: 20,
+    length:
+      20,
 
-    breadth: 20,
+    breadth:
+      20,
 
-    height: 10,
+    height:
+      10,
 
     weight:
       Number(totalWeight)
@@ -697,9 +790,12 @@ async function createShiprocketOrder(order) {
     await fetch(
       "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
       {
-        method: "POST",
+
+        method:
+          "POST",
 
         headers: {
+
           "Content-Type":
             "application/json",
 
@@ -717,17 +813,24 @@ async function createShiprocketOrder(order) {
   const data =
     await response.json();
 
-  if (!response.ok) {
+  if (
+    !response.ok
+  ) {
 
     throw new Error(
       data.message ||
       JSON.stringify(data)
     );
+
   }
 
   return {
-    success: true,
+
+    success:
+      true,
+
     data
+
   };
 }
 
@@ -788,11 +891,17 @@ app.post(
       const qty =
         Number(quantity);
 
+      /* -----------------------------------------------------
+         VALIDATION
+      ----------------------------------------------------- */
+
       if (!cleanName) {
 
         return res.status(400).json({
+
           error:
             "कृपया नाम डालें।"
+
         });
 
       }
@@ -804,8 +913,10 @@ app.post(
       ) {
 
         return res.status(400).json({
+
           error:
             "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
+
         });
 
       }
@@ -813,8 +924,10 @@ app.post(
       if (!cleanAddress) {
 
         return res.status(400).json({
+
           error:
             "कृपया पूरा पता डालें।"
+
         });
 
       }
@@ -822,8 +935,10 @@ app.post(
       if (!cleanCity) {
 
         return res.status(400).json({
+
           error:
             "कृपया शहर का नाम डालें।"
+
         });
 
       }
@@ -831,8 +946,10 @@ app.post(
       if (!cleanState) {
 
         return res.status(400).json({
+
           error:
             "कृपया राज्य का नाम डालें।"
+
         });
 
       }
@@ -844,8 +961,10 @@ app.post(
       ) {
 
         return res.status(400).json({
+
           error:
             "कृपया 6 अंकों का सही पिनकोड डालें।"
+
         });
 
       }
@@ -853,8 +972,10 @@ app.post(
       if (!product) {
 
         return res.status(400).json({
+
           error:
             "कृपया सही product चुनें।"
+
         });
 
       }
@@ -868,8 +989,10 @@ app.post(
         ) {
 
           return res.status(400).json({
+
             error:
               "Kg मात्रा 0.5 Kg से 10 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
+
           });
 
         }
@@ -881,8 +1004,10 @@ app.post(
         ) {
 
           return res.status(400).json({
+
             error:
               "Pack की संख्या 1 से 50 तक होनी चाहिए।"
+
           });
 
         }
@@ -894,11 +1019,17 @@ app.post(
       ) {
 
         return res.status(400).json({
+
           error:
             "अभी केवल UPI payment उपलब्ध है।"
+
         });
 
       }
+
+      /* -----------------------------------------------------
+         PRICE
+      ----------------------------------------------------- */
 
       const safePayment =
         "UPI";
@@ -923,11 +1054,10 @@ app.post(
         delivery;
 
       const orderNo =
-        createOrderNumber();
+        await createOrderNumber();
 
       const createdAt =
-        new Date()
-          .toISOString();
+        new Date().toISOString();
 
       const paymentStatus =
         safePayment === "UPI" &&
@@ -935,92 +1065,159 @@ app.post(
           ? "submitted"
           : "pending";
 
-      const stmt =
-        db.prepare(`
-          INSERT INTO orders (
-            order_no,
-            created_at,
-            customer_name,
-            phone,
-            address,
-            city,
-            state,
-            pincode,
-            country,
-            product_id,
-            product,
-            price,
-            quantity,
-            delivery,
-            total,
-            payment_method,
-            payment_status,
-            utr,
-            order_status,
-            awb,
-            shiprocket_status,
-            cancellation_reason
-          )
-          VALUES (
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?
-          )
-        `);
+      /* -----------------------------------------------------
+         SAVE ORDER
+      ----------------------------------------------------- */
 
-      stmt.run(
-        orderNo,
-        createdAt,
-        cleanName,
-        cleanPhone,
-        cleanAddress,
-        cleanCity,
-        cleanState,
-        cleanPincode,
-        "India",
-        product.id,
-        product.name,
-        product.price,
-        qty,
-        delivery,
-        total,
-        safePayment,
-        paymentStatus,
-        cleanUtr,
-        "new",
-        "",
-        "",
-        ""
+      await pool.query(
+        `
+        INSERT INTO orders (
+
+          order_no,
+
+          created_at,
+
+          customer_name,
+
+          phone,
+
+          address,
+
+          city,
+
+          state,
+
+          pincode,
+
+          country,
+
+          product_id,
+
+          product,
+
+          price,
+
+          quantity,
+
+          delivery,
+
+          total,
+
+          payment_method,
+
+          payment_status,
+
+          utr,
+
+          order_status,
+
+          awb,
+
+          shiprocket_status,
+
+          cancellation_reason
+
+        )
+
+        VALUES (
+
+          $1,
+          $2,
+          $3,
+          $4,
+          $5,
+          $6,
+          $7,
+          $8,
+          $9,
+          $10,
+          $11,
+          $12,
+          $13,
+          $14,
+          $15,
+          $16,
+          $17,
+          $18,
+          $19,
+          $20,
+          $21,
+          $22
+
+        )
+        `,
+
+        [
+
+          orderNo,
+
+          createdAt,
+
+          cleanName,
+
+          cleanPhone,
+
+          cleanAddress,
+
+          cleanCity,
+
+          cleanState,
+
+          cleanPincode,
+
+          "India",
+
+          product.id,
+
+          product.name,
+
+          product.price,
+
+          qty,
+
+          delivery,
+
+          total,
+
+          safePayment,
+
+          paymentStatus,
+
+          cleanUtr,
+
+          "new",
+
+          "",
+
+          "",
+
+          ""
+
+        ]
       );
 
+      /* -----------------------------------------------------
+         GET SAVED ORDER
+      ----------------------------------------------------- */
+
       let savedOrder =
-        db
-          .prepare(
-            "SELECT * FROM orders WHERE order_no = ?"
+        (
+          await pool.query(
+            `
+            SELECT *
+            FROM orders
+            WHERE order_no = $1
+            `,
+            [orderNo]
           )
-          .get(orderNo);
+        ).rows[0];
 
       let shiprocketMessage =
         "";
+
+      /* -----------------------------------------------------
+         SHIPROCKET
+      ----------------------------------------------------- */
 
       try {
 
@@ -1046,20 +1243,32 @@ app.post(
             srData.shipment_status ||
             "Created";
 
-          db.prepare(`
+          await pool.query(
+            `
             UPDATE orders
+
             SET
-              awb = ?,
-              shiprocket_status = ?
-            WHERE order_no = ?
-          `).run(
-            awb,
-            String(srStatus),
-            orderNo
+              awb = $1,
+
+              shiprocket_status = $2
+
+            WHERE order_no = $3
+            `,
+
+            [
+
+              awb,
+
+              String(srStatus),
+
+              orderNo
+
+            ]
           );
 
           shiprocketMessage =
             " Shipment में भेज दिया गया है.";
+
         }
 
       } catch (
@@ -1071,13 +1280,16 @@ app.post(
           shiprocketError.message
         );
 
-        shiprocketMessage =
-          "";
       }
+
+      /* -----------------------------------------------------
+         RESPONSE
+      ----------------------------------------------------- */
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         orderNo,
 
@@ -1087,7 +1299,8 @@ app.post(
 
         delivery,
 
-        quantity: qty,
+        quantity:
+          qty,
 
         productType:
           product.type,
@@ -1133,7 +1346,7 @@ app.post(
 
 app.get(
   "/api/orders/history",
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -1148,22 +1361,27 @@ app.get(
       ) {
 
         return res.status(400).json({
+
           error:
             "सही 10 अंकों का mobile number डालें।"
+
         });
 
       }
 
-      const rows =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT *
           FROM orders
-          WHERE phone = ?
+          WHERE phone = $1
           ORDER BY id DESC
-        `).all(phone);
+          `,
+          [phone]
+        );
 
       const orders =
-        rows.map(
+        result.rows.map(
           mapOrderForCustomer
         );
 
@@ -1201,7 +1419,7 @@ app.get(
 
 app.post(
   "/api/orders/details",
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -1230,16 +1448,22 @@ app.post(
 
       }
 
-      const row =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT *
           FROM orders
-          WHERE order_no = ?
-          AND phone = ?
-        `).get(
-          orderNo,
-          phone
+          WHERE order_no = $1
+          AND phone = $2
+          `,
+          [
+            orderNo,
+            phone
+          ]
         );
+
+      const row =
+        result.rows[0];
 
       if (!row) {
 
@@ -1284,7 +1508,7 @@ app.post(
 
 app.post(
   "/api/orders/cancel",
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -1328,16 +1552,22 @@ app.post(
 
       }
 
-      const order =
-        db.prepare(`
+      const result =
+        await pool.query(
+          `
           SELECT *
           FROM orders
-          WHERE order_no = ?
-          AND phone = ?
-        `).get(
-          orderNo,
-          phone
+          WHERE order_no = $1
+          AND phone = $2
+          `,
+          [
+            orderNo,
+            phone
+          ]
         );
+
+      const order =
+        result.rows[0];
 
       if (!order) {
 
@@ -1351,9 +1581,13 @@ app.post(
       }
 
       const cancellableStatuses = [
+
         "new",
+
         "confirmed",
+
         "packed"
+
       ];
 
       if (
@@ -1371,22 +1605,33 @@ app.post(
 
       }
 
-      db.prepare(`
+      await pool.query(
+        `
         UPDATE orders
+
         SET
           order_status = 'cancelled',
-          cancellation_reason = ?
-        WHERE order_no = ?
-        AND phone = ?
-      `).run(
-        reason,
-        orderNo,
-        phone
+
+          cancellation_reason = $1
+
+        WHERE order_no = $2
+
+        AND phone = $3
+        `,
+
+        [
+          reason,
+
+          orderNo,
+
+          phone
+        ]
       );
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         orderNo,
 
@@ -1421,9 +1666,13 @@ app.post(
 function canCancelOrder(order) {
 
   return [
+
     "new",
+
     "confirmed",
+
     "packed"
+
   ].includes(
     order.order_status
   );
@@ -1445,12 +1694,16 @@ function getOrderProductInfo(order) {
 
     return {
 
-      type: "kg",
+      type:
+        "kg",
 
-      packWeight: null,
+      packWeight:
+        null,
 
       totalWeight:
-        Number(order.quantity)
+        Number(
+          order.quantity
+        )
 
     };
 
@@ -1458,7 +1711,11 @@ function getOrderProductInfo(order) {
 
   const totalWeight =
     product.type === "kg"
-      ? Number(order.quantity)
+
+      ? Number(
+          order.quantity
+        )
+
       : Number(product.weight) *
         Number(order.quantity);
 
@@ -1522,10 +1779,10 @@ function mapOrderForCustomer(order) {
       order.product,
 
     price:
-      order.price,
+      Number(order.price),
 
     quantity:
-      order.quantity,
+      Number(order.quantity),
 
     productType:
       productInfo.type,
@@ -1537,10 +1794,10 @@ function mapOrderForCustomer(order) {
       productInfo.totalWeight,
 
     delivery:
-      order.delivery,
+      Number(order.delivery),
 
     total:
-      order.total,
+      Number(order.total),
 
     paymentMethod:
       order.payment_method,
@@ -1614,10 +1871,10 @@ function mapOrderDetails(order) {
       order.product,
 
     price:
-      order.price,
+      Number(order.price),
 
     quantity:
-      order.quantity,
+      Number(order.quantity),
 
     productType:
       productInfo.type,
@@ -1629,10 +1886,10 @@ function mapOrderDetails(order) {
       productInfo.totalWeight,
 
     delivery:
-      order.delivery,
+      Number(order.delivery),
 
     total:
-      order.total,
+      Number(order.total),
 
     paymentMethod:
       order.payment_method,
@@ -1704,11 +1961,14 @@ app.post(
     } = req.body;
 
     if (
-      username === ADMIN_USERNAME &&
-      password === ADMIN_PASSWORD
+      username ===
+        ADMIN_USERNAME &&
+      password ===
+        ADMIN_PASSWORD
     ) {
 
-      req.session.admin = true;
+      req.session.admin =
+        true;
 
       return res.json({
 
@@ -1738,9 +1998,29 @@ app.post(
   (req, res) => {
 
     req.session.destroy(
-      () => {
+      (error) => {
 
-        res.json({
+        if (error) {
+
+          console.error(
+            "LOGOUT ERROR:",
+            error
+          );
+
+          return res.status(500).json({
+
+            error:
+              "Logout नहीं हुआ।"
+
+          });
+
+        }
+
+        res.clearCookie(
+          "connect.sid"
+        );
+
+        return res.json({
 
           success:
             true
@@ -1781,19 +2061,19 @@ app.get(
 app.get(
   "/api/admin/orders",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
-      const rows =
-        db.prepare(`
+      const result =
+        await pool.query(`
           SELECT *
           FROM orders
           ORDER BY id DESC
-        `).all();
+        `);
 
       const orders =
-        rows.map(
+        result.rows.map(
           (order) => {
 
             const info =
@@ -1804,6 +2084,26 @@ app.get(
             return {
 
               ...order,
+
+              price:
+                Number(
+                  order.price
+                ),
+
+              quantity:
+                Number(
+                  order.quantity
+                ),
+
+              delivery:
+                Number(
+                  order.delivery
+                ),
+
+              total:
+                Number(
+                  order.total
+                ),
 
               product_type:
                 info.type,
@@ -1849,7 +2149,7 @@ app.get(
 app.patch(
   "/api/admin/orders/:id",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -1866,20 +2166,33 @@ app.patch(
       } = req.body;
 
       const allowedOrder = [
+
         "new",
+
         "confirmed",
+
         "packed",
+
         "shipped",
+
         "delivered",
+
         "cancelled"
+
       ];
 
       const allowedPayment = [
+
         "pending",
+
         "submitted",
+
         "paid",
+
         "failed",
+
         "refunded"
+
       ];
 
       if (
@@ -1928,12 +2241,19 @@ app.patch(
 
       }
 
-      const row =
-        db.prepare(
-          "SELECT * FROM orders WHERE id = ?"
-        ).get(id);
+      const existing =
+        await pool.query(
+          `
+          SELECT *
+          FROM orders
+          WHERE id = $1
+          `,
+          [id]
+        );
 
-      if (!row) {
+      if (
+        existing.rows.length === 0
+      ) {
 
         return res.status(404).json({
 
@@ -1944,56 +2264,91 @@ app.patch(
 
       }
 
-      db.prepare(`
-        UPDATE orders
-        SET
-          order_status =
-            COALESCE(
-              ?,
-              order_status
-            ),
+      const result =
+        await pool.query(
+          `
+          UPDATE orders
 
-          payment_status =
-            COALESCE(
-              ?,
-              payment_status
-            ),
+          SET
 
-          awb =
-            COALESCE(
-              ?,
-              awb
-            ),
+            order_status =
+              COALESCE(
+                $1,
+                order_status
+              ),
 
-          shiprocket_status =
-            COALESCE(
-              ?,
-              shiprocket_status
-            )
+            payment_status =
+              COALESCE(
+                $2,
+                payment_status
+              ),
 
-        WHERE id = ?
-      `).run(
+            awb =
+              COALESCE(
+                $3,
+                awb
+              ),
 
-        orderStatus || null,
+            shiprocket_status =
+              COALESCE(
+                $4,
+                shiprocket_status
+              )
 
-        paymentStatus || null,
+          WHERE id = $5
+          `,
 
-        awb !== undefined
-          ? String(awb)
-          : null,
+          [
 
-        shiprocketStatus !== undefined
-          ? String(shiprocketStatus)
-          : null,
+            orderStatus || null,
 
-        id
+            paymentStatus || null,
 
-      );
+            awb !== undefined
+              ? String(awb)
+              : null,
+
+            shiprocketStatus !== undefined
+              ? String(
+                  shiprocketStatus
+                )
+              : null,
+
+            id
+
+          ]
+        );
+
+      if (
+        result.rowCount !== 1
+      ) {
+
+        return res.status(500).json({
+
+          error:
+            "Order update नहीं हुआ।"
+
+        });
+
+      }
+
+      const updated =
+        await pool.query(
+          `
+          SELECT *
+          FROM orders
+          WHERE id = $1
+          `,
+          [id]
+        );
 
       return res.json({
 
         success:
-          true
+          true,
+
+        order:
+          updated.rows[0]
 
       });
 
@@ -2022,12 +2377,12 @@ app.patch(
 
 app.get(
   "/api/reviews",
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
-      const rows =
-        db.prepare(`
+      const rowsResult =
+        await pool.query(`
           SELECT
             id,
             name,
@@ -2038,26 +2393,34 @@ app.get(
           WHERE status = 'approved'
           ORDER BY id DESC
           LIMIT 100
-        `).all();
+        `);
 
-      const stats =
-        db.prepare(`
+      const statsResult =
+        await pool.query(`
           SELECT
+
             COUNT(*) AS total,
+
             COALESCE(
               ROUND(
-                AVG(rating),
+                AVG(rating)::numeric,
                 1
               ),
               0
             ) AS average
+
           FROM reviews
+
           WHERE status = 'approved'
-        `).get();
+        `);
+
+      const stats =
+        statsResult.rows[0];
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         total:
           Number(
@@ -2070,7 +2433,7 @@ app.get(
           ),
 
         reviews:
-          rows
+          rowsResult.rows
 
       });
 
@@ -2099,7 +2462,7 @@ app.get(
 
 app.post(
   "/api/reviews",
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -2118,9 +2481,9 @@ app.post(
           req.body.rating
         );
 
-      /* -----------------------------------------------
-         Basic length protection
-      ------------------------------------------------ */
+      /* -----------------------------------------------------
+         NAME VALIDATION
+      ----------------------------------------------------- */
 
       if (
         name.length < 2 ||
@@ -2136,6 +2499,10 @@ app.post(
 
       }
 
+      /* -----------------------------------------------------
+         REVIEW VALIDATION
+      ----------------------------------------------------- */
+
       if (
         review.length < 5 ||
         review.length > 1000
@@ -2149,6 +2516,10 @@ app.post(
         });
 
       }
+
+      /* -----------------------------------------------------
+         RATING VALIDATION
+      ----------------------------------------------------- */
 
       if (
         !Number.isInteger(rating) ||
@@ -2165,18 +2536,24 @@ app.post(
 
       }
 
-      /* -----------------------------------------------
-         Basic HTML/script character cleaning
-      ------------------------------------------------ */
+      /* -----------------------------------------------------
+         BASIC HTML CLEANING
+      ----------------------------------------------------- */
 
       name =
         name
-          .replace(/[<>]/g, "")
+          .replace(
+            /[<>]/g,
+            ""
+          )
           .trim();
 
       review =
         review
-          .replace(/[<>]/g, "")
+          .replace(
+            /[<>]/g,
+            ""
+          )
           .trim();
 
       if (
@@ -2194,34 +2571,74 @@ app.post(
       }
 
       const createdAt =
-        new Date()
-          .toISOString();
+        new Date().toISOString();
 
-      db.prepare(`
-        INSERT INTO reviews (
-          name,
-          rating,
-          review,
-          status,
-          created_at
-        )
-        VALUES (
-          ?,
-          ?,
-          ?,
-          'pending',
-          ?
-        )
-      `).run(
-        name,
-        rating,
-        review,
-        createdAt
+      /* -----------------------------------------------------
+         INSERT REVIEW
+      ----------------------------------------------------- */
+
+      const result =
+        await pool.query(
+          `
+          INSERT INTO reviews (
+
+            name,
+
+            rating,
+
+            review,
+
+            status,
+
+            created_at
+
+          )
+
+          VALUES (
+
+            $1,
+
+            $2,
+
+            $3,
+
+            'pending',
+
+            $4
+
+          )
+
+          RETURNING
+            id,
+            name,
+            rating,
+            review,
+            status,
+            created_at
+          `,
+
+          [
+
+            name,
+
+            rating,
+
+            review,
+
+            createdAt
+
+          ]
+        );
+
+      console.log(
+        "NEW REVIEW SAVED:",
+        result.rows[0]
       );
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         message:
           "धन्यवाद! आपका Feedback मिल गया है। Admin approval के बाद यह website पर दिखाई देगा।"
@@ -2254,19 +2671,38 @@ app.post(
 app.get(
   "/api/admin/reviews",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
-      const rows =
-        db.prepare(`
-          SELECT *
+      const result =
+        await pool.query(`
+          SELECT
+
+            id,
+
+            name,
+
+            rating,
+
+            review,
+
+            status,
+
+            created_at
+
           FROM reviews
+
           ORDER BY id DESC
-        `).all();
+        `);
+
+      console.log(
+        "ADMIN REVIEWS COUNT:",
+        result.rows.length
+      );
 
       return res.json(
-        rows
+        result.rows
       );
 
     } catch (error) {
@@ -2295,12 +2731,14 @@ app.get(
 app.patch(
   "/api/admin/reviews/:id",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
       const id =
-        Number(req.params.id);
+        Number(
+          req.params.id
+        );
 
       const status =
         String(
@@ -2308,14 +2746,18 @@ app.patch(
         ).trim();
 
       const allowedStatuses = [
+
         "pending",
+
         "approved",
+
         "hidden"
+
       ];
 
-      /* -----------------------------------------------
-         Validate ID
-      ----------------------------------------------- */
+      /* -----------------------------------------------------
+         VALIDATE ID
+      ----------------------------------------------------- */
 
       if (
         !Number.isInteger(id) ||
@@ -2323,109 +2765,137 @@ app.patch(
       ) {
 
         return res.status(400).json({
-          error: "Invalid review ID"
+
+          error:
+            "Invalid review ID"
+
         });
 
       }
 
-      /* -----------------------------------------------
-         Validate Status
-      ----------------------------------------------- */
+      /* -----------------------------------------------------
+         VALIDATE STATUS
+      ----------------------------------------------------- */
 
       if (
-        !allowedStatuses.includes(status)
+        !allowedStatuses.includes(
+          status
+        )
       ) {
 
         return res.status(400).json({
-          error: "Invalid review status"
+
+          error:
+            "Invalid review status"
+
         });
 
       }
 
-      /* -----------------------------------------------
-         Check Review Exists
-      ----------------------------------------------- */
+      /* -----------------------------------------------------
+         CHECK REVIEW EXISTS
+      ----------------------------------------------------- */
 
-      const review =
-        db.prepare(
-          "SELECT * FROM reviews WHERE id = ?"
-        ).get(id);
-
-      if (!review) {
-
-        return res.status(404).json({
-          error: "Review not found"
-        });
-
-      }
-
-      /* -----------------------------------------------
-         UPDATE STATUS
-      ----------------------------------------------- */
-
-      const result =
-        db.prepare(`
-          UPDATE reviews
-          SET status = ?
-          WHERE id = ?
-        `).run(
-          status,
-          id
+      const existing =
+        await pool.query(
+          `
+          SELECT *
+          FROM reviews
+          WHERE id = $1
+          `,
+          [id]
         );
 
-      /* -----------------------------------------------
-         Verify Update
-      ----------------------------------------------- */
+      if (
+        existing.rows.length === 0
+      ) {
 
-      if (result.changes !== 1) {
+        return res.status(404).json({
 
-        return res.status(500).json({
-          error: "Review status update नहीं हुआ।"
+          error:
+            "Review not found"
+
         });
 
       }
 
-      /* -----------------------------------------------
-         GET UPDATED REVIEW
-      ----------------------------------------------- */
+      /* -----------------------------------------------------
+         UPDATE REVIEW
+      ----------------------------------------------------- */
+
+      const result =
+        await pool.query(
+          `
+          UPDATE reviews
+
+          SET status = $1
+
+          WHERE id = $2
+
+          RETURNING
+
+            id,
+
+            name,
+
+            rating,
+
+            review,
+
+            status,
+
+            created_at
+          `,
+
+          [
+
+            status,
+
+            id
+
+          ]
+        );
+
+      if (
+        result.rowCount !== 1
+      ) {
+
+        return res.status(500).json({
+
+          error:
+            "Review status update नहीं हुआ।"
+
+        });
+
+      }
 
       const updatedReview =
-        db.prepare(`
-          SELECT
-            id,
-            name,
-            rating,
-            review,
-            status,
-            created_at
-          FROM reviews
-          WHERE id = ?
-        `).get(id);
+        result.rows[0];
 
-      if (!updatedReview) {
-
-        return res.status(500).json({
-          error: "Updated review वापस नहीं मिली।"
-        });
-
-      }
-
-      /* -----------------------------------------------
-         RESPONSE
-      ----------------------------------------------- */
+      console.log(
+        "REVIEW STATUS UPDATED:",
+        updatedReview
+      );
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         message:
+
           status === "approved"
+
             ? "Review approve हो गया।"
+
             : status === "hidden"
+
               ? "Review hide हो गया।"
+
               : "Review वापस pending में चला गया।",
 
-        review: updatedReview
+        review:
+          updatedReview
 
       });
 
@@ -2455,7 +2925,7 @@ app.patch(
 app.delete(
   "/api/admin/reviews/:id",
   requireAdmin,
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -2478,12 +2948,19 @@ app.delete(
 
       }
 
-      const review =
-        db.prepare(
-          "SELECT id FROM reviews WHERE id = ?"
-        ).get(id);
+      const existing =
+        await pool.query(
+          `
+          SELECT id
+          FROM reviews
+          WHERE id = $1
+          `,
+          [id]
+        );
 
-      if (!review) {
+      if (
+        existing.rows.length === 0
+      ) {
 
         return res.status(404).json({
 
@@ -2494,13 +2971,37 @@ app.delete(
 
       }
 
-      db.prepare(
-        "DELETE FROM reviews WHERE id = ?"
-      ).run(id);
+      const result =
+        await pool.query(
+          `
+          DELETE FROM reviews
+          WHERE id = $1
+          `,
+          [id]
+        );
+
+      if (
+        result.rowCount !== 1
+      ) {
+
+        return res.status(500).json({
+
+          error:
+            "Review delete नहीं हुआ।"
+
+        });
+
+      }
+
+      console.log(
+        "REVIEW DELETED:",
+        id
+      );
 
       return res.json({
 
-        success: true,
+        success:
+          true,
 
         message:
           "Review delete हो गया।"
@@ -2567,7 +3068,9 @@ app.get(
 ========================================================= */
 
 app.use(
-  express.static(__dirname)
+  express.static(
+    __dirname
+  )
 );
 
 /* =========================================================
@@ -2601,14 +3104,43 @@ app.use(
    START SERVER
 ========================================================= */
 
-app.listen(
-  PORT,
-  "0.0.0.0",
-  () => {
+async function startServer() {
 
-    console.log(
-      `23 Swasthyavardhak Laddu running on port ${PORT}`
+  try {
+
+    await initializeDatabase();
+
+    app.listen(
+
+      PORT,
+
+      "0.0.0.0",
+
+      () => {
+
+        console.log(
+          `23 Swasthyavardhak Laddu running on port ${PORT}`
+        );
+
+        console.log(
+          "PostgreSQL database connected."
+        );
+
+      }
+
     );
 
+  } catch (error) {
+
+    console.error(
+      "SERVER START ERROR:",
+      error
+    );
+
+    process.exit(1);
+
   }
-);
+
+}
+
+startServer();
