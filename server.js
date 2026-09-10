@@ -2931,19 +2931,15 @@ app.delete(
 
       const id = Number(req.params.id);
 
-      // Validate review ID
       if (
         !Number.isInteger(id) ||
         id <= 0
       ) {
-
         return res.status(400).json({
           error: "Invalid review ID"
         });
-
       }
 
-      // Check review exists
       const existing = await pool.query(
         `
         SELECT id
@@ -2954,14 +2950,11 @@ app.delete(
       );
 
       if (existing.rows.length === 0) {
-
         return res.status(404).json({
           error: "Review not found"
         });
-
       }
 
-      // Delete review
       const result = await pool.query(
         `
         DELETE FROM reviews
@@ -2971,11 +2964,9 @@ app.delete(
       );
 
       if (result.rowCount !== 1) {
-
         return res.status(500).json({
           error: "Review delete नहीं हुआ।"
         });
-
       }
 
       console.log(
@@ -2984,12 +2975,8 @@ app.delete(
       );
 
       return res.json({
-
         success: true,
-
-        message:
-          "Review delete हो गया।"
-
+        message: "Review delete हो गया।"
       });
 
     } catch (error) {
@@ -3000,14 +2987,10 @@ app.delete(
       );
 
       return res.status(500).json({
-
-        error:
-          "Review delete नहीं हुआ।"
-
+        error: "Review delete नहीं हुआ।"
       });
 
     }
-
   }
 );
 
