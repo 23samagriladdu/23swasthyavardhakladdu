@@ -2922,18 +2922,6 @@ app.patch(
    ADMIN DELETE REVIEW
 ========================================================= */
 
-app.delete(
-  "/api/admin/reviews/:id",
-  requireAdmin,
-  async (req, res) => {
-
-    try {
-
-      const id =
-        Number(
-          req.params.id
-        );
-
       if (
         !Number.isInteger(id) ||
         id <= 0
