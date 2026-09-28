@@ -891,179 +891,173 @@ app.post(
       const qty =
         Number(quantity);
 
-      /* -----------------------------------------------------
-         VALIDATION
-      ----------------------------------------------------- */
+     /* -----------------------------------------------------
+   VALIDATION
+----------------------------------------------------- */
 
-      if (!cleanName) {
+if (!cleanName) {
 
-        return res.status(400).json({
+  return res.status(400).json({
+    error: "कृपया नाम डालें।"
+  });
 
-          error:
-            "कृपया नाम डालें।"
+}
 
-        });
+if (!/^\d{10}$/.test(cleanPhone)) {
 
-      }
+  return res.status(400).json({
+    error:
+      "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
+  });
 
-      if (
-        !/^\d{10}$/.test(
-          cleanPhone
-        )
-      ) {
+}
 
-        return res.status(400).json({
+if (!cleanAddress) {
 
-          error:
-            "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
+  return res.status(400).json({
+    error: "कृपया पूरा पता डालें।"
+  });
 
-        });
+}
 
-      }
+if (!cleanCity) {
 
-      if (!cleanAddress) {
+  return res.status(400).json({
+    error: "कृपया शहर का नाम डालें।"
+  });
 
-        return res.status(400).json({
+}
 
-          error:
-            "कृपया पूरा पता डालें।"
+if (!cleanState) {
 
-        });
+  return res.status(400).json({
+    error: "कृपया राज्य का नाम डालें।"
+  });
 
-      }
+}
 
-      if (!cleanCity) {
+if (!/^\d{6}$/.test(cleanPincode)) {
 
-        return res.status(400).json({
+  return res.status(400).json({
+    error:
+      "कृपया 6 अंकों का सही पिनकोड डालें।"
+  });
 
-          error:
-            "कृपया शहर का नाम डालें।"
+}
 
-        });
+if (!product) {
 
-      }
+  return res.status(400).json({
+    error:
+      "कृपया सही product चुनें।"
+  });
 
-      if (!cleanState) {
+}
 
-        return res.status(400).json({
+if (product.type === "kg") {
 
-          error:
-            "कृपया राज्य का नाम डालें।"
+  if (!isValidKgQuantity(qty)) {
 
-        });
+    return res.status(400).json({
+      error:
+        "Kg मात्रा 0.5 Kg से 10 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
+    });
 
-      }
+  }
 
-      if (
-        !/^\d{6}$/.test(
-          cleanPincode
-        )
-      ) {
+} else {
 
-        return res.status(400).json({
+  if (!isValidPackQuantity(qty)) {
 
-          error:
-            "कृपया 6 अंकों का सही पिनकोड डालें।"
+    return res.status(400).json({
+      error:
+        "Pack की संख्या 1 से 50 तक होनी चाहिए।"
+    });
 
-        });
+  }
 
-      }
+}
 
-      if (!product) {
+/* -----------------------------------------------------
+   PAYMENT VALIDATION
+----------------------------------------------------- */
 
-        return res.status(400).json({
+if (paymentMethod !== "UPI") {
 
-          error:
-            "कृपया सही product चुनें।"
+  return res.status(400).json({
 
-        });
+    error:
+      "अभी केवल UPI payment उपलब्ध है।"
 
-      }
+  });
 
-      if (
-        product.type === "kg"
-      ) {
+}
 
-        if (
-          !isValidKgQuantity(qty)
-        ) {
+/*
+   UPI payment के बाद UTR / Reference Number
+   mandatory है।
+*/
 
-          return res.status(400).json({
+if (!cleanUtr) {
 
-            error:
-              "Kg मात्रा 0.5 Kg से 10 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
+  return res.status(400).json({
 
-          });
+    error:
+      "कृपया पहले UPI payment करें और फिर UTR / Reference Number डालें।"
 
-        }
+  });
 
-      } else {
+}
 
-        if (
-          !isValidPackQuantity(qty)
-        ) {
+/*
+   बहुत छोटा या बहुत बड़ा UTR reject करें।
+*/
 
-          return res.status(400).json({
+if (
+  cleanUtr.length < 6 ||
+  cleanUtr.length > 100
+) {
 
-            error:
-              "Pack की संख्या 1 से 50 तक होनी चाहिए।"
+  return res.status(400).json({
 
-          });
+    error:
+      "कृपया सही UTR / Reference Number डालें।"
 
-        }
+  });
 
-      }
+}
 
-      if (
-        paymentMethod !== "UPI"
-      ) {
+/* -----------------------------------------------------
+   PRICE
+----------------------------------------------------- */
 
-        return res.status(400).json({
+const safePayment = "UPI";
 
-          error:
-            "अभी केवल UPI payment उपलब्ध है।"
+const productTotal =
+  Number(product.price) * qty;
 
-        });
+const totalWeight =
+  product.type === "kg"
+    ? qty
+    : Number(product.weight) * qty;
 
-      }
+const delivery =
+  getDeliveryCharge(totalWeight);
 
-      /* -----------------------------------------------------
-         PRICE
-      ----------------------------------------------------- */
+const total =
+  productTotal + delivery;
 
-      const safePayment =
-        "UPI";
+const orderNo =
+  await createOrderNumber();
 
-      const productTotal =
-        Number(product.price) *
-        qty;
+const createdAt =
+  new Date().toISOString();
 
-      const totalWeight =
-        product.type === "kg"
-          ? qty
-          : Number(product.weight) *
-            qty;
+/*
+   यहाँ तक code तभी पहुँचेगा जब UTR मौजूद होगा।
+*/
 
-      const delivery =
-        getDeliveryCharge(
-          totalWeight
-        );
-
-      const total =
-        productTotal +
-        delivery;
-
-      const orderNo =
-        await createOrderNumber();
-
-      const createdAt =
-        new Date().toISOString();
-
-      const paymentStatus =
-        safePayment === "UPI" &&
-        cleanUtr
-          ? "submitted"
-          : "pending";
+const paymentStatus = "submitted";
 
       /* -----------------------------------------------------
          SAVE ORDER
@@ -1314,10 +1308,9 @@ app.post(
 
         paymentStatus,
 
-        message:
-          "ऑर्डर सेव हो गया है। " +
-          "UPI payment के बाद UTR/Reference admin द्वारा verify किया जाएगा." +
-          shiprocketMessage
+       message:
+  "UPI payment और UTR प्राप्त हो गया है। आपका order सफलतापूर्वक submit हो गया है। Payment admin द्वारा verify किया जाएगा." +
+  shiprocketMessage
 
       });
 
