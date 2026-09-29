@@ -1,1 +1,2106 @@
+<!doctype html>
+<html lang="hi">
 
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>23 स्वास्थ्यवर्धक लड्डू</title>
+  <meta name="version" content="2026-08-31-UPI-only">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .history-section {
+      padding: 50px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .history-search {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      max-width: 650px;
+      margin: 25px auto;
+    }
+
+    .history-search input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .history-search button,
+    .history-card button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .history-search button {
+      background: #198754;
+      color: white;
+    }
+
+    .history-message {
+      text-align: center;
+      margin: 15px 0;
+      font-weight: 600;
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .history-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
+    }
+
+    .history-card h3 {
+      margin-top: 0;
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-row:last-child {
+      border-bottom: 0;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #eee;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .history-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .details-btn {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .cancel-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .disabled-btn {
+      background: #aaa;
+      color: white;
+      cursor: not-allowed !important;
+    }
+
+    .detail-box {
+      max-width: 800px;
+      margin: 25px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
+      display: none;
+    }
+
+    .detail-box h3 {
+      margin-top: 0;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .detail-item {
+      padding: 12px;
+      background: #f7f7f7;
+      border-radius: 8px;
+      word-break: break-word;
+    }
+
+    .detail-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .65);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 500px;
+      width: 100%;
+      padding: 25px;
+      border-radius: 18px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .modal-card button,
+    .modal-card a {
+      display: inline-block;
+      margin: 8px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .modal-card button {
+      background: #198754;
+      color: white;
+    }
+
+    .modal-card a {
+      background: #25d366;
+      color: white;
+    }
+
+    #qr {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 180px;
+      margin: 15px 0;
+    }
+
+    .loading {
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .success-text {
+      color: #198754;
+      font-weight: 600;
+    }
+
+    .error-text {
+      color: #dc3545;
+      font-weight: 600;
+    }
+
+    .delivery-note {
+      text-align: center;
+      margin-top: 20px;
+      line-height: 1.7;
+    }
+
+    @media(max-width: 650px) {
+      .history-search {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-item.full-width {
+        grid-column: auto;
+      }
+
+      .history-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .modal-card {
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+    23 <span>स्वास्थ्यवर्धक सामान</span>
+  </div>
+
+  <a class="call-btn" href="tel:9643185255">
+    📞 9643185255
+  </a>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+  <div>
+
+    <p class="eyebrow">
+      100% प्राकृतिक सामग्री • स्वादिष्ट • पौष्टिक
+    </p>
+
+    <h1>
+      23<br>
+      <span>
+        (एनर्जी लड्डू मिश्रित Sugar free)
+      </span>
+    </h1>
+
+    <p class="hero-text">
+      23 चुनिंदा ड्रायफ्रूट्स और सीड्स से तैयार
+      स्वादिष्ट लड्डू। ऑनलाइन ऑर्डर करें और
+      घर तक डिलीवरी पाएं।
+    </p>
+
+    <div class="hero-actions">
+
+      <a class="primary-btn" href="#order">
+        ऑर्डर करें
+      </a>
+
+      <a
+        class="secondary-btn"
+        href="https://wa.me/919643185255"
+        target="_blank"
+        rel="noopener">
+        WhatsApp
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <div class="hero-image-wrap">
+
+    <img
+      src="laddu-main.png"
+      alt="23 स्वास्थ्यवर्धक लड्डू"
+      loading="eager">
+
+  </div>
+
+</section>
+
+
+<section class="ingredients">
+
+  <h2>
+    23 स्वास्थ्यवर्धक सामग्री
+  </h2>
+
+  <div class="chips">
+
+    <span>बादाम</span>
+    <span>काजू</span>
+    <span>अखरोट</span>
+    <span>किशमिश</span>
+    <span>पिस्ता</span>
+    <span>खजूर</span>
+    <span>नारियल बुरादा</span>
+    <span>चिलगोजा</span>
+    <span>चिरौंजी</span>
+    <span>मुनक्का</span>
+    <span>गुलाब</span>
+    <span>मूंगफली</span>
+    <span>तिल</span>
+    <span>काली किशमिश</span>
+
+  </div>
+
+</section>
+
+
+<section class="products">
+
+  <h2>
+    हमारे लड्डू पैक
+  </h2>
+
+  <div id="productGrid" class="product-grid">
+    <p>उत्पाद उपलब्ध हैं।</p>
+  </div>
+
+  <p class="delivery-note">
+    🚚 डिलीवरी चार्ज:
+    <strong>
+      0.5–1 Kg: ₹100 |
+      1.5–2 Kg: ₹200 |
+      2.5–3 Kg: ₹300 |
+      3.5–4 Kg: ₹400 |
+      4.5–5 Kg: ₹500 |
+      5.5–6 Kg: ₹600 |
+      6.5–7 Kg: ₹700 |
+      7.5–8 Kg: ₹800 |
+      8.5–9 Kg: ₹900 |
+      9.5–10 Kg: ₹1000
+    </strong>
+  </p>
+
+</section>
+
+
+<section class="order-section" id="order">
+
+  <div class="order-copy">
+
+    <p class="eyebrow">
+      Online Order
+    </p>
+
+    <h2>
+      घर बैठे ऑर्डर करें
+    </h2>
+
+    <p>
+      अपनी जानकारी भरें। आप UPI से भुगतान कर सकते हैं
+      और UPI से सुरक्षित रूप से भुगतान कर सकते हैं।
+    </p>
+
+    <div class="contact-box">
+      📱 <strong>9643185255</strong>
+      <br>
+      कॉल या WhatsApp करें
+    </div>
+
+  </div>
+
+
+  <form id="orderForm" class="order-form">
+
+    <label>
+      नाम
+
+      <input
+        id="name"
+        required
+        autocomplete="name"
+        placeholder="अपना नाम">
+    </label>
+
+
+    <label>
+      मोबाइल
+
+      <input
+        id="phone"
+        required
+        inputmode="numeric"
+        pattern="[0-9]{10}"
+        maxlength="10"
+        autocomplete="tel"
+        placeholder="10 अंकों का मोबाइल">
+    </label>
+
+
+    <label class="full">
+
+      पूरा पता
+
+      <textarea
+        id="address"
+        required
+        autocomplete="street-address"
+        placeholder="घर/दुकान, गली, मोहल्ला"></textarea>
+
+    </label>
+
+
+    <label>
+
+      शहर
+
+      <input
+        id="city"
+        required
+        autocomplete="address-level2"
+        placeholder="शहर का नाम">
+
+    </label>
+
+
+    <label>
+
+      राज्य
+
+      <input
+        id="state"
+        required
+        autocomplete="address-level1"
+        placeholder="राज्य का नाम">
+
+    </label>
+
+
+    <label>
+
+      पिनकोड
+
+      <input
+        id="pincode"
+        required
+        inputmode="numeric"
+        pattern="[0-9]{6}"
+        maxlength="6"
+        autocomplete="postal-code"
+        placeholder="6 अंकों का पिनकोड">
+
+    </label>
+
+
+    <label>
+
+      लड्डू का प्रकार
+
+      <select id="product" required>
+
+        <option value="">
+          लड्डू का प्रकार चुनें
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <label for="quantity">
+
+      Kg मात्रा
+
+      <select id="quantity" required>
+
+        <option value="0.5">0.5 Kg</option>
+        <option value="1" selected>1 Kg</option>
+        <option value="1.5">1.5 Kg</option>
+        <option value="2">2 Kg</option>
+        <option value="2.5">2.5 Kg</option>
+        <option value="3">3 Kg</option>
+        <option value="3.5">3.5 Kg</option>
+        <option value="4">4 Kg</option>
+        <option value="4.5">4.5 Kg</option>
+        <option value="5">5 Kg</option>
+        <option value="5.5">5.5 Kg</option>
+        <option value="6">6 Kg</option>
+        <option value="6.5">6.5 Kg</option>
+        <option value="7">7 Kg</option>
+        <option value="7.5">7.5 Kg</option>
+        <option value="8">8 Kg</option>
+        <option value="8.5">8.5 Kg</option>
+        <option value="9">9 Kg</option>
+        <option value="9.5">9.5 Kg</option>
+        <option value="10">10 Kg</option>
+
+      </select>
+
+    </label>
+
+
+    <label>
+
+      Payment Method
+
+      <select id="paymentMethod" required>
+
+        <option value="UPI" selected>
+          UPI / Online Payment
+        </option>
+
+      </select>
+
+    </label>
+
+
+    <div id="upiBox" class="payment-box full">
+
+      <strong>
+        UPI Payment
+      </strong>
+
+      <p>
+        UPI ID:
+        <span id="upiId">
+          UPI ID उपलब्ध नहीं है
+        </span>
+      </p>
+
+      <div id="qr"></div>
+
+      <button
+        type="button"
+        class="pay-btn"
+        id="payBtn">
+
+        📲 UPI App खोलें / Pay करें
+
+      </button>
+
+
+      <label>
+
+        Payment UTR / Reference No.
+        (यदि भुगतान किया है)
+
+        <input
+          id="utr"
+          maxlength="100"
+          placeholder="जैसे 123456789012">
+
+      </label>
+
+    </div>
+
+
+    <div class="total">
+
+      <span>
+        उत्पाद
+      </span>
+
+      <strong id="productTotal">
+        ₹0
+      </strong>
+
+
+      <span>
+        डिलीवरी
+      </span>
+
+      <strong id="deliveryCharge">
+        ₹0
+      </strong>
+
+
+      <span>
+        कुल
+      </span>
+
+      <strong id="grandTotal">
+        ₹0
+      </strong>
+
+    </div>
+
+
+    <button
+      class="whatsapp-btn"
+      id="orderSubmitBtn"
+      type="submit">
+
+      ✅ Order Confirm करें
+
+    </button>
+
+
+    <p class="small">
+
+      UPI payment verification admin द्वारा की जाएगी।
+      Payment UPI के माध्यम से किया जाएगा।
+
+    </p>
+
+  </form>
+
+</section>
+
+
+<section class="history-section" id="order-history">
+
+  <p class="eyebrow">
+    My Orders
+  </p>
+
+  <h2>
+    📦 मेरे Orders
+  </h2>
+
+  <p>
+    अपने registered mobile number से अपने सभी orders देखें।
+  </p>
+
+
+  <div class="history-search">
+
+    <input
+      id="historyPhone"
+      type="tel"
+      inputmode="numeric"
+      pattern="[0-9]{10}"
+      maxlength="10"
+      placeholder="Order वाला 10 अंकों का मोबाइल नंबर">
+
+    <button
+      type="button"
+      id="historyBtn">
+
+      🔍 Orders देखें
+
+    </button>
+
+  </div>
+
+
+  <p
+    id="historyMessage"
+    class="history-message">
+  </p>
+
+
+  <div
+    id="historyGrid"
+    class="history-grid">
+  </div>
+
+
+  <div
+    id="detailBox"
+    class="detail-box">
+
+    <h3>
+      📋 Order Details
+    </h3>
+
+    <div
+      id="detailContent"
+      class="detail-grid">
+    </div>
+
+  </div>
+
+</section>
+
+
+<section
+  class="order-section"
+  id="cancel-order">
+
+  <div class="order-copy">
+
+    <p class="eyebrow">
+      Order Cancellation
+    </p>
+
+    <h2>
+      अपना Order Cancel करें
+    </h2>
+
+    <p>
+      यदि आपने order किया है और अब उसे cancel करना चाहते हैं,
+      तो अपना Order No. और वही mobile number डालें
+      जिससे order किया था।
+    </p>
+
+    <div class="contact-box">
+      ⚠️ Shipment courier को Out for Pickup होने के बाद
+      cancellation संभव नहीं हो सकती।
+    </div>
+
+  </div>
+
+
+  <form id="cancelForm" class="order-form">
+
+    <label>
+
+      Order No.
+
+      <input
+        id="cancelOrderNo"
+        required
+        maxlength="50"
+        placeholder="जैसे 23L378440773">
+
+    </label>
+
+
+    <label>
+
+      Mobile Number
+
+      <input
+        id="cancelPhone"
+        required
+        inputmode="numeric"
+        pattern="[0-9]{10}"
+        maxlength="10"
+        placeholder="Order वाला mobile number">
+
+    </label>
+
+
+    <label class="full">
+
+      Cancellation Reason
+      (Optional)
+
+      <textarea
+        id="cancelReason"
+        maxlength="500"
+        placeholder="Order cancel करने का कारण"></textarea>
+
+    </label>
+
+
+    <button
+      class="whatsapp-btn"
+      type="submit">
+
+      ❌ Order Cancel करें
+
+    </button>
+
+
+    <p
+      id="cancelMessage"
+      class="small">
+    </p>
+
+  </form>
+
+</section>
+
+
+<section class="gallery">
+
+  <h2>
+    हमारे उत्पाद की झलक
+  </h2>
+
+  <p class="gallery-subtitle">
+    हमारे स्वादिष्ट लड्डू और प्राकृतिक सामग्री की कुछ तस्वीरें
+  </p>
+
+  <div class="gallery-grid">
+
+    <div class="gallery-item">
+      <img
+        src="/besan.jpeg"
+        alt="बेसन लड्डू"
+        loading="lazy">
+      <p>बेसन लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/dry_fruit.jpeg"
+        alt="ड्राय फ्रूट"
+        loading="lazy">
+      <p>ड्राय फ्रूट</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/mix_ladd-2.jpeg"
+        alt="मिक्स लड्डू"
+        loading="lazy">
+      <p>मिक्स लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/mix_laddu-.jpeg"
+        alt="मिक्स लड्डू"
+        loading="lazy">
+      <p>मिक्स लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/mix_laddu-3.jpeg"
+        alt="मिक्स लड्डू"
+        loading="lazy">
+      <p>मिक्स लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/mix_laddu-4.jpeg"
+        alt="मिक्स लड्डू"
+        loading="lazy">
+      <p>मिक्स लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/mix_laddu-5.jpeg"
+        alt="मिक्स लड्डू"
+        loading="lazy">
+      <p>मिक्स लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/mix_laddu-6.jpeg"
+        alt="मिक्स लड्डू"
+        loading="lazy">
+      <p>मिक्स लड्डू</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="/seeds_dryfruit.jpeg"
+        alt="सीड्स और ड्राय फ्रूट"
+        loading="lazy">
+      <p>सीड्स और ड्राय फ्रूट</p>
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="product-details-hindi.png"
+        alt="हिंदी उत्पाद विवरण"
+        loading="lazy">
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="product-poster-english.png"
+        alt="English Product Poster"
+        loading="lazy">
+    </div>
+
+    <div class="gallery-item">
+      <img
+        src="product-poster-hindi.png"
+        alt="Hindi Product Poster"
+        loading="lazy">
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+  <strong>
+    23 स्वास्थ्यवर्धक सामान
+  </strong>
+
+  <span>
+    स्वस्थ शरीर • खुशहाल जीवन
+  </span>
+
+  <span>
+    📞 9643185255
+  </span>
+
+</footer>
+
+
+<!-- =====================================================
+     SUCCESS MODAL
+===================================================== -->
+
+<div
+  id="successModal"
+  class="modal hidden">
+
+  <div class="modal-card">
+
+    <h2>
+      ✅ Order Successfully Placed
+    </h2>
+
+    <p id="successMessage">
+      आपका order सफलतापूर्वक प्राप्त हो गया है।
+    </p>
+
+    <div
+      id="successOrderDetails">
+    </div>
+
+    <a
+      id="successWhatsapp"
+      href="#"
+      target="_blank"
+      rel="noopener">
+
+      📲 WhatsApp पर भेजें
+
+    </a>
+
+    <button
+      type="button"
+      id="closeSuccess">
+
+      बंद करें
+
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+(function () {
+
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+
+  let CONFIG = {
+    upiId: "",
+    upiName: "",
+    products: [],
+    deliveryRules: {}
+  };
+
+
+  /* =====================================================
+     HELPERS
+  ===================================================== */
+
+  function escapeHtml(value) {
+
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function money(value) {
+
+    return "₹" + Number(value || 0).toLocaleString("en-IN");
+
+  }
+
+
+  function getProduct() {
+
+    const id = $("product").value;
+
+    return CONFIG.products.find(
+      (p) => String(p.id) === String(id)
+    );
+
+  }
+
+
+  function getDelivery(weight) {
+
+    const w = Number(weight || 0);
+
+    if (!Number.isFinite(w) || w <= 0) {
+      return 0;
+    }
+
+    if (w <= 1) return 100;
+    if (w <= 2) return 200;
+    if (w <= 3) return 300;
+    if (w <= 4) return 400;
+    if (w <= 5) return 500;
+    if (w <= 6) return 600;
+    if (w <= 7) return 700;
+    if (w <= 8) return 800;
+    if (w <= 9) return 900;
+
+    return 1000;
+
+  }
+
+
+  /* =====================================================
+     CONFIG LOAD
+  ===================================================== */
+
+  async function loadConfig() {
+
+    try {
+
+      const response = await fetch("/api/config");
+
+      if (!response.ok) {
+        throw new Error("Config load failed");
+      }
+
+      CONFIG = await response.json();
+
+      $("upiId").textContent =
+        CONFIG.upiId || "UPI ID उपलब्ध नहीं है";
+
+
+      const productSelect = $("product");
+
+      productSelect.innerHTML = `
+        <option value="">
+          लड्डू का प्रकार चुनें
+        </option>
+      `;
+
+
+      (CONFIG.products || []).forEach((product) => {
+
+        const option = document.createElement("option");
+
+        option.value = product.id;
+
+        option.textContent =
+          `${product.name} — ${money(product.price)}/Kg`;
+
+        productSelect.appendChild(option);
+
+      });
+
+
+      updateTotal();
+
+      renderProducts();
+
+      renderQr();
+
+    } catch (error) {
+
+      console.error(error);
+
+      $("upiId").textContent =
+        "UPI ID उपलब्ध नहीं है";
+
+      $("productGrid").innerHTML =
+        `<p class="error-text">
+          Products load नहीं हो सके।
+        </p>`;
+
+    }
+
+  }
+
+
+  /* =====================================================
+     PRODUCTS
+  ===================================================== */
+
+  function renderProducts() {
+
+    const grid = $("productGrid");
+
+    if (!CONFIG.products || !CONFIG.products.length) {
+
+      grid.innerHTML =
+        "<p>उत्पाद उपलब्ध नहीं हैं।</p>";
+
+      return;
+
+    }
+
+
+    grid.innerHTML =
+      CONFIG.products.map((product) => {
+
+        return `
+          <div class="product-card">
+
+            <img
+              src="${escapeHtml(product.image || "laddu-main.png")}"
+              alt="${escapeHtml(product.name)}"
+              loading="lazy">
+
+            <h3>
+              ${escapeHtml(product.name)}
+            </h3>
+
+            <p>
+              <strong>
+                ${money(product.price)}
+              </strong>
+              / Kg
+            </p>
+
+            <button
+              type="button"
+              class="primary-btn"
+              onclick="selectProduct('${escapeHtml(product.id)}')">
+
+              यह चुनें
+
+            </button>
+
+          </div>
+        `;
+
+      }).join("");
+
+  }
+
+
+  window.selectProduct = function (productId) {
+
+    $("product").value = productId;
+
+    updateTotal();
+
+    document
+      .getElementById("order")
+      .scrollIntoView({
+        behavior: "smooth"
+      });
+
+  };
+
+
+  /* =====================================================
+     QR
+  ===================================================== */
+
+  function renderQr() {
+
+    const qr = $("qr");
+
+    if (!CONFIG.upiId) {
+
+      qr.innerHTML = `
+        <div class="qr-placeholder">
+          UPI QR उपलब्ध नहीं है।
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    const upiUrl =
+      `upi://pay?pa=${encodeURIComponent(CONFIG.upiId)}` +
+      `&pn=${encodeURIComponent(CONFIG.upiName || "23 Swasthyavardhak Samaan")}` +
+      `&cu=INR`;
+
+
+    qr.innerHTML = `
+      <div class="qr-placeholder">
+
+        <p>
+          UPI ID:
+          <strong>
+            ${escapeHtml(CONFIG.upiId)}
+          </strong>
+        </p>
+
+        <p>
+          QR / UPI App से payment करें।
+        </p>
+
+      </div>
+    `;
+
+
+    $("payBtn").onclick = function () {
+
+      window.location.href = upiUrl;
+
+    };
+
+  }
+
+
+  /* =====================================================
+     TOTAL
+  ===================================================== */
+
+  function updateTotal() {
+
+    const product = getProduct();
+
+    const quantity =
+      Number($("quantity").value || 0);
+
+
+    if (!product || !quantity) {
+
+      $("productTotal").textContent = "₹0";
+      $("deliveryCharge").textContent = "₹0";
+      $("grandTotal").textContent = "₹0";
+
+      return;
+
+    }
+
+
+    const productTotal =
+      Number(product.price) * quantity;
+
+
+    const totalWeight =
+      product.type === "kg"
+        ? quantity
+        : Number(product.weight || 1) * quantity;
+
+
+    const delivery =
+      getDelivery(totalWeight);
+
+
+    const total =
+      productTotal + delivery;
+
+
+    $("productTotal").textContent =
+      money(productTotal);
+
+    $("deliveryCharge").textContent =
+      money(delivery);
+
+    $("grandTotal").textContent =
+      money(total);
+
+  }
+
+
+  $("product").addEventListener(
+    "change",
+    updateTotal
+  );
+
+  $("quantity").addEventListener(
+    "change",
+    updateTotal
+  );
+
+
+  /* =====================================================
+     ORDER SUBMIT
+  ===================================================== */
+
+  $("orderForm").addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+
+      const button =
+        $("orderSubmitBtn");
+
+
+      const product =
+        getProduct();
+
+
+      if (!product) {
+
+        alert(
+          "कृपया लड्डू का प्रकार चुनें।"
+        );
+
+        return;
+
+      }
+
+
+      const utr =
+        $("utr").value.trim();
+
+
+      if (!utr) {
+
+        alert(
+          "कृपया payment करने के बाद UTR / Reference Number डालें।"
+        );
+
+        $("utr").focus();
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.classList.add("loading");
+
+      button.textContent =
+        "⏳ Order भेजा जा रहा है...";
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/orders",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+
+                name:
+                  $("name").value.trim(),
+
+                phone:
+                  $("phone").value.trim(),
+
+                address:
+                  $("address").value.trim(),
+
+                city:
+                  $("city").value.trim(),
+
+                state:
+                  $("state").value.trim(),
+
+                pincode:
+                  $("pincode").value.trim(),
+
+                productId:
+                  $("product").value,
+
+                quantity:
+                  $("quantity").value,
+
+                paymentMethod:
+                  $("paymentMethod").value,
+
+                utr:
+                  utr
+
+              })
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Order submit नहीं हुआ।"
+          );
+
+        }
+
+
+        showSuccess(data);
+
+
+        $("orderForm").reset();
+
+        $("quantity").value = "1";
+
+        $("paymentMethod").value =
+          "UPI";
+
+        updateTotal();
+
+        renderQr();
+
+
+      } catch (error) {
+
+        alert(
+          error.message ||
+          "Order submit नहीं हुआ।"
+        );
+
+      } finally {
+
+        button.disabled = false;
+
+        button.classList.remove(
+          "loading"
+        );
+
+        button.textContent =
+          "✅ Order Confirm करें";
+
+      }
+
+    }
+  );
+
+
+  /* =====================================================
+     SUCCESS
+  ===================================================== */
+
+  function showSuccess(data) {
+
+    const modal =
+      $("successModal");
+
+
+    $("successMessage").innerHTML = `
+      <span class="success-text">
+        ${escapeHtml(
+          data.message ||
+          "आपका order सफलतापूर्वक प्राप्त हो गया है।"
+        )}
+      </span>
+    `;
+
+
+    $("successOrderDetails").innerHTML = `
+
+      <div class="detail-item">
+
+        <strong>
+          Order No.
+        </strong>
+
+        <br>
+
+        ${escapeHtml(
+          data.orderNo
+        )}
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <strong>
+          Product
+        </strong>
+
+        <br>
+
+        ${escapeHtml(
+          getProduct()?.name || ""
+        )}
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <strong>
+          Quantity
+        </strong>
+
+        <br>
+
+        ${escapeHtml(
+          data.quantity || ""
+        )}
+        Kg
+
+      </div>
+
+
+      <div class="detail-item">
+
+        <strong>
+          Total
+        </strong>
+
+        <br>
+
+        ${money(data.total)}
+
+      </div>
+
+    `;
+
+
+    const whatsappText =
+      `नमस्ते, मेरा 23 स्वास्थ्यवर्धक लड्डू का Order है।%0A` +
+      `Order No: ${encodeURIComponent(data.orderNo || "")}%0A` +
+      `Total: ${encodeURIComponent(money(data.total))}%0A` +
+      `UTR: ${encodeURIComponent($("utr").value.trim())}`;
+
+
+    $("successWhatsapp").href =
+      `https://wa.me/919643185255?text=${whatsappText}`;
+
+
+    modal.classList.remove("hidden");
+
+  }
+
+
+  $("closeSuccess").addEventListener(
+    "click",
+    function () {
+
+      $("successModal")
+        .classList.add("hidden");
+
+    }
+  );
+
+
+  $("successModal").addEventListener(
+    "click",
+    function (event) {
+
+      if (
+        event.target ===
+        $("successModal")
+      ) {
+
+        $("successModal")
+          .classList.add("hidden");
+
+      }
+
+    }
+  );
+
+
+  /* =====================================================
+     ORDER HISTORY
+  ===================================================== */
+
+  $("historyBtn").addEventListener(
+    "click",
+    loadHistory
+  );
+
+
+  async function loadHistory() {
+
+    const phone =
+      $("historyPhone")
+        .value
+        .replace(/\D/g, "");
+
+
+    const message =
+      $("historyMessage");
+
+
+    const grid =
+      $("historyGrid");
+
+
+    const detail =
+      $("detailBox");
+
+
+    if (!/^\d{10}$/.test(phone)) {
+
+      message.textContent =
+        "कृपया 10 अंकों का सही mobile number डालें।";
+
+      message.className =
+        "history-message error-text";
+
+      return;
+
+    }
+
+
+    message.textContent =
+      "Orders load हो रहे हैं...";
+
+    message.className =
+      "history-message";
+
+
+    grid.innerHTML = "";
+
+    detail.style.display = "none";
+
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/orders/history?phone=${encodeURIComponent(phone)}`
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Orders load नहीं हुए।"
+        );
+
+      }
+
+
+      if (
+        !data.orders ||
+        !data.orders.length
+      ) {
+
+        message.textContent =
+          "इस mobile number से कोई order नहीं मिला।";
+
+        message.className =
+          "history-message error-text";
+
+        return;
+
+      }
+
+
+      message.textContent =
+        `${data.orders.length} order मिले।`;
+
+      message.className =
+        "history-message success-text";
+
+
+      grid.innerHTML =
+        data.orders.map(
+          (order) =>
+            createHistoryCard(order, phone)
+        ).join("");
+
+
+    } catch (error) {
+
+      message.textContent =
+        error.message;
+
+      message.className =
+        "history-message error-text";
+
+    }
+
+  }
+
+
+  function createHistoryCard(
+    order,
+    phone
+  ) {
+
+    const cancelButton =
+      order.canCancel
+
+        ? `
+          <button
+            class="cancel-btn"
+            type="button"
+            onclick="cancelFromHistory(
+              '${escapeHtml(order.orderNo)}',
+              '${escapeHtml(phone)}'
+            )">
+
+            ❌ Cancel
+
+          </button>
+        `
+
+        : `
+          <button
+            class="disabled-btn"
+            type="button"
+            disabled>
+
+            Cancel नहीं कर सकते
+
+          </button>
+        `;
+
+
+    return `
+
+      <div class="history-card">
+
+        <h3>
+          📦 ${escapeHtml(order.orderNo)}
+        </h3>
+
+
+        <div class="history-row">
+
+          <span>
+            Product
+          </span>
+
+          <strong>
+            ${escapeHtml(order.product)}
+          </strong>
+
+        </div>
+
+
+        <div class="history-row">
+
+          <span>
+            Quantity
+          </span>
+
+          <strong>
+            ${escapeHtml(order.quantity)}
+            Kg
+          </strong>
+
+        </div>
+
+
+        <div class="history-row">
+
+          <span>
+            Total
+          </span>
+
+          <strong>
+            ${money(order.total)}
+          </strong>
+
+        </div>
+
+
+        <div class="history-row">
+
+          <span>
+            Payment
+          </span>
+
+          <span class="status">
+            ${escapeHtml(order.paymentStatus || "pending")}
+          </span>
+
+        </div>
+
+
+        <div class="history-row">
+
+          <span>
+            Order Status
+          </span>
+
+          <span class="status">
+            ${escapeHtml(order.orderStatus || "new")}
+          </span>
+
+        </div>
+
+
+        <div class="history-actions">
+
+          <button
+            class="details-btn"
+            type="button"
+            onclick="showOrderDetails(
+              '${escapeHtml(order.orderNo)}',
+              '${escapeHtml(phone)}'
+            )">
+
+            📋 Details
+
+          </button>
+
+          ${cancelButton}
+
+        </div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  window.showOrderDetails =
+    async function (
+      orderNo,
+      phone
+    ) {
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/orders/details",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                orderNo,
+                phone
+              })
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Details load नहीं हुईं।"
+          );
+
+        }
+
+
+        const order =
+          data.order;
+
+
+        $("detailContent").innerHTML = `
+
+          <div class="detail-item">
+            <strong>Order No.</strong><br>
+            ${escapeHtml(order.orderNo)}
+          </div>
+
+          <div class="detail-item">
+            <strong>Date</strong><br>
+            ${escapeHtml(order.createdAt)}
+          </div>
+
+          <div class="detail-item full-width">
+            <strong>Product</strong><br>
+            ${escapeHtml(order.product)}
+          </div>
+
+          <div class="detail-item">
+            <strong>Quantity</strong><br>
+            ${escapeHtml(order.quantity)} Kg
+          </div>
+
+          <div class="detail-item">
+            <strong>Product Price</strong><br>
+            ${money(order.price)}
+          </div>
+
+          <div class="detail-item">
+            <strong>Delivery</strong><br>
+            ${money(order.delivery)}
+          </div>
+
+          <div class="detail-item">
+            <strong>Total</strong><br>
+            ${money(order.total)}
+          </div>
+
+          <div class="detail-item">
+            <strong>Payment</strong><br>
+            ${escapeHtml(order.paymentStatus || "")}
+          </div>
+
+          <div class="detail-item">
+            <strong>Order Status</strong><br>
+            ${escapeHtml(order.orderStatus || "")}
+          </div>
+
+          <div class="detail-item">
+            <strong>UTR</strong><br>
+            ${escapeHtml(order.utr || "-")}
+          </div>
+
+          <div class="detail-item full-width">
+            <strong>Address</strong><br>
+            ${escapeHtml(order.address)},
+            ${escapeHtml(order.city)},
+            ${escapeHtml(order.state)}
+            - ${escapeHtml(order.pincode)}
+          </div>
+
+          <div class="detail-item">
+            <strong>AWB</strong><br>
+            ${escapeHtml(order.awb || "-")}
+          </div>
+
+          <div class="detail-item">
+            <strong>Shiprocket</strong><br>
+            ${escapeHtml(order.shiprocketStatus || "-")}
+          </div>
+
+        `;
+
+
+        $("detailBox").style.display =
+          "block";
+
+
+        $("detailBox")
+          .scrollIntoView({
+            behavior: "smooth"
+          });
+
+
+      } catch (error) {
+
+        alert(error.message);
+
+      }
+
+    };
+
+
+  window.cancelFromHistory =
+    function (
+      orderNo,
+      phone
+    ) {
+
+      $("cancelOrderNo").value =
+        orderNo;
+
+      $("cancelPhone").value =
+        phone;
+
+
+      document
+        .getElementById("cancel-order")
+        .scrollIntoView({
+          behavior: "smooth"
+        });
+
+    };
+
+
+  /* =====================================================
+     CANCEL ORDER
+  ===================================================== */
+
+  $("cancelForm").addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+
+      const message =
+        $("cancelMessage");
+
+
+      message.textContent =
+        "Order cancel किया जा रहा है...";
+
+
+      try {
+
+        const response =
+          await fetch(
+            "/api/orders/cancel",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+
+                orderNo:
+                  $("cancelOrderNo")
+                    .value
+                    .trim(),
+
+                phone:
+                  $("cancelPhone")
+                    .value
+                    .trim(),
+
+                reason:
+                  $("cancelReason")
+                    .value
+                    .trim()
+
+              })
+
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Order cancel नहीं हुआ।"
+          );
+
+        }
+
+
+        message.textContent =
+          data.message ||
+          "Order successfully cancelled.";
+
+        message.className =
+          "small success-text";
+
+
+        $("cancelForm").reset();
+
+
+      } catch (error) {
+
+        message.textContent =
+          error.message;
+
+        message.className =
+          "small error-text";
+
+      }
+
+    }
+  );
+
+
+  /* =====================================================
+     START
+  ===================================================== */
+
+  loadConfig();
+
+})();
+
+</script>
+
+</body>
+</html>
