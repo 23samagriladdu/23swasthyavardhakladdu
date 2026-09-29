@@ -7,487 +7,467 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1">
+    content="width=device-width, initial-scale=1"
+  >
 
-  <title>23 स्वास्थ्यवर्धक लड्डू</title>
+  <meta
+    name="description"
+    content="23 स्वास्थ्यवर्धक लड्डू - Seeds & Dry Fruits और मिश्रित लड्डू। Verified UPI payment के बाद order confirmation."
+  >
 
-  <link rel="stylesheet" href="style.css">
+  <title>
+    23 स्वास्थ्यवर्धक लड्डू
+  </title>
+
+  <!-- Razorpay Checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
 
-    /* =====================================================
-       CUSTOMER REVIEWS
-    ===================================================== */
-
-    .reviews-section {
-      max-width: 1100px;
-      margin: auto;
-      padding: 60px 20px;
-    }
-
-    .reviews-header {
-      text-align: center;
-      max-width: 750px;
-      margin: 0 auto 30px;
-    }
-
-    .rating-summary {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 18px;
-      max-width: 650px;
-      margin: 30px auto;
-    }
-
-    .rating-average,
-    .rating-total {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 18px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
-    }
-
-    .rating-average strong,
-    .rating-total strong {
-      display: block;
-      font-size: 38px;
-      margin-bottom: 5px;
-    }
-
-    .rating-average span,
-    .rating-total span {
-      display: block;
-      color: #666;
-    }
-
-    .big-stars {
-      color: #f59e0b;
-      font-size: 25px;
-      letter-spacing: 3px;
-      margin-bottom: 5px;
-    }
-
-
-    /* =====================================================
-       REVIEW FORM
-    ===================================================== */
-
-    .review-form-card {
-      max-width: 700px;
-      margin: 30px auto;
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, .06);
-    }
-
-    .review-form {
-      display: grid;
-      gap: 18px;
-    }
-
-    .review-form label {
-      display: grid;
-      gap: 8px;
-      font-weight: 600;
-    }
-
-    .review-form input,
-    .review-form textarea {
-      width: 100%;
+    * {
       box-sizing: border-box;
-      padding: 13px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 16px;
-      font-family: inherit;
     }
 
-    .review-form textarea {
-      min-height: 130px;
+    body {
+      margin: 0;
+      font-family:
+        Arial,
+        "Noto Sans Devanagari",
+        sans-serif;
+
+      background: #fffaf2;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      width: min(1100px, 94%);
+      margin: auto;
+    }
+
+    .hero {
+      background:
+        linear-gradient(
+          135deg,
+          #fff0c8,
+          #ffe1a8
+        );
+
+      padding: 28px 0;
+
+      text-align: center;
+
+      border-bottom:
+        1px solid #f0d39a;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+
+      font-size:
+        clamp(
+          28px,
+          5vw,
+          46px
+        );
+
+      color: #7a3d00;
+    }
+
+    .hero p {
+      margin: 5px 0;
+    }
+
+    .badge {
+      display: inline-block;
+
+      background: #198754;
+
+      color: #fff;
+
+      padding:
+        7px 13px;
+
+      border-radius: 30px;
+
+      font-weight: 700;
+
+      margin-top: 10px;
+    }
+
+    .grid {
+      display: grid;
+
+      grid-template-columns:
+        1.15fr
+        0.85fr;
+
+      gap: 22px;
+
+      margin: 24px 0;
+    }
+
+    .card {
+      background: #fff;
+
+      border:
+        1px solid #eadfce;
+
+      border-radius: 16px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(
+          80,
+          50,
+          10,
+          0.06
+        );
+    }
+
+    h2 {
+      margin-top: 0;
+
+      color: #7a3d00;
+    }
+
+    label {
+      display: block;
+
+      font-weight: 700;
+
+      margin:
+        13px 0 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+
+      padding: 12px;
+
+      border:
+        1px solid #cfc5b6;
+
+      border-radius: 10px;
+
+      font-size: 16px;
+
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 90px;
+
       resize: vertical;
     }
 
-    .star-input {
-      display: flex;
-      gap: 4px;
-    }
-
-    .star-input button {
-      border: 0;
-      background: transparent;
-      padding: 2px;
-      cursor: pointer;
-      font-size: 38px;
-      line-height: 1;
-      color: #ccc;
-      transition:
-        transform .15s ease,
-        color .15s ease;
-    }
-
-    .star-input button:hover {
-      transform: scale(1.08);
-    }
-
-    .star-input button.selected {
-      color: #f59e0b;
-    }
-
-    .review-form .primary-btn {
-      border: 0;
-      cursor: pointer;
-    }
-
-
-    /* =====================================================
-       PUBLIC REVIEW CARDS
-    ===================================================== */
-
-    .public-reviews {
+    .row {
       display: grid;
+
       grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(280px, 1fr)
-        );
-      gap: 18px;
-      margin-top: 35px;
-    }
+        1fr 1fr;
 
-    .public-review-card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, .05);
-    }
-
-    .public-review-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .public-review-name {
-      font-weight: 700;
-      font-size: 17px;
-    }
-
-    .public-review-stars {
-      color: #f59e0b;
-      font-size: 20px;
-      letter-spacing: 2px;
-    }
-
-    .public-review-text {
-      margin-top: 15px;
-      line-height: 1.7;
-      color: #333;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .public-review-date {
-      margin-top: 12px;
-      font-size: 12px;
-      color: #888;
-    }
-
-    .no-reviews {
-      text-align: center;
-      padding: 30px;
-      background: #f8f8f8;
-      border-radius: 15px;
-      grid-column: 1 / -1;
-    }
-
-    .review-success {
-      color: #198754;
-      font-weight: 600;
-    }
-
-    .review-error {
-      color: #dc3545;
-      font-weight: 600;
-    }
-
-
-    /* =====================================================
-       CUSTOMER ORDER HISTORY
-    ===================================================== */
-
-    .history-section {
-      padding: 50px 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    .history-search {
-      display: grid;
-      grid-template-columns: 1fr auto;
       gap: 12px;
-      max-width: 650px;
-      margin: 25px auto;
     }
 
-    .history-search input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
+    .pricebox {
+      background: #fff8e8;
 
-    .history-search button,
-    .history-card button {
-      border: 0;
-      border-radius: 10px;
-      padding: 12px 18px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+      border:
+        1px solid #efd79f;
 
-    .history-search button {
-      background: #198754;
-      color: white;
-    }
+      padding: 15px;
 
-    .history-message {
-      text-align: center;
+      border-radius: 12px;
+
       margin: 15px 0;
-      font-weight: 600;
     }
 
-    .history-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(290px, 1fr)
-        );
-      gap: 18px;
-      margin-top: 25px;
-    }
-
-    .history-card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, .06);
-    }
-
-    .history-card h3 {
-      margin-top: 0;
-    }
-
-    .history-row {
+    .priceLine {
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 9px 0;
-      border-bottom: 1px solid #eee;
+
+      justify-content:
+        space-between;
+
+      margin: 6px 0;
     }
 
-    .history-row:last-child {
-      border-bottom: 0;
+    .total {
+      font-size: 22px;
+
+      font-weight: 800;
+
+      color: #137a4b;
+
+      border-top:
+        1px solid #e8d6b0;
+
+      padding-top: 10px;
+
+      margin-top: 10px;
     }
 
-    .status {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 20px;
-      background: #eee;
-      font-size: 13px;
-      font-weight: 700;
+    .btn {
+      border: 0;
+
+      border-radius: 11px;
+
+      padding:
+        13px 18px;
+
+      font-size: 16px;
+
+      font-weight: 800;
+
+      cursor: pointer;
     }
 
-    .history-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 15px;
+    .btn-primary {
+      background: #198754;
+
+      color: #fff;
+
+      width: 100%;
     }
 
-    .details-btn {
-      background: #0d6efd;
-      color: white;
+    .btn-secondary {
+      background: #fff0d0;
+
+      color: #6c3c00;
+
+      border:
+        1px solid #e0c58f;
     }
 
-    .cancel-btn {
-      background: #dc3545;
-      color: white;
+    .btn-danger {
+      background: #b42318;
+
+      color: #fff;
     }
 
-    .disabled-btn {
-      background: #aaa;
-      color: white;
-      cursor: not-allowed !important;
+    .btn:disabled {
+      opacity: .55;
+
+      cursor: not-allowed;
     }
 
-    .detail-box {
-      max-width: 800px;
-      margin: 25px auto;
-      background: #fff;
-      border-radius: 16px;
-      padding: 22px;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
-      display: none;
-    }
-
-    .detail-box h3 {
-      margin-top: 0;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .detail-item {
+    .notice {
       padding: 12px;
-      background: #f7f7f7;
-      border-radius: 8px;
-      word-break: break-word;
+
+      border-radius: 10px;
+
+      background: #eef8f1;
+
+      border:
+        1px solid #b8dfc4;
+
+      margin: 12px 0;
     }
 
-    .detail-item.full-width {
-      grid-column: 1 / -1;
+    .productPreview {
+      display: flex;
+
+      gap: 15px;
+
+      align-items: center;
+
+      background: #fffdf8;
+
+      padding: 12px;
+
+      border-radius: 12px;
+
+      border:
+        1px solid #eee0c7;
     }
 
+    .productPreview img {
+      width: 90px;
 
-    /* =====================================================
-       MODAL
-    ===================================================== */
+      height: 90px;
 
-    .modal.hidden {
-      display: none;
+      object-fit: cover;
+
+      border-radius: 12px;
+    }
+
+    .muted {
+      color: #666;
+
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .modal {
       position: fixed;
+
       inset: 0;
-      background: rgba(0, 0, 0, .65);
-      z-index: 9999;
+
+      background:
+        rgba(
+          0,
+          0,
+          0,
+          .55
+        );
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
-      padding: 20px;
+
+      padding: 18px;
+
+      z-index: 50;
     }
 
-    .modal-card {
-      background: white;
-      max-width: 500px;
-      width: 100%;
-      padding: 25px;
+    .modalBox {
+      background: #fff;
+
       border-radius: 18px;
-      text-align: center;
-      box-sizing: border-box;
+
+      padding: 24px;
+
+      width:
+        min(
+          500px,
+          100%
+        );
+
+      max-height: 90vh;
+
+      overflow: auto;
     }
 
-    .modal-card button,
-    .modal-card a {
-      display: inline-block;
-      margin: 8px;
-      padding: 12px 18px;
-      border-radius: 10px;
-      text-decoration: none;
-      border: 0;
-      cursor: pointer;
-    }
+    .modalBox h3 {
+      margin-top: 0;
 
-    .modal-card button {
-      background: #198754;
-      color: white;
-    }
-
-    .modal-card a {
-      background: #25d366;
-      color: white;
-    }
-
-    .qr-placeholder {
-      padding: 20px;
-      background: #f7f7f7;
-      border-radius: 10px;
-      margin: 10px 0;
-    }
-
-    #qr {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 180px;
-      margin: 15px 0;
-    }
-
-    .loading {
-      opacity: .7;
-      pointer-events: none;
-    }
-
-    .success-text {
       color: #198754;
-      font-weight: 600;
     }
 
-    .error-text {
-      color: #dc3545;
-      font-weight: 600;
+    .orderItem {
+      border:
+        1px solid #e4d9c8;
+
+      border-radius: 12px;
+
+      padding: 14px;
+
+      margin: 10px 0;
+
+      background: #fff;
     }
 
-    .delivery-note {
+    .orderItem .top {
+      display: flex;
+
+      justify-content:
+        space-between;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+    }
+
+    .status {
+      display: inline-block;
+
+      padding:
+        4px 9px;
+
+      border-radius: 20px;
+
+      background: #eee;
+
+      font-size: 12px;
+
+      font-weight: 700;
+    }
+
+    .status.paid,
+    .status.confirmed {
+      background: #dff5e6;
+
+      color: #146c35;
+    }
+
+    .status.cancelled {
+      background: #ffe0de;
+
+      color: #9f1d17;
+    }
+
+    .stars {
+      color: #e5a400;
+
+      letter-spacing: 2px;
+    }
+
+    .reviewGrid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          3,
+          1fr
+        );
+
+      gap: 12px;
+    }
+
+    .review {
+      background: #fff;
+
+      border:
+        1px solid #eadfce;
+
+      border-radius: 12px;
+
+      padding: 14px;
+    }
+
+    .footer {
+      padding: 28px 0;
+
       text-align: center;
-      margin-top: 20px;
-      line-height: 1.7;
+
+      color: #666;
     }
 
+    .link {
+      color: #0b6b9a;
 
-    /* =====================================================
-       MOBILE
-    ===================================================== */
+      text-decoration: none;
+    }
 
-    @media(max-width:650px) {
+    .smallbtn {
+      padding:
+        8px 10px;
 
-      .rating-summary {
+      font-size: 13px;
+    }
+
+    @media(max-width:800px) {
+
+      .grid {
         grid-template-columns: 1fr;
       }
 
-      .review-form-card {
-        padding: 18px;
-      }
-
-      .star-input button {
-        font-size: 34px;
-      }
-
-      .history-search {
+      .row,
+      .reviewGrid {
         grid-template-columns: 1fr;
       }
 
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-item.full-width {
-        grid-column: auto;
-      }
-
-      .history-row {
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .modal-card {
-        max-height: 90vh;
-        overflow-y: auto;
+      .hero {
+        padding: 22px 0;
       }
 
     }
@@ -496,1231 +476,649 @@
 
 </head>
 
-
 <body>
-
 
   <!-- =====================================================
        HEADER
-  ===================================================== -->
+  ====================================================== -->
 
-  <header class="topbar">
+  <header class="hero">
 
-    <div class="brand">
-      23
-      <span>
-        स्वास्थ्यवर्धक सामान
-      </span>
+    <div class="wrap">
+
+      <h1>
+        23 स्वास्थ्यवर्धक लड्डू
+      </h1>
+
+      <p>
+        स्वस्थ शरीर • खुशहाल जीवन
+      </p>
+
+      <div class="badge">
+        अब केवल verified UPI payment के बाद order confirm होगा
+      </div>
+
     </div>
-
-    <a
-      class="call-btn"
-      href="tel:9643185255">
-
-      📞 9643185255
-
-    </a>
 
   </header>
 
 
-  <main>
+  <main class="wrap">
 
+    <div class="grid">
 
-    <!-- =====================================================
-         HERO
-    ===================================================== -->
+      <!-- =================================================
+           ORDER FORM
+      ================================================== -->
 
-    <section class="hero">
-
-      <div>
-
-        <p class="eyebrow">
-          100% प्राकृतिक सामग्री • स्वादिष्ट • पौष्टिक
-        </p>
-
-        <h1>
-
-          23
-
-          <br>
-
-          <span>
-            (एनर्जी लड्डू मिश्रित Sugar free)
-          </span>
-
-        </h1>
-
-        <p class="hero-text">
-
-          23 चुनिंदा ड्रायफ्रूट्स और सीड्स से तैयार
-          स्वादिष्ट लड्डू। ऑनलाइन ऑर्डर करें और
-          घर तक डिलीवरी पाएं।
-
-        </p>
-
-        <div class="hero-actions">
-
-          <a
-            class="primary-btn"
-            href="#order">
-
-            ऑर्डर करें
-
-          </a>
-
-          <a
-            class="secondary-btn"
-            href="https://wa.me/919643185255"
-            target="_blank"
-            rel="noopener">
-
-            WhatsApp
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <div class="hero-image-wrap">
-
-        <img
-          src="laddu-main.png"
-          alt="23 स्वास्थ्यवर्धक लड्डू"
-          loading="eager">
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         INGREDIENTS
-    ===================================================== -->
-
-    <section class="ingredients">
-
-      <h2>
-        23 स्वास्थ्यवर्धक सामग्री
-      </h2>
-
-      <div class="chips">
-
-        <span>बादाम</span>
-        <span>काजू</span>
-        <span>अखरोट</span>
-        <span>किशमिश</span>
-        <span>पिस्ता</span>
-        <span>खजूर</span>
-        <span>नारियल बुरादा</span>
-        <span>चिलगोजा</span>
-        <span>चिरौंजी</span>
-        <span>मुनक्का</span>
-        <span>गुलाब</span>
-        <span>मूंगफली</span>
-        <span>तिल</span>
-        <span>काली किशमिश</span>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         PRODUCTS
-    ===================================================== -->
-
-    <section class="products">
-
-      <h2>
-        हमारे लड्डू पैक
-      </h2>
-
-
-      <div
-        id="productGrid"
-        class="product-grid">
-
-        <p>
-          उत्पाद load हो रहे हैं...
-        </p>
-
-      </div>
-
-
-      <p class="delivery-note">
-
-        🚚 डिलीवरी चार्ज:
-
-        <strong>
-
-          0.5–1 Kg: ₹100 |
-          1.5–2 Kg: ₹200 |
-          2.5–3 Kg: ₹300 |
-          3.5–4 Kg: ₹400 |
-          4.5–5 Kg: ₹500 |
-          5.5–6 Kg: ₹600 |
-          6.5–7 Kg: ₹700 |
-          7.5–8 Kg: ₹800 |
-          8.5–9 Kg: ₹900 |
-          9.5–10 Kg: ₹1000
-
-        </strong>
-
-      </p>
-
-    </section>
-
-
-    <!-- =====================================================
-         ORDER SECTION
-    ===================================================== -->
-
-    <section
-      class="order-section"
-      id="order">
-
-
-      <div class="order-copy">
-
-        <p class="eyebrow">
-          Online Order
-        </p>
+      <section class="card">
 
         <h2>
-          घर बैठे ऑर्डर करें
+          🛒 अपना लड्डू चुनें
         </h2>
 
-        <p>
-          अपनी जानकारी भरें और UPI से ऑनलाइन भुगतान करें।
-        </p>
+        <form
+          id="orderForm"
+          novalidate
+        >
 
-        <div class="contact-box">
+          <!-- PRODUCT -->
 
-          📱
-          <strong>
-            9643185255
-          </strong>
-
-          <br>
-
-          कॉल या WhatsApp करें
-
-        </div>
-
-      </div>
-
-
-      <form
-        id="orderForm"
-        class="order-form">
-
-
-        <!-- NAME -->
-
-        <label>
-
-          नाम
-
-          <input
-            id="name"
-            required
-            autocomplete="name"
-            placeholder="अपना नाम">
-
-        </label>
-
-
-        <!-- PHONE -->
-
-        <label>
-
-          मोबाइल
-
-          <input
-            id="phone"
-            required
-            inputmode="numeric"
-            pattern="[0-9]{10}"
-            maxlength="10"
-            autocomplete="tel"
-            placeholder="10 अंकों का मोबाइल">
-
-        </label>
-
-
-        <!-- ADDRESS -->
-
-        <label class="full">
-
-          पूरा पता
-
-          <textarea
-            id="address"
-            required
-            autocomplete="street-address"
-            placeholder="घर/दुकान, गली, मोहल्ला"></textarea>
-
-        </label>
-
-
-        <!-- CITY -->
-
-        <label>
-
-          शहर
-
-          <input
-            id="city"
-            required
-            autocomplete="address-level2"
-            placeholder="शहर का नाम">
-
-        </label>
-
-
-        <!-- STATE -->
-
-        <label>
-
-          राज्य
-
-          <input
-            id="state"
-            required
-            autocomplete="address-level1"
-            placeholder="राज्य का नाम">
-
-        </label>
-
-
-        <!-- PINCODE -->
-
-        <label>
-
-          पिनकोड
-
-          <input
-            id="pincode"
-            required
-            inputmode="numeric"
-            pattern="[0-9]{6}"
-            maxlength="6"
-            autocomplete="postal-code"
-            placeholder="6 अंकों का पिनकोड">
-
-        </label>
-
-
-        <!-- =================================================
-             LADDU TYPE
-        ================================================== -->
-
-        <label>
-
-          लड्डू का प्रकार
+          <label for="product">
+            लड्डू का प्रकार
+          </label>
 
           <select
             id="product"
-            required>
-
-            <option value="">
-              लड्डू का प्रकार चुनें
-            </option>
-
-          </select>
-
-        </label>
-
-
-        <!-- =================================================
-             KG QUANTITY
-        ================================================== -->
-
-        <label for="quantity">
-
-          Kg मात्रा
-
-          <select
-            id="quantity"
-            required>
-
-            <option value="0.5">
-              0.5 Kg
-            </option>
-
-            <option
-              value="1"
-              selected>
-              1 Kg
-            </option>
-
-            <option value="1.5">
-              1.5 Kg
-            </option>
-
-            <option value="2">
-              2 Kg
-            </option>
-
-            <option value="2.5">
-              2.5 Kg
-            </option>
-
-            <option value="3">
-              3 Kg
-            </option>
-
-            <option value="3.5">
-              3.5 Kg
-            </option>
-
-            <option value="4">
-              4 Kg
-            </option>
-
-            <option value="4.5">
-              4.5 Kg
-            </option>
-
-            <option value="5">
-              5 Kg
-            </option>
-
-            <option value="5.5">
-              5.5 Kg
-            </option>
-
-            <option value="6">
-              6 Kg
-            </option>
-
-            <option value="6.5">
-              6.5 Kg
-            </option>
-
-            <option value="7">
-              7 Kg
-            </option>
-
-            <option value="7.5">
-              7.5 Kg
-            </option>
-
-            <option value="8">
-              8 Kg
-            </option>
-
-            <option value="8.5">
-              8.5 Kg
-            </option>
-
-            <option value="9">
-              9 Kg
-            </option>
-
-            <option value="9.5">
-              9.5 Kg
-            </option>
-
-            <option value="10">
-              10 Kg
-            </option>
-
-          </select>
-
-        </label>
-
-
-        <!-- PAYMENT -->
-
-        <label>
-
-          Payment Method
-
-          <select id="paymentMethod">
-
-            <option value="UPI">
-              UPI / Online Payment
-            </option>
-
-          </select>
-
-        </label>
-
-
-        <!-- =================================================
-             UPI
-        ================================================== -->
-
-        <div
-          id="upiBox"
-          class="payment-box full">
-
-          <strong>
-            UPI Payment
-          </strong>
-
-          <p>
-
-            UPI ID:
-
-            <span id="upiId">
-              UPI ID उपलब्ध नहीं है
-            </span>
-
-          </p>
-
-
-          <div id="qr"></div>
-
-
-          <button
-            type="button"
-            class="pay-btn"
-            id="payBtn">
-
-            📲 UPI App खोलें / Pay करें
-
-          </button>
-
-
-          <label>
-
-            Payment UTR / Reference No.
-            (यदि भुगतान किया है)
-
-            <input
-              id="utr"
-              maxlength="100"
-              placeholder="जैसे 123456789012">
-
-          </label>
-
-        </div>
-
-
-        <!-- =================================================
-             TOTAL
-        ================================================== -->
-
-        <div class="total">
-
-          <span>
-            उत्पाद
-          </span>
-
-          <strong id="productTotal">
-            ₹0
-          </strong>
-
-
-          <span>
-            डिलीवरी
-          </span>
-
-          <strong id="deliveryCharge">
-            ₹0
-          </strong>
-
-
-          <span>
-            कुल
-          </span>
-
-          <strong id="grandTotal">
-            ₹0
-          </strong>
-
-        </div>
-
-
-        <button
-          class="whatsapp-btn"
-          id="orderSubmitBtn"
-          type="submit">
-
-          ✅ Order Confirm करें
-
-        </button>
-
-
-        <p class="small">
-
-          UPI payment verification admin द्वारा की जाएगी।
-
-        </p>
-
-      </form>
-
-    </section>
-
-
-    <!-- =====================================================
-         CUSTOMER ORDER HISTORY
-    ===================================================== -->
-
-    <section
-      class="history-section"
-      id="order-history">
-
-      <p class="eyebrow">
-        My Orders
-      </p>
-
-      <h2>
-        📦 मेरे Orders
-      </h2>
-
-      <p>
-        अपने registered mobile number से अपने सभी orders देखें।
-      </p>
-
-
-      <div class="history-search">
-
-        <input
-          id="historyPhone"
-          type="tel"
-          inputmode="numeric"
-          pattern="[0-9]{10}"
-          maxlength="10"
-          placeholder="Order वाला 10 अंकों का मोबाइल नंबर">
-
-        <button
-          type="button"
-          id="historyBtn">
-
-          🔍 Orders देखें
-
-        </button>
-
-      </div>
-
-
-      <p
-        id="historyMessage"
-        class="history-message">
-      </p>
-
-
-      <div
-        id="historyGrid"
-        class="history-grid">
-      </div>
-
-
-      <div
-        id="detailBox"
-        class="detail-box">
-
-        <h3>
-          📋 Order Details
-        </h3>
-
-        <div
-          id="detailContent"
-          class="detail-grid">
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         CUSTOMER CANCELLATION
-    ===================================================== -->
-
-    <section
-      class="order-section"
-      id="cancel-order">
-
-
-      <div class="order-copy">
-
-        <p class="eyebrow">
-          Order Cancellation
-        </p>
-
-        <h2>
-          अपना Order Cancel करें
-        </h2>
-
-        <p>
-
-          यदि आपने order किया है और अब उसे cancel करना चाहते हैं,
-          तो अपना Order No. और वही mobile number डालें
-          जिससे order किया था।
-
-        </p>
-
-        <div class="contact-box">
-
-          ⚠️ Shipment courier को Out for Pickup होने के बाद
-          cancellation संभव नहीं हो सकती।
-
-        </div>
-
-      </div>
-
-
-      <form
-        id="cancelForm"
-        class="order-form">
-
-
-        <label>
-
-          Order No.
-
-          <input
-            id="cancelOrderNo"
             required
-            maxlength="50"
-            placeholder="जैसे 23L378440773">
+          ></select>
 
-        </label>
 
-
-        <label>
-
-          Mobile Number
-
-          <input
-            id="cancelPhone"
-            required
-            inputmode="numeric"
-            pattern="[0-9]{10}"
-            maxlength="10"
-            placeholder="Order वाला mobile number">
-
-        </label>
-
-
-        <label class="full">
-
-          Cancellation Reason
-          (Optional)
-
-          <textarea
-            id="cancelReason"
-            maxlength="500"
-            placeholder="Order cancel करने का कारण"></textarea>
-
-        </label>
-
-
-        <button
-          class="whatsapp-btn"
-          type="submit">
-
-          ❌ Order Cancel करें
-
-        </button>
-
-
-        <p
-          id="cancelMessage"
-          class="small">
-        </p>
-
-      </form>
-
-    </section>
-
-
-    <!-- =====================================================
-         GALLERY
-    ===================================================== -->
-
-    <section class="gallery">
-
-      <h2>
-        हमारे उत्पाद की झलक
-      </h2>
-
-      <p class="gallery-subtitle">
-
-        हमारे स्वादिष्ट लड्डू और प्राकृतिक सामग्री की कुछ तस्वीरें
-
-      </p>
-
-
-      <div class="gallery-grid">
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/besan.jpeg"
-            alt="बेसन लड्डू"
-            loading="lazy">
-
-          <p>
-            बेसन लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/dry_fruit.jpeg"
-            alt="ड्राय फ्रूट"
-            loading="lazy">
-
-          <p>
-            ड्राय फ्रूट
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/mix_ladd-2.jpeg"
-            alt="मिक्स लड्डू"
-            loading="lazy">
-
-          <p>
-            मिक्स लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/mix_laddu-.jpeg"
-            alt="मिक्स लड्डू"
-            loading="lazy">
-
-          <p>
-            मिक्स लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/mix_laddu-3.jpeg"
-            alt="मिक्स लड्डू"
-            loading="lazy">
-
-          <p>
-            मिक्स लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/mix_laddu-4.jpeg"
-            alt="मिक्स लड्डू"
-            loading="lazy">
-
-          <p>
-            मिक्स लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/mix_laddu-5.jpeg"
-            alt="मिक्स लड्डू"
-            loading="lazy">
-
-          <p>
-            मिक्स लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/mix_laddu-6.jpeg"
-            alt="मिक्स लड्डू"
-            loading="lazy">
-
-          <p>
-            मिक्स लड्डू
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="/seeds_dryfruit.jpeg"
-            alt="सीड्स और ड्राय फ्रूट"
-            loading="lazy">
-
-          <p>
-            सीड्स और ड्राय फ्रूट
-          </p>
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="product-details-hindi.png"
-            alt="हिंदी उत्पाद विवरण"
-            loading="lazy">
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="product-poster-english.png"
-            alt="English Product Poster"
-            loading="lazy">
-
-        </div>
-
-
-        <div class="gallery-item">
-
-          <img
-            src="product-poster-hindi.png"
-            alt="Hindi Product Poster"
-            loading="lazy">
-
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         CUSTOMER FEEDBACK & REVIEWS
-    ===================================================== -->
-
-    <section
-      class="reviews-section"
-      id="reviews">
-
-
-      <div class="reviews-header">
-
-        <p class="eyebrow">
-          Customer Feedback
-        </p>
-
-        <h2>
-          ⭐ हमारे Customers क्या कहते हैं?
-        </h2>
-
-        <p>
-
-          आपका Feedback हमारे लिए बहुत महत्वपूर्ण है।
-          अपना अनुभव हमारे साथ जरूर साझा करें।
-
-        </p>
-
-      </div>
-
-
-      <!-- =================================================
-           RATING SUMMARY
-      ================================================= -->
-
-      <div
-        class="rating-summary"
-        id="ratingSummary">
-
-
-        <div class="rating-average">
-
-          <strong id="averageRating">
-            0.0
-          </strong>
+          <!-- PRODUCT PREVIEW -->
 
           <div
-            class="big-stars"
-            id="averageStars">
+            id="productPreview"
+            class="productPreview hidden"
+          >
 
-            ☆☆☆☆☆
+            <img
+              id="productImage"
+              src="laddu-main.png"
+              alt="Laddu"
+            >
+
+            <div>
+
+              <strong
+                id="productName"
+              ></strong>
+
+              <div
+                id="productUnitPrice"
+                class="muted"
+              ></div>
+
+            </div>
 
           </div>
 
-          <span>
-            Average Rating
-          </span>
 
-        </div>
+          <!-- QUANTITY -->
 
-
-        <div class="rating-total">
-
-          <strong id="totalReviews">
-            0
-          </strong>
-
-          <span>
-            Customer Reviews
-          </span>
-
-        </div>
-
-
-      </div>
-
-
-      <!-- =================================================
-           REVIEW FORM
-      ================================================== -->
-
-      <div class="review-form-card">
-
-        <h3>
-          ✍️ अपना Feedback दें
-        </h3>
-
-        <p class="small">
-
-          आपका review submit होने के बाद Admin approval
-          के बाद website पर दिखाई देगा।
-
-        </p>
-
-
-        <form
-          id="reviewForm"
-          class="review-form">
-
-
-          <!-- NAME -->
-
-          <label>
-
-            आपका नाम
-
-            <input
-              id="reviewName"
-              maxlength="80"
-              required
-              placeholder="अपना नाम">
-
+          <label for="quantity">
+            मात्रा (kg)
           </label>
 
+          <select
+            id="quantity"
+            required
+          >
 
-          <!-- STAR RATING -->
+            <option value="0.5">
+              0.5 kg
+            </option>
 
-          <label>
+            <option value="1">
+              1 kg
+            </option>
 
-            आपकी Rating
+            <option value="1.5">
+              1.5 kg
+            </option>
+
+            <option value="2">
+              2 kg
+            </option>
+
+            <option value="2.5">
+              2.5 kg
+            </option>
+
+            <option value="3">
+              3 kg
+            </option>
+
+            <option value="3.5">
+              3.5 kg
+            </option>
+
+            <option value="4">
+              4 kg
+            </option>
+
+            <option value="4.5">
+              4.5 kg
+            </option>
+
+            <option value="5">
+              5 kg
+            </option>
+
+            <option value="5.5">
+              5.5 kg
+            </option>
+
+            <option value="6">
+              6 kg
+            </option>
+
+            <option value="6.5">
+              6.5 kg
+            </option>
+
+            <option value="7">
+              7 kg
+            </option>
+
+            <option value="7.5">
+              7.5 kg
+            </option>
+
+            <option value="8">
+              8 kg
+            </option>
+
+            <option value="8.5">
+              8.5 kg
+            </option>
+
+            <option value="9">
+              9 kg
+            </option>
+
+            <option value="9.5">
+              9.5 kg
+            </option>
+
+            <option value="10">
+              10 kg
+            </option>
+
+          </select>
+
+
+          <!-- PRICE -->
+
+          <div class="pricebox">
+
+            <div class="priceLine">
+
+              <span>
+                लड्डू की कीमत
+              </span>
+
+              <strong
+                id="productPrice"
+              >
+                ₹0
+              </strong>
+
+            </div>
+
+            <div class="priceLine">
+
+              <span>
+                Delivery
+              </span>
+
+              <strong
+                id="deliveryPrice"
+              >
+                ₹0
+              </strong>
+
+            </div>
 
             <div
-              class="star-input"
-              id="starInput">
+              class="priceLine total"
+            >
+
+              <span>
+                कुल राशि
+              </span>
+
+              <strong
+                id="totalPrice"
+              >
+                ₹0
+              </strong>
+
+            </div>
+
+          </div>
 
 
-              <button
-                type="button"
-                data-rating="1"
-                aria-label="1 Star">
+          <!-- CUSTOMER DETAILS -->
 
-                ★
-
-              </button>
+          <h2>
+            📦 Delivery details
+          </h2>
 
 
-              <button
-                type="button"
-                data-rating="2"
-                aria-label="2 Stars">
+          <div class="row">
 
-                ★
+            <div>
 
-              </button>
+              <label for="name">
+                नाम
+              </label>
 
-
-              <button
-                type="button"
-                data-rating="3"
-                aria-label="3 Stars">
-
-                ★
-
-              </button>
-
-
-              <button
-                type="button"
-                data-rating="4"
-                aria-label="4 Stars">
-
-                ★
-
-              </button>
-
-
-              <button
-                type="button"
-                data-rating="5"
-                aria-label="5 Stars">
-
-                ★
-
-              </button>
-
+              <input
+                id="name"
+                maxlength="100"
+                required
+              >
 
             </div>
 
 
-            <span
-              id="selectedRatingText"
-              class="small">
+            <div>
 
-              Rating चुनें
+              <label for="phone">
+                Mobile Number
+              </label>
 
-            </span>
+              <input
+                id="phone"
+                inputmode="numeric"
+                maxlength="10"
+                placeholder="10 digit mobile"
+                required
+              >
 
+            </div>
+
+          </div>
+
+
+          <label for="address">
+            पूरा पता
           </label>
 
+          <textarea
+            id="address"
+            maxlength="500"
+            placeholder="House no., street, area आदि"
+            required
+          ></textarea>
 
-          <!-- REVIEW -->
 
-          <label>
+          <div class="row">
 
-            आपका Feedback
+            <div>
 
-            <textarea
-              id="reviewText"
-              maxlength="1000"
-              minlength="5"
-              required
-              placeholder="लड्डू का स्वाद, quality या आपका अनुभव लिखें..."></textarea>
+              <label for="city">
+                City
+              </label>
 
+              <input
+                id="city"
+                maxlength="100"
+                required
+              >
+
+            </div>
+
+
+            <div>
+
+              <label for="state">
+                State
+              </label>
+
+              <input
+                id="state"
+                maxlength="100"
+                value="Punjab"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <label for="pincode">
+            Pincode
           </label>
+
+          <input
+            id="pincode"
+            inputmode="numeric"
+            maxlength="6"
+            required
+          >
+
+
+          <!-- PAYMENT NOTICE -->
+
+          <div class="notice">
+
+            <strong>
+              💳 Payment:
+            </strong>
+
+            Razorpay Checkout के जरिए
+            UPI payment होगा।
+
+            <br>
+
+            Payment successful और server द्वारा
+            verify होने के बाद ही order number बनेगा।
+
+          </div>
+
+
+          <!-- SUBMIT -->
+
+          <button
+            id="orderSubmitBtn"
+            class="btn btn-primary"
+            type="submit"
+          >
+            💳 Pay करके Order Confirm करें
+          </button>
+
+        </form>
+
+      </section>
+
+
+      <!-- =================================================
+           RIGHT SIDE
+      ================================================== -->
+
+      <aside>
+
+
+        <!-- ORDER HISTORY -->
+
+        <section class="card">
+
+          <h2>
+            🔎 Order History
+          </h2>
+
+          <p class="muted">
+
+            अपने पुराने orders देखने के लिए
+            वही mobile number डालें जिससे
+            order किया था।
+
+          </p>
+
+
+          <div class="row">
+
+            <input
+              id="historyPhone"
+              inputmode="numeric"
+              maxlength="10"
+              placeholder="10 digit mobile"
+            >
+
+            <button
+              id="historyBtn"
+              class="btn btn-secondary"
+              type="button"
+            >
+              Orders देखें
+            </button>
+
+          </div>
+
+
+          <div
+            id="historyList"
+          ></div>
+
+        </section>
+
+
+        <!-- REVIEWS -->
+
+        <section
+          class="card"
+          style="margin-top:22px"
+        >
+
+          <h2>
+            ⭐ Customer Reviews
+          </h2>
+
+
+          <div
+            id="reviewsList"
+            class="reviewGrid"
+          ></div>
+
+
+          <hr
+            style="
+              border:0;
+              border-top:1px solid #eadfce;
+              margin:18px 0;
+            "
+          >
+
+
+          <h3>
+            अपना review दें
+          </h3>
+
+
+          <input
+            id="reviewName"
+            placeholder="आपका नाम"
+          >
+
+
+          <label for="reviewRating">
+            Rating
+          </label>
+
+          <select
+            id="reviewRating"
+          >
+
+            <option value="5">
+              ★★★★★ 5
+            </option>
+
+            <option value="4">
+              ★★★★☆ 4
+            </option>
+
+            <option value="3">
+              ★★★☆☆ 3
+            </option>
+
+            <option value="2">
+              ★★☆☆☆ 2
+            </option>
+
+            <option value="1">
+              ★☆☆☆☆ 1
+            </option>
+
+          </select>
+
+
+          <label for="reviewText">
+            Review
+          </label>
+
+          <textarea
+            id="reviewText"
+            placeholder="अपना अनुभव लिखें"
+          ></textarea>
 
 
           <button
-            type="submit"
-            id="reviewSubmitBtn"
-            class="primary-btn">
-
-            ⭐ Review Submit करें
-
+            id="reviewBtn"
+            class="btn btn-secondary"
+            type="button"
+          >
+            Review भेजें
           </button>
 
 
           <p
-            id="reviewMessage"
-            class="small">
-          </p>
+            id="reviewMsg"
+            class="muted"
+          ></p>
 
+        </section>
 
-        </form>
+      </aside>
 
-      </div>
-
-
-      <!-- =================================================
-           PUBLIC REVIEWS
-      ================================================== -->
-
-      <div
-        id="publicReviews"
-        class="public-reviews">
-
-        <p>
-          Customer reviews load हो रहे हैं...
-        </p>
-
-      </div>
-
-
-    </section>
-
+    </div>
 
   </main>
 
 
   <!-- =====================================================
        FOOTER
-  ===================================================== -->
+  ====================================================== -->
 
-  <footer>
+  <footer class="footer">
 
-    <strong>
-      23 स्वास्थ्यवर्धक सामान
-    </strong>
+    <div class="wrap">
 
-    <span>
-      स्वस्थ शरीर • खुशहाल जीवन
-    </span>
+      <strong>
+        23 स्वास्थ्यवर्धक लड्डू
+      </strong>
 
-    <span>
-      📞 9643185255
-    </span>
+      <br>
 
-    <a href="/admin">
-      Admin
-    </a>
+      WhatsApp / Call:
+
+      <a
+        class="link"
+        href="tel:9643185255"
+      >
+        9643185255
+      </a>
+
+    </div>
 
   </footer>
 
 
   <!-- =====================================================
        SUCCESS MODAL
-  ===================================================== -->
+  ====================================================== -->
 
   <div
     id="successModal"
-    class="modal hidden">
+    class="modal hidden"
+  >
+
+    <div class="modalBox">
+
+      <h3>
+        🎉 Order Confirmed!
+      </h3>
+
+      <p>
+
+        आपका payment successfully
+        verify हो गया है और order बन गया है।
+
+      </p>
 
 
-    <div class="modal-card">
+      <div class="pricebox">
 
-      <h2>
-        🎉 Order Confirmed
-      </h2>
+        <div class="priceLine">
+
+          <span>
+            Order No.
+          </span>
+
+          <strong
+            id="successOrderNo"
+          ></strong>
+
+        </div>
 
 
-      <p id="successText"></p>
+        <div class="priceLine">
+
+          <span>
+            Total
+          </span>
+
+          <strong
+            id="successTotal"
+          ></strong>
+
+        </div>
+
+
+        <div class="priceLine">
+
+          <span>
+            Payment
+          </span>
+
+          <strong>
+            Paid ✓
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <p class="muted">
+
+        Shiprocket में order automatically
+        भेजा जाएगा।
+
+      </p>
 
 
       <button
+        id="whatsappBtn"
+        class="btn btn-primary"
         type="button"
-        onclick="closeModal()">
-
-        ठीक है
-
+      >
+        📱 WhatsApp पर Order भेजें
       </button>
 
 
-      <a
-        id="successWa"
-        target="_blank"
-        rel="noopener">
-
-        WhatsApp पर Order भेजें
-
-      </a>
-
+      <button
+        id="closeSuccess"
+        class="btn btn-secondary"
+        style="
+          width:100%;
+          margin-top:10px
+        "
+        type="button"
+      >
+        Close
+      </button>
 
     </div>
 
@@ -1728,3001 +1126,1793 @@
 
 
   <!-- =====================================================
-       QR CODE LIBRARY
-  ===================================================== -->
+       ORDER DETAIL MODAL
+  ====================================================== -->
 
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
-  </script>
+  <div
+    id="detailModal"
+    class="modal hidden"
+  >
+
+    <div class="modalBox">
+
+      <h3>
+        📦 Order Details
+      </h3>
 
 
-  <!-- =====================================================
-       MAIN WEBSITE JAVASCRIPT
-  ===================================================== -->
+      <div
+        id="detailContent"
+      ></div>
 
-  <script>
 
-    /* =====================================================
-       GLOBAL
-    ===================================================== */
+      <button
+        id="closeDetail"
+        class="btn btn-secondary"
+        style="
+          width:100%;
+          margin-top:12px
+        "
+        type="button"
+      >
+        Close
+      </button>
 
-    let config = null;
+    </div>
+
+  </div>
+
+
+<script>
+
+(() => {
+
+  "use strict";
+
+
+  /* =====================================================
+     VARIABLES
+  ====================================================== */
+
+  let config = null;
+
+  let lastSuccess = null;
+
+  let paymentInProgress =
+    false;
+
+
+  /* =====================================================
+     HELPER
+  ====================================================== */
+
+  const $ =
+    (id) =>
+      document.getElementById(id);
+
+
+  function money(number) {
+
+    return (
+      "₹" +
+      Number(
+        number || 0
+      ).toLocaleString(
+        "en-IN",
+        {
+          maximumFractionDigits: 2
+        }
+      )
+    );
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(
+      value ?? ""
+    )
+
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
+
+
+  /* =====================================================
+     DELIVERY
+  ====================================================== */
+
+  function deliveryCharge(
+    quantity
+  ) {
+
+    const q =
+      Number(quantity);
+
+
+    if (q <= 1)
+      return 100;
+
+    if (q <= 2)
+      return 200;
+
+    if (q <= 3)
+      return 300;
+
+    if (q <= 4)
+      return 400;
+
+    if (q <= 5)
+      return 500;
+
+    if (q <= 6)
+      return 600;
+
+    if (q <= 7)
+      return 700;
+
+    if (q <= 8)
+      return 800;
+
+    if (q <= 9)
+      return 900;
+
+    return 1000;
+
+  }
+
+
+  /* =====================================================
+     SELECTED PRODUCT
+  ====================================================== */
+
+  function selectedProduct() {
+
+    return config?.products?.find(
+      product =>
+        product.id ===
+        $("product").value
+    );
+
+  }
+
+
+  /* =====================================================
+     UPDATE TOTAL
+  ====================================================== */
+
+  function updateTotal() {
 
     const product =
-      document.getElementById("product");
+      selectedProduct();
 
-    const qty =
-      document.getElementById("quantity");
+    const quantity =
+      Number(
+        $("quantity").value
+      );
+
+
+    if (!product)
+      return;
+
 
     const productTotal =
-      document.getElementById("productTotal");
+      Number(
+        product.price
+      ) *
+      quantity;
 
-    const grandTotal =
-      document.getElementById("grandTotal");
 
-    const deliveryCharge =
-      document.getElementById("deliveryCharge");
+    const delivery =
+      deliveryCharge(
+        quantity
+      );
 
-    const paymentMethod =
-      document.getElementById("paymentMethod");
 
-    const upiBox =
-      document.getElementById("upiBox");
+    $("productPrice")
+      .textContent =
+      money(
+        productTotal
+      );
 
 
-    /* =====================================================
-       MONEY
-    ===================================================== */
+    $("deliveryPrice")
+      .textContent =
+      money(
+        delivery
+      );
 
-    function money(n) {
 
-      return "₹" +
-        Number(n || 0).toLocaleString("en-IN");
+    $("totalPrice")
+      .textContent =
+      money(
+        productTotal +
+        delivery
+      );
 
-    }
 
+    $("productName")
+      .textContent =
+      product.name;
 
-    /* =====================================================
-       DELIVERY CALCULATION
-    ===================================================== */
 
-    function getDeliveryCharge(totalWeight) {
+    $("productUnitPrice")
+      .textContent =
+      money(
+        product.price
+      ) +
+      " / kg";
 
-      const weight =
-        Number(totalWeight || 0);
 
+    $("productImage")
+      .src =
+      product.image ||
+      "laddu-main.png";
 
-      if (
-        !Number.isFinite(weight) ||
-        weight <= 0
-      ) {
 
-        return 0;
+    $("productPreview")
+      .classList
+      .remove(
+        "hidden"
+      );
 
-      }
+  }
 
 
-      if (weight <= 1) {
-        return 100;
-      }
+  /* =====================================================
+     FILL PRODUCTS
+  ====================================================== */
 
-      if (weight <= 2) {
-        return 200;
-      }
+  function fillProducts() {
 
-      if (weight <= 3) {
-        return 300;
-      }
-
-      if (weight <= 4) {
-        return 400;
-      }
-
-      if (weight <= 5) {
-        return 500;
-      }
-
-      if (weight <= 6) {
-        return 600;
-      }
-
-      if (weight <= 7) {
-        return 700;
-      }
-
-      if (weight <= 8) {
-        return 800;
-      }
-
-      if (weight <= 9) {
-        return 900;
-      }
-
-      return 1000;
-
-    }
-
-
-    /* =====================================================
-       WEIGHT FORMAT
-    ===================================================== */
-
-    function formatWeight(weight) {
-
-      const n =
-        Number(weight || 0);
-
-
-      if (Number.isInteger(n)) {
-
-        return `${n} Kg`;
-
-      }
-
-
-      return `${n.toFixed(1)} Kg`;
-
-    }
-
-
-    /* =====================================================
-       GET SELECTED PRODUCT
-    ===================================================== */
-
-    function getSelectedProduct() {
-
-      const selected =
-        product.options[product.selectedIndex];
-
-
-      if (
-        !selected ||
-        !selected.value
-      ) {
-
-        return null;
-
-      }
-
-
-      return {
-
-        id:
-          selected.value,
-
-        price:
-          Number(
-            selected.dataset.price || 0
-          ),
-
-        weight:
-          Number(
-            selected.dataset.weight || 1
-          ),
-
-        name:
-          selected.textContent.trim()
-
-      };
-
-    }
-
-
-    /* =====================================================
-       UPDATE TOTAL
-    ===================================================== */
-
-    function updateTotal() {
-
-      const selected =
-        getSelectedProduct();
-
-
-      if (!selected) {
-
-        productTotal.textContent =
-          money(0);
-
-        deliveryCharge.textContent =
-          money(0);
-
-        grandTotal.textContent =
-          money(0);
-
-        renderUPI();
-
-        return;
-
-      }
-
-
-      const productPrice =
-        selected.price;
-
-
-      const quantityKg =
-        Number(qty.value || 1);
-
-
-      /*
-        Product price 1 Kg का है,
-        इसलिए quantity Kg से multiply होगी.
-      */
-
-      const productAmount =
-        productPrice *
-        quantityKg;
-
-
-      const totalWeight =
-        quantityKg;
-
-
-      const delivery =
-        getDeliveryCharge(
-          totalWeight
-        );
-
-
-      const grand =
-        productAmount +
-        delivery;
-
-
-      productTotal.textContent =
-        money(productAmount);
-
-
-      deliveryCharge.textContent =
-        `${money(delivery)} (${formatWeight(totalWeight)})`;
-
-
-      grandTotal.textContent =
-        money(grand);
-
-
-      renderUPI();
-
-    }
-
-
-    /* =====================================================
-       ESCAPE HTML
-    ===================================================== */
-
-    function escapeHtml(value) {
-
-      return String(value ?? "")
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-    }
-
-
-    /* =====================================================
-       ESCAPE JS
-    ===================================================== */
-
-    function escapeJs(value) {
-
-      return String(value ?? "")
-        .replace(
-          /\\/g,
-          "\\\\"
-        )
-        .replace(
-          /'/g,
-          "\\'"
-        );
-
-    }
-
-
-    /* =====================================================
-       PRODUCT GRID
-    ===================================================== */
-
-    function renderProducts() {
-
-      const grid =
-        document.getElementById(
-          "productGrid"
-        );
-
-
-      if (
-        !config ||
-        !Array.isArray(
-          config.products
-        )
-      ) {
-
-        grid.innerHTML =
-          "<p class='error-text'>" +
-          "Products उपलब्ध नहीं हैं।" +
-          "</p>";
-
-        return;
-
-      }
-
-
-      if (
-        config.products.length === 0
-      ) {
-
-        grid.innerHTML =
-          "<p>" +
-          "अभी कोई product उपलब्ध नहीं है।" +
-          "</p>";
-
-        return;
-
-      }
-
-
-      grid.innerHTML =
-        config.products
-          .map(p => {
-
-            const weight =
-              Number(
-                p.weight || 1
-              );
-
-
-            const weightText =
-              formatWeight(weight);
-
-
-            return `
-
-              <div class="product-card">
-
-                <h3>
-                  ${escapeHtml(p.name)}
-                </h3>
-
-                <p>
-
-                  <strong>
-                    ${money(p.price)}
-                  </strong>
-
-                  / ${weightText}
-
-                </p>
-
-                <button
-                  type="button"
-                  class="primary-btn"
-                  onclick="selectProduct('${escapeJs(p.id)}')">
-
-                  यह पैक चुनें
-
-                </button>
-
-              </div>
-
-            `;
-
-          })
-          .join("");
-
-    }
-
-
-    /* =====================================================
-       SELECT PRODUCT
-    ===================================================== */
-
-    function selectProduct(id) {
-
-      product.value =
-        id;
-
-
-      updateTotal();
-
-
-      document
-        .getElementById("order")
-        .scrollIntoView({
-          behavior: "smooth"
-        });
-
-    }
-
-
-    /* =====================================================
-       UPI
-    ===================================================== */
-
-    function renderUPI() {
-
-      if (!config) {
-        return;
-      }
-
-
-      upiBox.style.display =
-        paymentMethod.value === "UPI"
-          ? "block"
-          : "none";
-
-
-      if (
-        paymentMethod.value !== "UPI"
-      ) {
-
-        return;
-
-      }
-
-
-      const selected =
-        getSelectedProduct();
-
-
-      const qr =
-        document.getElementById(
-          "qr"
-        );
-
-
-      const payBtn =
-        document.getElementById(
-          "payBtn"
-        );
-
-
-      if (!selected) {
-
-        qr.innerHTML =
-          '<div class="qr-placeholder">' +
-          'पहले product चुनें।' +
-          '</div>';
-
-        return;
-
-      }
-
-
-      const quantityKg =
-        Number(qty.value || 1);
-
-
-      const totalWeight =
-        quantityKg;
-
-
-      const delivery =
-        getDeliveryCharge(
-          totalWeight
-        );
-
-
-      const amount =
-        selected.price *
-        quantityKg +
-        delivery;
-
-
-      document
-        .getElementById("upiId")
-        .textContent =
-          config.upiId ||
-          "UPI ID उपलब्ध नहीं है";
-
-
-      qr.innerHTML =
-        "";
-
-
-      if (
-        config.upiId &&
-        !String(
-          config.upiId
-        ).startsWith("YOUR-")
-      ) {
-
-
-        const url =
-          `upi://pay?pa=${
-            encodeURIComponent(
-              config.upiId
-            )
-          }&pn=${
-            encodeURIComponent(
-              config.upiName ||
-              "23 स्वास्थ्यवर्धक सामान"
-            )
-          }&am=${
-            amount.toFixed(2)
-          }&cu=INR`;
-
-
-        if (
-          typeof QRCode !==
-          "undefined"
-        ) {
-
-          new QRCode(
-            qr,
-            {
-              text: url,
-              width: 170,
-              height: 170
-            }
-          );
-
-        } else {
-
-          qr.innerHTML =
-            '<div class="qr-placeholder">' +
-            'QR Code library load नहीं हुई।' +
-            '</div>';
-
-        }
-
-
-        payBtn.onclick =
-          () => {
-
-            window.location.href =
-              url;
-
-          };
-
-
-      } else {
-
-
-        qr.innerHTML =
-          '<div class="qr-placeholder">' +
-          'Admin panel में UPI ID सेट करें।' +
-          '</div>';
-
-
-        payBtn.onclick =
-          () => {
-
-            alert(
-              "पहले Render में UPI_ID environment variable सेट करें।"
-            );
-
-          };
-
-      }
-
-    }
-
-
-    /* =====================================================
-       INIT
-    ===================================================== */
-
-    async function init() {
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/config",
-            {
-              cache: "no-store"
-            }
-          );
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            "Config API failed"
-          );
-
-        }
-
-
-        config =
-          await response.json();
-
-
-        if (
-          !config ||
-          !Array.isArray(
-            config.products
-          )
-        ) {
-
-          throw new Error(
-            "Products configuration missing"
-          );
-
-        }
-
-
-        console.log(
-          "CONFIG LOADED:",
-          config
-        );
-
-
-        /* =================================================
-           PRODUCT DROPDOWN
-        ================================================== */
-
-        product.innerHTML =
-          '<option value="">' +
-          'लड्डू का प्रकार चुनें' +
-          '</option>' +
-
-          config.products
-            .map(p => {
-
-              const weight =
-                Number(
-                  p.weight || 1
-                );
-
-
-              return `
-                <option
-                  value="${escapeHtml(p.id)}"
-                  data-price="${Number(p.price) || 0}"
-                  data-weight="${weight}">
-
-                  ${escapeHtml(p.name)}
-                  — ${money(p.price)}
-                  / ${formatWeight(weight)}
-
-                </option>
-              `;
-
-            })
-            .join("");
-
-
-        /* =================================================
-           DEFAULT PRODUCT
-        ================================================== */
-
-        if (
-          config.products.length > 1
-        ) {
-
-          product.value =
-            config.products[1].id;
-
-        } else if (
-          config.products.length === 1
-        ) {
-
-          product.value =
-            config.products[0].id;
-
-        }
-
-
-        renderProducts();
-
-        updateTotal();
-
-
-      } catch (error) {
-
-        console.error(
-          "INIT ERROR:",
-          error
-        );
-
-
-        document
-          .getElementById(
-            "productGrid"
-          )
-          .innerHTML =
-
-          '<p class="error-text">' +
-          'Website configuration load नहीं हो सकी।' +
-          '<br><br>' +
-          'कृपया page refresh करें।' +
-          '</p>';
-
-
-        product.innerHTML =
-
-          '<option value="">' +
-          'Product load नहीं हुआ' +
-          '</option>';
-
-      }
-
-    }
-
-
-    /* =====================================================
-       EVENTS
-    ===================================================== */
-
-    product.addEventListener(
-      "change",
-      updateTotal
-    );
-
-
-    qty.addEventListener(
-      "change",
-      updateTotal
-    );
-
-
-    paymentMethod.addEventListener(
-      "change",
-      renderUPI
-    );
-
-
-    /* =====================================================
-       ORDER FORM
-    ===================================================== */
-
-    document
-      .getElementById("orderForm")
-      .addEventListener(
-        "submit",
-        async e => {
-
-          e.preventDefault();
-
-
-          const submitBtn =
-            document.getElementById(
-              "orderSubmitBtn"
-            );
-
-
-          const body = {
-
-            name:
-              document
-                .getElementById("name")
-                .value
-                .trim(),
-
-
-            phone:
-              document
-                .getElementById("phone")
-                .value
-                .replace(
-                  /\D/g,
-                  ""
-                ),
-
-
-            address:
-              document
-                .getElementById("address")
-                .value
-                .trim(),
-
-
-            city:
-              document
-                .getElementById("city")
-                .value
-                .trim(),
-
-
-            state:
-              document
-                .getElementById("state")
-                .value
-                .trim(),
-
-
-            pincode:
-              document
-                .getElementById("pincode")
-                .value
-                .replace(
-                  /\D/g,
-                  ""
-                ),
-
-
-            productId:
-              product.value,
-
-
-            quantity:
-              Number(
-                qty.value
-              ),
-
-
-            paymentMethod:
-              paymentMethod.value,
-
-
-            utr:
-              document
-                .getElementById("utr")
-                .value
-                .trim()
-
-          };
-
-
-          /* ================================================
-             VALIDATION
-          ================================================ */
-
-          if (!body.name) {
-
-            alert(
-              "कृपया नाम डालें।"
-            );
-
-            return;
-
-          }
-
-
-          if (
-            !/^\d{10}$/.test(
-              body.phone
-            )
-          ) {
-
-            alert(
-              "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
-            );
-
-            return;
-
-          }
-
-
-          if (!body.address) {
-
-            alert(
-              "कृपया पूरा पता डालें।"
-            );
-
-            return;
-
-          }
-
-
-          if (!body.city) {
-
-            alert(
-              "कृपया शहर का नाम डालें।"
-            );
-
-            return;
-
-          }
-
-
-          if (!body.state) {
-
-            alert(
-              "कृपया राज्य का नाम डालें।"
-            );
-
-            return;
-
-          }
-
-
-          if (
-            !/^\d{6}$/.test(
-              body.pincode
-            )
-          ) {
-
-            alert(
-              "कृपया 6 अंकों का सही पिनकोड डालें।"
-            );
-
-            return;
-
-          }
-
-
-          if (!body.productId) {
-
-            alert(
-              "कृपया लड्डू का प्रकार चुनें।"
-            );
-
-            return;
-
-          }
-
-
-          if (
-            !Number.isFinite(
-              body.quantity
-            ) ||
-            body.quantity < 0.5 ||
-            body.quantity > 10 ||
-            !Number.isInteger(
-              body.quantity * 2
-            )
-          ) {
-
-            alert(
-              "कृपया 0.5 Kg से 10 Kg के बीच सही मात्रा चुनें।"
-            );
-
-            return;
-
-          }
-
-
-          try {
-
-            submitBtn.disabled =
-              true;
-
-
-            submitBtn.classList.add(
-              "loading"
-            );
-
-
-            submitBtn.textContent =
-              "⏳ Order भेजा जा रहा है...";
-
-
-            const r =
-              await fetch(
-                "/api/orders",
-                {
-
-                  method: "POST",
-
-                  headers: {
-                    "Content-Type":
-                      "application/json"
-                  },
-
-                  body:
-                    JSON.stringify(
-                      body
-                    )
-
-                }
-              );
-
-
-            const data =
-              await r.json();
-
-
-            if (!r.ok) {
-
-              alert(
-                data.error ||
-                "Order submit नहीं हुआ।"
-              );
-
-              return;
-
-            }
-
-
-            /* ==============================================
-               SUCCESS
-            ============================================== */
-
-            document
-              .getElementById(
-                "successText"
-              )
-              .innerHTML =
-
-              `आपका Order No.
-              <strong>${escapeHtml(
-                data.orderNo
-              )}</strong>
-              है।<br>
-              कुल राशि:
-              <strong>${money(
-                data.total
-              )}</strong>
-              <br>
+    $("product")
+      .innerHTML =
+      config.products
+        .map(
+          product =>
+            `
+            <option
+              value="${escapeHtml(
+                product.id
+              )}"
+            >
               ${escapeHtml(
-                data.message ||
-                "Order successfully received."
-              )}`;
+                product.name
+              )}
+              —
+              ${money(
+                product.price
+              )}/kg
+            </option>
+            `
+        )
+        .join("");
 
 
-            const selectedProduct =
-              product.options[
-                product.selectedIndex
-              ]?.text || "";
+    updateTotal();
+
+  }
 
 
-            const wa =
-              `नमस्ते, मेरा 23 स्वास्थ्यवर्धक सामान का ऑर्डर है। ` +
-              `Order No: ${data.orderNo}. ` +
-              `नाम: ${body.name}, ` +
-              `मोबाइल: ${body.phone}, ` +
-              `लड्डू का प्रकार: ${selectedProduct}, ` +
-              `मात्रा: ${formatWeight(body.quantity)}, ` +
-              `पता: ${body.address}, ` +
-              `शहर: ${body.city}, ` +
-              `राज्य: ${body.state}, ` +
-              `पिनकोड: ${body.pincode}, ` +
-              `कुल: ${money(data.total)}, ` +
-              `Payment: ${body.paymentMethod}, ` +
-              `UTR: ${body.utr || "N/A"}`;
+  /* =====================================================
+     FORM DATA
+  ====================================================== */
 
+  function formData() {
 
-            document
-              .getElementById(
-                "successWa"
-              )
-              .href =
+    return {
 
-              "https://wa.me/919643185255?text=" +
-              encodeURIComponent(
-                wa
-              );
+      name:
+        $("name")
+          .value
+          .trim(),
 
-
-            document
-              .getElementById(
-                "successModal"
-              )
-              .classList
-              .remove("hidden");
-
-
-            /* ==============================================
-               RESET
-            ============================================== */
-
-            e.target.reset();
-
-
-            if (
-              config &&
-              config.products.length > 1
-            ) {
-
-              product.value =
-                config.products[1].id;
-
-            } else if (
-              config &&
-              config.products.length === 1
-            ) {
-
-              product.value =
-                config.products[0].id;
-
-            }
-
-
-            qty.value =
-              "1";
-
-
-            paymentMethod.value =
-              "UPI";
-
-
-            document
-              .getElementById(
-                "utr"
-              )
-              .value =
-              "";
-
-
-            updateTotal();
-
-
-          } catch (error) {
-
-            console.error(
-              "ORDER ERROR:",
-              error
-            );
-
-
-            alert(
-              "Server से connection नहीं हो सका। कृपया दोबारा कोशिश करें।"
-            );
-
-
-          } finally {
-
-            submitBtn.disabled =
-              false;
-
-
-            submitBtn.classList.remove(
-              "loading"
-            );
-
-
-            submitBtn.textContent =
-              "✅ Order Confirm करें";
-
-          }
-
-        }
-      );
-
-
-    /* =====================================================
-       CUSTOMER ORDER HISTORY
-    ===================================================== */
-
-    document
-      .getElementById(
-        "historyBtn"
-      )
-      .addEventListener(
-        "click",
-        loadOrderHistory
-      );
-
-
-    document
-      .getElementById(
-        "historyPhone"
-      )
-      .addEventListener(
-        "keydown",
-        e => {
-
-          if (
-            e.key === "Enter"
-          ) {
-
-            e.preventDefault();
-
-            loadOrderHistory();
-
-          }
-
-        }
-      );
-
-
-    async function loadOrderHistory() {
-
-      const phone =
-        document
-          .getElementById(
-            "historyPhone"
-          )
+      phone:
+        $("phone")
           .value
           .replace(
             /\D/g,
             ""
-          );
+          ),
 
+      address:
+        $("address")
+          .value
+          .trim(),
 
-      const message =
-        document.getElementById(
-          "historyMessage"
-        );
+      city:
+        $("city")
+          .value
+          .trim(),
 
+      state:
+        $("state")
+          .value
+          .trim(),
 
-      const grid =
-        document.getElementById(
-          "historyGrid"
-        );
+      pincode:
+        $("pincode")
+          .value
+          .replace(
+            /\D/g,
+            ""
+          ),
 
+      productId:
+        $("product")
+          .value,
 
-      const detailBox =
-        document.getElementById(
-          "detailBox"
-        );
-
-
-      detailBox.style.display =
-        "none";
-
-
-      grid.innerHTML =
-        "";
-
-
-      if (
-        !/^\d{10}$/.test(
-          phone
+      quantity:
+        Number(
+          $("quantity")
+            .value
         )
-      ) {
 
-        message.textContent =
-          "कृपया 10 अंकों का सही मोबाइल नंबर डालें।";
+    };
 
-        return;
-
-      }
+  }
 
 
-      message.textContent =
-        "Orders load हो रहे हैं...";
+  /* =====================================================
+     VALIDATE
+  ====================================================== */
 
+  function validateForm(
+    data
+  ) {
 
-      try {
+    if (!data.name) {
 
-        const response =
-          await fetch(
-            `/api/orders/history?phone=${encodeURIComponent(phone)}`,
-            {
-              cache: "no-store"
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          message.textContent =
-            data.error ||
-            "Orders load नहीं हो सके।";
-
-          return;
-
-        }
-
-
-        if (
-          !data.orders ||
-          data.orders.length === 0
-        ) {
-
-          message.textContent =
-            "इस मोबाइल नंबर से कोई order नहीं मिला।";
-
-          return;
-
-        }
-
-
-        message.textContent =
-          `${data.count ?? data.orders.length} Order मिले।`;
-
-
-        grid.innerHTML =
-          data.orders
-            .map(
-              order =>
-                createHistoryCard(
-                  order,
-                  phone
-                )
-            )
-            .join("");
-
-
-      } catch (error) {
-
-        console.error(
-          "HISTORY ERROR:",
-          error
-        );
-
-
-        message.textContent =
-          "Server से connection नहीं हो सका।";
-
-      }
+      return "कृपया नाम भरें।";
 
     }
 
 
-    /* =====================================================
-       HISTORY CARD
-    ===================================================== */
-
-    function createHistoryCard(
-      order,
-      phone
-    ) {
-
-      const canCancel =
-        Boolean(
-          order.canCancel
-        );
-
-
-      const status =
-        getStatusText(
-          order.orderStatus
-        );
-
-
-      const payment =
-        getPaymentStatusText(
-          order.paymentStatus
-        );
-
-
-      return `
-
-        <div class="history-card">
-
-          <h3>
-
-            📦 ${escapeHtml(
-              order.orderNo
-            )}
-
-          </h3>
-
-
-          <div class="history-row">
-
-            <span>
-              Product
-            </span>
-
-            <strong>
-              ${escapeHtml(
-                order.product
-              )}
-            </strong>
-
-          </div>
-
-
-          <div class="history-row">
-
-            <span>
-              मात्रा
-            </span>
-
-            <strong>
-              ${formatWeight(
-                order.quantity
-              )}
-            </strong>
-
-          </div>
-
-
-          <div class="history-row">
-
-            <span>
-              कुल राशि
-            </span>
-
-            <strong>
-              ${money(
-                order.total
-              )}
-            </strong>
-
-          </div>
-
-
-          <div class="history-row">
-
-            <span>
-              Payment
-            </span>
-
-            <strong>
-              ${escapeHtml(
-                payment
-              )}
-            </strong>
-
-          </div>
-
-
-          <div class="history-row">
-
-            <span>
-              Order Status
-            </span>
-
-            <strong class="status">
-
-              ${escapeHtml(
-                status
-              )}
-
-            </strong>
-
-          </div>
-
-
-          ${
-            order.awb
-              ? `
-
-                <div class="history-row">
-
-                  <span>
-                    AWB
-                  </span>
-
-                  <strong>
-
-                    ${escapeHtml(
-                      order.awb
-                    )}
-
-                  </strong>
-
-                </div>
-
-              `
-              : ""
-          }
-
-
-          <div class="history-actions">
-
-
-            <button
-              type="button"
-              class="details-btn"
-              onclick="showOrderDetails(
-                '${escapeJs(
-                  order.orderNo
-                )}',
-                '${escapeJs(
-                  phone
-                )}'
-              )">
-
-              📋 Details
-
-            </button>
-
-
-            ${
-              canCancel
-                ? `
-
-                  <button
-                    type="button"
-                    class="cancel-btn"
-                    onclick="cancelFromHistory(
-                      '${escapeJs(
-                        order.orderNo
-                      )}',
-                      '${escapeJs(
-                        phone
-                      )}'
-                    )">
-
-                    ❌ Cancel
-
-                  </button>
-
-                `
-                : `
-
-                  <button
-                    type="button"
-                    class="disabled-btn"
-                    disabled>
-
-                    Cancellation बंद
-
-                  </button>
-
-                `
-            }
-
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* =====================================================
-       STATUS TEXT
-    ===================================================== */
-
-    function getStatusText(
-      status
-    ) {
-
-      const map = {
-
-        new:
-          "नया Order",
-
-        confirmed:
-          "Confirmed",
-
-        packed:
-          "Packed",
-
-        shipped:
-          "Shipped",
-
-        delivered:
-          "Delivered",
-
-        cancelled:
-          "Cancelled"
-
-      };
-
-
-      return map[status] ||
-        status ||
-        "Unknown";
-
-    }
-
-
-    function getPaymentStatusText(
-      status
-    ) {
-
-      const map = {
-
-        pending:
-          "Payment Pending",
-
-        submitted:
-          "UTR Submitted",
-
-        paid:
-          "Paid",
-
-        failed:
-          "Payment Failed",
-
-        refunded:
-          "Refunded"
-
-      };
-
-
-      return map[status] ||
-        status ||
-        "Unknown";
-
-    }
-
-
-    /* =====================================================
-       SINGLE ORDER DETAILS
-    ===================================================== */
-
-    async function showOrderDetails(
-      orderNo,
-      phone
-    ) {
-
-      const detailBox =
-        document.getElementById(
-          "detailBox"
-        );
-
-
-      const detailContent =
-        document.getElementById(
-          "detailContent"
-        );
-
-
-      detailBox.style.display =
-        "block";
-
-
-      detailContent.innerHTML =
-        "<p>Details load हो रही हैं...</p>";
-
-
-      detailBox.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-
-      try {
-
-        const response =
-          await fetch(
-            "/api/orders/details",
-            {
-
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify({
-                  orderNo,
-                  phone
-                })
-
-            }
-          );
-
-
-        const data =
-          await response.json();
-
-
-        if (!response.ok) {
-
-          detailContent.innerHTML =
-
-            `<p class="error-text">
-
-              ${escapeHtml(
-                data.error ||
-                "Order details नहीं मिली।"
-              )}
-
-            </p>`;
-
-          return;
-
-        }
-
-
-        const order =
-          data.order;
-
-
-        if (!order) {
-
-          detailContent.innerHTML =
-            "<p>Order details उपलब्ध नहीं हैं।</p>";
-
-          return;
-
-        }
-
-
-        detailContent.innerHTML = `
-
-          <div class="detail-item">
-
-            <strong>
-              Order No.
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.orderNo
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Date
-            </strong>
-
-            <br>
-
-            ${formatHistoryDate(
-              order.createdAt
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Customer
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.customerName
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Mobile
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.phone
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Product
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.product
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Quantity
-            </strong>
-
-            <br>
-
-            ${formatWeight(
-              order.quantity
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Product Price
-            </strong>
-
-            <br>
-
-            ${money(
-              order.price
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Delivery
-            </strong>
-
-            <br>
-
-            ${money(
-              order.delivery
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Total
-            </strong>
-
-            <br>
-
-            <strong>
-
-              ${money(
-                order.total
-              )}
-
-            </strong>
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Payment
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              getPaymentStatusText(
-                order.paymentStatus
-              )
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Order Status
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              getStatusText(
-                order.orderStatus
-              )
-            )}
-
-          </div>
-
-
-          <div class="detail-item full-width">
-
-            <strong>
-              Address
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.address
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              City
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.city
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              State
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.state
-            )}
-
-          </div>
-
-
-          <div class="detail-item">
-
-            <strong>
-              Pincode
-            </strong>
-
-            <br>
-
-            ${escapeHtml(
-              order.pincode
-            )}
-
-          </div>
-
-
-          ${
-            order.awb
-              ? `
-
-                <div class="detail-item">
-
-                  <strong>
-                    AWB
-                  </strong>
-
-                  <br>
-
-                  ${escapeHtml(
-                    order.awb
-                  )}
-
-                </div>
-
-              `
-              : ""
-          }
-
-
-          ${
-            order.shiprocketStatus
-              ? `
-
-                <div class="detail-item">
-
-                  <strong>
-                    Shipping Status
-                  </strong>
-
-                  <br>
-
-                  ${escapeHtml(
-                    order.shiprocketStatus
-                  )}
-
-                </div>
-
-              `
-              : ""
-          }
-
-
-          ${
-            order.cancellationReason
-              ? `
-
-                <div class="detail-item full-width">
-
-                  <strong>
-                    Cancellation Reason
-                  </strong>
-
-                  <br>
-
-                  ${escapeHtml(
-                    order.cancellationReason
-                  )}
-
-                </div>
-
-              `
-              : ""
-          }
-
-
-          ${
-            order.canCancel
-              ? `
-
-                <div class="detail-item full-width">
-
-                  <strong>
-                    Cancellation
-                  </strong>
-
-                  <br><br>
-
-                  <button
-                    type="button"
-                    class="cancel-btn"
-                    onclick="cancelFromHistory(
-                      '${escapeJs(
-                        order.orderNo
-                      )}',
-                      '${escapeJs(
-                        order.phone
-                      )}'
-                    )">
-
-                    ❌ Order Cancel करें
-
-                  </button>
-
-                </div>
-
-              `
-              : ""
-          }
-
-        `;
-
-
-      } catch (error) {
-
-        console.error(
-          "DETAIL ERROR:",
-          error
-        );
-
-
-        detailContent.innerHTML =
-          "<p class='error-text'>" +
-          "Server से connection नहीं हो सका।" +
-          "</p>";
-
-      }
-
-    }
-
-
-    /* =====================================================
-       HISTORY DATE
-    ===================================================== */
-
-    function formatHistoryDate(
-      value
-    ) {
-
-      if (!value) {
-        return "-";
-      }
-
-
-      try {
-
-        return new Date(value)
-          .toLocaleString(
-            "en-IN",
-            {
-              dateStyle: "medium",
-              timeStyle: "short"
-            }
-          );
-
-      } catch (error) {
-
-        return String(value);
-
-      }
-
-    }
-
-
-    /* =====================================================
-       CANCEL FROM HISTORY
-    ===================================================== */
-
-    function cancelFromHistory(
-      orderNo,
-      phone
-    ) {
-
-      document
-        .getElementById(
-          "cancelOrderNo"
-        )
-        .value =
-        orderNo;
-
-
-      document
-        .getElementById(
-          "cancelPhone"
-        )
-        .value =
-        phone;
-
-
-      document
-        .getElementById(
-          "cancel-order"
-        )
-        .scrollIntoView({
-          behavior: "smooth"
-        });
-
-    }
-
-
-    /* =====================================================
-       CUSTOMER CANCEL FORM
-    ===================================================== */
-
-    document
-      .getElementById(
-        "cancelForm"
+    if (
+      !/^\d{10}$/.test(
+        data.phone
       )
-      .addEventListener(
-        "submit",
-        async e => {
+    ) {
 
-          e.preventDefault();
+      return (
+        "10 digit mobile number भरें।"
+      );
 
+    }
 
-          const cancelMessage =
-            document.getElementById(
-              "cancelMessage"
-            );
 
+    if (!data.address) {
 
-          cancelMessage.textContent =
-            "Order cancellation check हो रहा है...";
+      return (
+        "पूरा address भरें।"
+      );
 
+    }
 
-          const orderNo =
-            document
-              .getElementById(
-                "cancelOrderNo"
-              )
-              .value
-              .trim();
 
+    if (!data.city) {
 
-          const phone =
-            document
-              .getElementById(
-                "cancelPhone"
-              )
-              .value
-              .replace(
-                /\D/g,
-                ""
-              );
+      return "City भरें।";
 
+    }
 
-          const reason =
-            document
-              .getElementById(
-                "cancelReason"
-              )
-              .value
-              .trim();
 
+    if (!data.state) {
 
-          if (!orderNo) {
+      return "State भरें।";
 
-            cancelMessage.textContent =
-              "Order No. डालें।";
+    }
 
-            return;
 
-          }
+    if (
+      !/^\d{6}$/.test(
+        data.pincode
+      )
+    ) {
 
+      return (
+        "6 digit pincode भरें।"
+      );
 
-          if (
-            !/^\d{10}$/.test(
-              phone
-            )
-          ) {
+    }
 
-            cancelMessage.textContent =
-              "सही 10 अंकों का mobile number डालें।";
 
-            return;
+    if (
+      !data.productId ||
+      !Number.isFinite(
+        data.quantity
+      )
+    ) {
 
-          }
+      return (
+        "Product और quantity चुनें।"
+      );
 
+    }
 
-          const confirmed =
-            window.confirm(
-              "क्या आप सच में इस Order को cancel करना चाहते हैं?"
-            );
 
+    return "";
 
-          if (!confirmed) {
+  }
 
-            cancelMessage.textContent =
-              "Cancellation रोक दी गई।";
 
-            return;
+  /* =====================================================
+     API HELPER
+  ====================================================== */
 
-          }
+  async function apiJson(
+    url,
+    options = {}
+  ) {
 
-
-          try {
-
-            const response =
-              await fetch(
-                "/api/orders/cancel",
-                {
-
-                  method: "POST",
-
-                  headers: {
-                    "Content-Type":
-                      "application/json"
-                  },
-
-                  body:
-                    JSON.stringify({
-                      orderNo,
-                      phone,
-                      reason
-                    })
-
-                }
-              );
-
-
-            const data =
-              await response.json();
-
-
-            if (!response.ok) {
-
-              cancelMessage.innerHTML =
-                `<span class="error-text">
-
-                  ${escapeHtml(
-                    data.error ||
-                    "Order cancel नहीं हुआ।"
-                  )}
-
-                </span>`;
-
-              return;
-
-            }
-
-
-            cancelMessage.innerHTML =
-              `<span class="success-text">
-
-                ✅ ${escapeHtml(
-                  data.message ||
-                  "Order successfully cancelled."
-                )}
-
-                <br>
-
-                Order No:
-
-                <strong>
-
-                  ${escapeHtml(
-                    data.orderNo ||
-                    orderNo
-                  )}
-
-                </strong>
-
-              </span>`;
-
-
-            document
-              .getElementById(
-                "cancelForm"
-              )
-              .reset();
-
-
-            const historyPhone =
-              document
-                .getElementById(
-                  "historyPhone"
-                )
-                .value
-                .replace(
-                  /\D/g,
-                  ""
-                );
-
-
-            if (
-              /^\d{10}$/.test(
-                historyPhone
-              )
-            ) {
-
-              loadOrderHistory();
-
-            }
-
-
-          } catch (error) {
-
-            console.error(
-              "CANCEL ERROR:",
-              error
-            );
-
-
-            cancelMessage.innerHTML =
-              `<span class="error-text">
-
-                Server से connection नहीं हो सका।
-
-              </span>`;
-
-          }
-
-        }
+    const response =
+      await fetch(
+        url,
+        options
       );
 
 
-    /* =====================================================
-       MODAL
-    ===================================================== */
+    let data = {};
 
-    function closeModal() {
+    try {
 
-      document
-        .getElementById(
-          "successModal"
-        )
-        .classList
-        .add("hidden");
+      data =
+        await response.json();
+
+    } catch {}
+
+
+    if (
+      !response.ok
+    ) {
+
+      throw new Error(
+        data.error ||
+        "Server error"
+      );
 
     }
 
 
-    /* =====================================================
-       CLOSE MODAL OUTSIDE
-    ===================================================== */
+    return data;
 
-    document
-      .getElementById(
-        "successModal"
-      )
-      .addEventListener(
-        "click",
-        event => {
+  }
 
-          if (
-            event.target.id ===
-            "successModal"
-          ) {
 
-            closeModal();
+  /* =====================================================
+     START RAZORPAY PAYMENT
+  ====================================================== */
 
-          }
+  async function startPayment() {
 
-        }
+    if (
+      paymentInProgress
+    ) {
+      return;
+    }
+
+
+    const data =
+      formData();
+
+
+    const validationError =
+      validateForm(
+        data
       );
 
 
-    /* =====================================================
-       START WEBSITE
-    ===================================================== */
+    if (
+      validationError
+    ) {
 
-    init();
+      alert(
+        validationError
+      );
 
-  </script>
+      return;
 
-
-  <!-- =====================================================
-       CUSTOMER REVIEWS JAVASCRIPT
-  ===================================================== -->
-
-  <script>
-
-    /* =====================================================
-       CUSTOMER REVIEWS SYSTEM
-    ===================================================== */
-
-    let selectedReviewRating = 0;
+    }
 
 
-    /* =====================================================
-       STAR SELECTION
-    ===================================================== */
+    if (
+      !config.razorpayEnabled
+    ) {
 
-    document
-      .querySelectorAll(
-        "#starInput button"
-      )
-      .forEach(
-        button => {
+      alert(
+        "Razorpay अभी website पर configured नहीं है। Render में RAZORPAY_KEY_ID और RAZORPAY_KEY_SECRET सेट करें।"
+      );
 
-          button.addEventListener(
-            "click",
-            () => {
+      return;
 
-              selectedReviewRating =
-                Number(
-                  button.dataset.rating
-                );
+    }
 
 
-              document
-                .querySelectorAll(
-                  "#starInput button"
-                )
-                .forEach(
-                  star => {
+    if (
+      typeof window.Razorpay !==
+      "function"
+    ) {
 
-                    const value =
-                      Number(
-                        star.dataset.rating
-                      );
+      alert(
+        "Razorpay Checkout load नहीं हुआ। Internet connection check करके फिर try करें।"
+      );
+
+      return;
+
+    }
 
 
-                    star.classList.toggle(
-                      "selected",
-                      value <=
-                      selectedReviewRating
-                    );
+    const button =
+      $("orderSubmitBtn");
+
+
+    paymentInProgress =
+      true;
+
+
+    button.disabled =
+      true;
+
+
+    button.textContent =
+      "Payment Checkout खुल रहा है...";
+
+
+    try {
+
+      /* ---------------------------------------
+         CREATE RAZORPAY ORDER
+      ---------------------------------------- */
+
+      const created =
+        await apiJson(
+          "/api/payment/create-order",
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify(
+                data
+              )
+          }
+        );
+
+
+      /* ---------------------------------------
+         RAZORPAY OPTIONS
+      ---------------------------------------- */
+
+      const options = {
+
+        key:
+          created.keyId,
+
+        amount:
+          created.amount,
+
+        currency:
+          "INR",
+
+        name:
+          "23 स्वास्थ्यवर्धक सामान",
+
+        description:
+          created.productName ||
+          "23 Swasthyavardhak Laddu",
+
+        order_id:
+          created.razorpayOrderId,
+
+
+        prefill: {
+
+          name:
+            data.name,
+
+          contact:
+            data.phone
+
+        },
+
+
+        notes: {
+
+          product_id:
+            data.productId,
+
+          quantity:
+            String(
+              data.quantity
+            )
+
+        },
+
+
+        /* -----------------------------------
+           ONLY UPI
+        ------------------------------------ */
+
+        method: {
+
+          upi: true,
+
+          card: false,
+
+          netbanking: false,
+
+          wallet: false,
+
+          emi: false,
+
+          paylater: false
+
+        },
+
+
+        /* -----------------------------------
+           PAYMENT SUCCESS
+        ------------------------------------ */
+
+        handler:
+          async function (
+            response
+          ) {
+
+            button.textContent =
+              "Payment verify हो रहा है...";
+
+
+            try {
+
+              /* -----------------------------
+                 FINAL SERVER VERIFICATION
+              ------------------------------ */
+
+              const verified =
+                await apiJson(
+                  "/api/orders",
+                  {
+
+                    method:
+                      "POST",
+
+                    headers: {
+                      "Content-Type":
+                        "application/json"
+                    },
+
+                    body:
+                      JSON.stringify({
+
+                        ...data,
+
+                        paymentMethod:
+                          "UPI",
+
+                        razorpay_order_id:
+                          response
+                            .razorpay_order_id,
+
+                        razorpay_payment_id:
+                          response
+                            .razorpay_payment_id,
+
+                        razorpay_signature:
+                          response
+                            .razorpay_signature
+
+                      })
 
                   }
                 );
 
 
-              document
-                .getElementById(
-                  "selectedRatingText"
-                )
+              /* -----------------------------
+                 SUCCESS
+              ------------------------------ */
+
+              lastSuccess = {
+
+                orderNo:
+                  verified.orderNo,
+
+                total:
+                  verified.total,
+
+                paymentId:
+                  verified.paymentId ||
+                  response.razorpay_payment_id,
+
+                ...data
+
+              };
+
+
+              $("successOrderNo")
                 .textContent =
-                `${selectedReviewRating} / 5 Stars`;
+                verified.orderNo;
+
+
+              $("successTotal")
+                .textContent =
+                money(
+                  verified.total
+                );
+
+
+              $("successModal")
+                .classList
+                .remove(
+                  "hidden"
+                );
+
+
+              $("orderForm")
+                .reset();
+
+
+              $("quantity")
+                .value =
+                "0.5";
+
+
+              fillProducts();
+
+            } catch (error) {
+
+              alert(
+                "Payment हो गया हो सकता है, लेकिन server verification/order creation में समस्या आई।\n\nPayment ID: " +
+                response.razorpay_payment_id +
+                "\n\n" +
+                error.message
+              );
+
+            } finally {
+
+              paymentInProgress =
+                false;
+
+              button.disabled =
+                false;
+
+              button.textContent =
+                "💳 Pay करके Order Confirm करें";
 
             }
+
+          },
+
+
+        /* -----------------------------------
+           PAYMENT WINDOW CLOSE
+        ------------------------------------ */
+
+        modal: {
+
+          ondismiss:
+            function () {
+
+              paymentInProgress =
+                false;
+
+              button.disabled =
+                false;
+
+              button.textContent =
+                "💳 Pay करके Order Confirm करें";
+
+            }
+
+        },
+
+
+        theme: {
+
+          color:
+            "#198754"
+
+        }
+
+      };
+
+
+      /* ---------------------------------------
+         CREATE CHECKOUT
+      ---------------------------------------- */
+
+      const razorpay =
+        new Razorpay(
+          options
+        );
+
+
+      /* ---------------------------------------
+         PAYMENT FAILED
+      ---------------------------------------- */
+
+      razorpay.on(
+        "payment.failed",
+        function (
+          response
+        ) {
+
+          paymentInProgress =
+            false;
+
+          button.disabled =
+            false;
+
+          button.textContent =
+            "💳 Pay करके Order Confirm करें";
+
+
+          alert(
+            "Payment failed. Order create नहीं हुआ.\n\n" +
+            (
+              response
+                .error
+                ?.description ||
+              "Please try again."
+            )
           );
 
         }
       );
 
 
-    /* =====================================================
-       LOAD PUBLIC REVIEWS
-    ===================================================== */
+      razorpay.open();
 
-    async function loadPublicReviews() {
+    } catch (error) {
 
-      const container =
-        document.getElementById(
-          "publicReviews"
+      paymentInProgress =
+        false;
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "💳 Pay करके Order Confirm करें";
+
+
+      alert(
+        error.message
+      );
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ORDER HISTORY
+  ====================================================== */
+
+  async function loadHistory() {
+
+    const phone =
+      $("historyPhone")
+        .value
+        .replace(
+          /\D/g,
+          ""
         );
 
 
-      if (!container) {
+    if (
+      !/^\d{10}$/.test(
+        phone
+      )
+    ) {
+
+      alert(
+        "10 digit mobile number डालें।"
+      );
+
+      return;
+
+    }
+
+
+    $("historyList")
+      .innerHTML =
+      "<p class='muted'>Loading...</p>";
+
+
+    try {
+
+      const orders =
+        await apiJson(
+          "/api/orders?phone=" +
+          encodeURIComponent(
+            phone
+          )
+        );
+
+
+      if (
+        !orders.length
+      ) {
+
+        $("historyList")
+          .innerHTML =
+          "<p class='muted'>इस mobile number से कोई order नहीं मिला।</p>";
+
+        return;
+
+      }
+
+
+      $("historyList")
+        .innerHTML =
+        orders
+          .map(
+            order => {
+
+              const status =
+                String(
+                  order.order_status ||
+                  "confirmed"
+                ).toLowerCase();
+
+
+              return `
+
+                <div class="orderItem">
+
+                  <div class="top">
+
+                    <strong>
+                      ${escapeHtml(
+                        order.order_no
+                      )}
+                    </strong>
+
+                    <span
+                      class="status ${escapeHtml(
+                        status
+                      )}"
+                    >
+                      ${escapeHtml(
+                        status
+                      )}
+                    </span>
+
+                  </div>
+
+
+                  <div class="muted">
+
+                    ${escapeHtml(
+                      new Date(
+                        order.created_at
+                      )
+                      .toLocaleString(
+                        "en-IN"
+                      )
+                    )}
+
+                  </div>
+
+
+                  <p>
+
+                    <strong>
+                      ${escapeHtml(
+                        order.product_name
+                      )}
+                    </strong>
+
+                    <br>
+
+                    ${escapeHtml(
+                      order.quantity
+                    )}
+                    kg
+
+                    ·
+
+                    ${money(
+                      order.total
+                    )}
+
+                  </p>
+
+
+                  <button
+                    class="btn btn-secondary smallbtn"
+                    onclick="showOrderDetails(
+                      '${escapeHtml(
+                        order.order_no
+                      )}',
+                      '${escapeHtml(
+                        phone
+                      )}'
+                    )"
+                  >
+                    Details
+                  </button>
+
+
+                  ${
+                    status !==
+                      "cancelled" &&
+                    status !==
+                      "delivered"
+
+                    ?
+
+                    `
+                    <button
+                      class="btn btn-danger smallbtn"
+                      onclick="cancelOrder(
+                        '${escapeHtml(
+                          order.order_no
+                        )}',
+                        '${escapeHtml(
+                          phone
+                        )}'
+                      )"
+                    >
+                      Cancel
+                    </button>
+                    `
+
+                    :
+
+                    ""
+                  }
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("");
+
+    } catch (error) {
+
+      $("historyList")
+        .innerHTML =
+        `
+        <p class="muted">
+          ${escapeHtml(
+            error.message
+          )}
+        </p>
+        `;
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ORDER DETAILS
+  ====================================================== */
+
+  window.showOrderDetails =
+    async function (
+      orderNo,
+      phone
+    ) {
+
+      try {
+
+        const order =
+          await apiJson(
+            `/api/orders/${encodeURIComponent(
+              orderNo
+            )}?phone=${encodeURIComponent(
+              phone
+            )}`
+          );
+
+
+        $("detailContent")
+          .innerHTML =
+
+          `
+
+          <div class="orderItem">
+
+            <p>
+              <strong>
+                Order No:
+              </strong>
+
+              ${escapeHtml(
+                order.order_no
+              )}
+            </p>
+
+
+            <p>
+              <strong>
+                Product:
+              </strong>
+
+              ${escapeHtml(
+                order.product_name
+              )}
+            </p>
+
+
+            <p>
+              <strong>
+                Quantity:
+              </strong>
+
+              ${escapeHtml(
+                order.quantity
+              )}
+              kg
+            </p>
+
+
+            <p>
+              <strong>
+                Total:
+              </strong>
+
+              ${money(
+                order.total
+              )}
+            </p>
+
+
+            <p>
+              <strong>
+                Payment:
+              </strong>
+
+              ${escapeHtml(
+                order.payment_status
+              )}
+
+              /
+
+              ${escapeHtml(
+                order.payment_method
+              )}
+            </p>
+
+
+            <p>
+              <strong>
+                Order Status:
+              </strong>
+
+              ${escapeHtml(
+                order.order_status
+              )}
+            </p>
+
+
+            <p>
+              <strong>
+                Address:
+              </strong>
+
+              ${escapeHtml(
+                order.address
+              )},
+
+              ${escapeHtml(
+                order.city
+              )},
+
+              ${escapeHtml(
+                order.state
+              )}
+
+              -
+
+              ${escapeHtml(
+                order.pincode
+              )}
+
+            </p>
+
+
+            <p>
+              <strong>
+                Shiprocket:
+              </strong>
+
+              ${escapeHtml(
+                order.shiprocket_status ||
+                "pending"
+              )}
+
+            </p>
+
+
+            <p>
+              <strong>
+                AWB:
+              </strong>
+
+              ${escapeHtml(
+                order.awb ||
+                "Not assigned yet"
+              )}
+
+            </p>
+
+
+            ${
+              order.cancellation_reason
+
+              ?
+
+              `
+              <p>
+                <strong>
+                  Cancellation reason:
+                </strong>
+
+                ${escapeHtml(
+                  order.cancellation_reason
+                )}
+              </p>
+              `
+
+              :
+
+              ""
+            }
+
+          </div>
+
+          `;
+
+
+        $("detailModal")
+          .classList
+          .remove(
+            "hidden"
+          );
+
+      } catch (error) {
+
+        alert(
+          error.message
+        );
+
+      }
+
+    };
+
+
+  /* =====================================================
+     CANCEL ORDER
+  ====================================================== */
+
+  window.cancelOrder =
+    async function (
+      orderNo,
+      phone
+    ) {
+
+      const reason =
+        prompt(
+          "Cancellation reason:",
+          "Customer requested cancellation"
+        );
+
+
+      if (
+        reason === null
+      ) {
         return;
       }
 
 
       try {
 
-        const response =
-          await fetch(
-            "/api/reviews",
-            {
-              cache: "no-store"
-            }
-          );
+        await apiJson(
+          `/api/orders/${encodeURIComponent(
+            orderNo
+          )}/cancel`,
+          {
 
+            method:
+              "POST",
 
-        const data =
-          await response.json();
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
 
+            body:
+              JSON.stringify({
+                phone,
+                reason
+              })
 
-        if (!response.ok) {
-
-          throw new Error(
-            data.error ||
-            "Reviews load नहीं हो सके।"
-          );
-
-        }
-
-
-        const average =
-          Number(
-            data.average || 0
-          );
-
-
-        const averageRating =
-          document.getElementById(
-            "averageRating"
-          );
-
-
-        if (averageRating) {
-
-          averageRating.textContent =
-            average.toFixed(1);
-
-        }
-
-
-        const totalReviews =
-          document.getElementById(
-            "totalReviews"
-          );
-
-
-        if (totalReviews) {
-
-          totalReviews.textContent =
-            Number(
-              data.total || 0
-            );
-
-        }
-
-
-        renderAverageStars(
-          average
+          }
         );
 
 
+        alert(
+          "Order cancellation request save हो गई।"
+        );
+
+
+        loadHistory();
+
+      } catch (error) {
+
+        alert(
+          error.message
+        );
+
+      }
+
+    };
+
+
+  /* =====================================================
+     REVIEWS
+  ====================================================== */
+
+  async function loadReviews() {
+
+    try {
+
+      const reviews =
+        await apiJson(
+          "/api/reviews"
+        );
+
+
+      if (
+        !reviews.length
+      ) {
+
+        $("reviewsList")
+          .innerHTML =
+          "<p class='muted'>अभी कोई approved review नहीं है।</p>";
+
+        return;
+
+      }
+
+
+      $("reviewsList")
+        .innerHTML =
+        reviews
+          .map(
+            review =>
+
+              `
+
+              <div class="review">
+
+                <strong>
+                  ${escapeHtml(
+                    review.name
+                  )}
+                </strong>
+
+
+                <div class="stars">
+
+                  ${
+                    "★".repeat(
+                      Number(
+                        review.rating
+                      )
+                    )
+                  }
+
+                  ${
+                    "☆".repeat(
+                      5 -
+                      Number(
+                        review.rating
+                      )
+                    )
+                  }
+
+                </div>
+
+
+                <p>
+                  ${escapeHtml(
+                    review.text
+                  )}
+                </p>
+
+              </div>
+
+              `
+          )
+          .join("");
+
+    } catch {
+
+      $("reviewsList")
+        .innerHTML =
+        "<p class='muted'>Reviews load नहीं हो पाए।</p>";
+
+    }
+
+  }
+
+
+  /* =====================================================
+     ORDER FORM
+  ====================================================== */
+
+  $("orderForm")
+    .addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        startPayment();
+
+      }
+    );
+
+
+  /* =====================================================
+     PRODUCT CHANGE
+  ====================================================== */
+
+  $("product")
+    .addEventListener(
+      "change",
+      updateTotal
+    );
+
+
+  /* =====================================================
+     QUANTITY CHANGE
+  ====================================================== */
+
+  $("quantity")
+    .addEventListener(
+      "change",
+      updateTotal
+    );
+
+
+  /* =====================================================
+     HISTORY
+  ====================================================== */
+
+  $("historyBtn")
+    .addEventListener(
+      "click",
+      loadHistory
+    );
+
+
+  /* =====================================================
+     CLOSE SUCCESS
+  ====================================================== */
+
+  $("closeSuccess")
+    .addEventListener(
+      "click",
+      () => {
+
+        $("successModal")
+          .classList
+          .add(
+            "hidden"
+          );
+
+      }
+    );
+
+
+  /* =====================================================
+     CLOSE DETAILS
+  ====================================================== */
+
+  $("closeDetail")
+    .addEventListener(
+      "click",
+      () => {
+
+        $("detailModal")
+          .classList
+          .add(
+            "hidden"
+          );
+
+      }
+    );
+
+
+  /* =====================================================
+     WHATSAPP
+  ====================================================== */
+
+  $("whatsappBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (!lastSuccess)
+          return;
+
+
+        const product =
+          config?.products?.find(
+            p =>
+              p.id ===
+              lastSuccess.productId
+          );
+
+
+        const text =
+
+`नमस्ते, मैंने 23 स्वास्थ्यवर्धक लड्डू का order किया है।
+
+Order No: ${lastSuccess.orderNo}
+
+नाम: ${lastSuccess.name}
+
+Mobile: ${lastSuccess.phone}
+
+Product: ${
+  product?.name ||
+  lastSuccess.productId
+}
+
+Quantity: ${
+  lastSuccess.quantity
+} kg
+
+Total: ${
+  money(
+    lastSuccess.total
+  )
+}
+
+Payment: Paid ✓`;
+
+
+        window.open(
+
+          "https://wa.me/919643185255?text=" +
+
+          encodeURIComponent(
+            text
+          ),
+
+          "_blank"
+
+        );
+
+      }
+    );
+
+
+  /* =====================================================
+     REVIEW SUBMIT
+  ====================================================== */
+
+  $("reviewBtn")
+    .addEventListener(
+      "click",
+      async () => {
+
+        const name =
+          $("reviewName")
+            .value
+            .trim();
+
+
+        const text =
+          $("reviewText")
+            .value
+            .trim();
+
+
+        const rating =
+          Number(
+            $("reviewRating")
+              .value
+          );
+
+
         if (
-          !Array.isArray(
-            data.reviews
-          ) ||
-          data.reviews.length === 0
+          !name ||
+          !text
         ) {
 
-          container.innerHTML = `
-
-            <div class="no-reviews">
-
-              ⭐ अभी कोई approved review नहीं है।
-
-              <br>
-
-              सबसे पहले अपना अनुभव साझा करें।
-
-            </div>
-
-          `;
+          alert(
+            "Name और review दोनों भरें।"
+          );
 
           return;
 
         }
 
 
-        container.innerHTML =
-          data.reviews
-            .map(
-              review =>
-                createPublicReviewCard(
-                  review
-                )
-            )
-            .join("");
-
-
-      } catch (error) {
-
-        console.error(
-          "PUBLIC REVIEWS ERROR:",
-          error
-        );
-
-
-        container.innerHTML = `
-
-          <div class="no-reviews">
-
-            Reviews अभी load नहीं हो सके।
-
-          </div>
-
-        `;
-
-      }
-
-    }
-
-
-    /* =====================================================
-       AVERAGE STARS
-    ===================================================== */
-
-    function renderAverageStars(
-      rating
-    ) {
-
-      const container =
-        document.getElementById(
-          "averageStars"
-        );
-
-
-      if (!container) {
-        return;
-      }
-
-
-      const rounded =
-        Math.round(
-          Number(
-            rating || 0
-          )
-        );
-
-
-      container.textContent =
-        "★".repeat(
-          rounded
-        ) +
-        "☆".repeat(
-          5 - rounded
-        );
-
-    }
-
-
-    /* =====================================================
-       PUBLIC REVIEW CARD
-    ===================================================== */
-
-    function createPublicReviewCard(
-      review
-    ) {
-
-      const rating =
-        Number(
-          review.rating || 0
-        );
-
-
-      const safeRating =
-        Math.max(
-          0,
-          Math.min(
-            5,
-            rating
-          )
-        );
-
-
-      const stars =
-        "★".repeat(
-          safeRating
-        ) +
-        "☆".repeat(
-          5 - safeRating
-        );
-
-
-      return `
-
-        <div class="public-review-card">
-
-          <div class="public-review-top">
-
-            <div>
-
-              <div class="public-review-name">
-
-                ${escapeHtml(
-                  review.name
-                )}
-
-              </div>
-
-
-              <div class="public-review-stars">
-
-                ${stars}
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div class="public-review-text">
-
-            ${escapeHtml(
-              review.review
-            )}
-
-          </div>
-
-
-          <div class="public-review-date">
-
-            ${formatReviewDate(
-              review.created_at
-            )}
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* =====================================================
-       SUBMIT REVIEW
-    ===================================================== */
-
-    const reviewForm =
-      document.getElementById(
-        "reviewForm"
-      );
-
-
-    if (reviewForm) {
-
-      reviewForm.addEventListener(
-        "submit",
-        async event => {
-
-          event.preventDefault();
-
-
-          const name =
-            document
-              .getElementById(
-                "reviewName"
-              )
-              .value
-              .trim();
-
-
-          const review =
-            document
-              .getElementById(
-                "reviewText"
-              )
-              .value
-              .trim();
-
-
-          const message =
-            document.getElementById(
-              "reviewMessage"
+        try {
+
+          const result =
+            await apiJson(
+              "/api/reviews",
+              {
+
+                method:
+                  "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify({
+                    name,
+                    text,
+                    rating
+                  })
+
+              }
             );
 
 
-          const submitButton =
-            document.getElementById(
-              "reviewSubmitBtn"
-            );
+          $("reviewMsg")
+            .textContent =
+            result.message ||
+            "Review भेज दिया गया है।";
 
 
-          if (
-            name.length < 2 ||
-            name.length > 80
-          ) {
+          $("reviewName")
+            .value = "";
 
-            message.innerHTML =
-              `<span class="review-error">
 
-                नाम 2 से 80 characters के बीच होना चाहिए।
+          $("reviewText")
+            .value = "";
 
-              </span>`;
+        } catch (error) {
 
-            return;
-
-          }
-
-
-          if (
-            selectedReviewRating < 1 ||
-            selectedReviewRating > 5
-          ) {
-
-            message.innerHTML =
-              `<span class="review-error">
-
-                कृपया 1 से 5 Star Rating चुनें।
-
-              </span>`;
-
-            return;
-
-          }
-
-
-          if (
-            review.length < 5 ||
-            review.length > 1000
-          ) {
-
-            message.innerHTML =
-              `<span class="review-error">
-
-                Feedback 5 से 1000 characters के बीच होना चाहिए।
-
-              </span>`;
-
-            return;
-
-          }
-
-
-          try {
-
-            submitButton.disabled =
-              true;
-
-
-            submitButton.textContent =
-              "⏳ Feedback भेजा जा रहा है...";
-
-
-            message.textContent =
-              "";
-
-
-            const response =
-              await fetch(
-                "/api/reviews",
-                {
-
-                  method: "POST",
-
-                  headers: {
-                    "Content-Type":
-                      "application/json"
-                  },
-
-                  body:
-                    JSON.stringify({
-
-                      name:
-                        name,
-
-                      rating:
-                        selectedReviewRating,
-
-                      review:
-                        review
-
-                    })
-
-                }
-              );
-
-
-            const data =
-              await response.json();
-
-
-            if (!response.ok) {
-
-              throw new Error(
-                data.error ||
-                "Review submit नहीं हुआ।"
-              );
-
-            }
-
-
-            message.innerHTML =
-              `<span class="review-success">
-
-                ✅ ${escapeHtml(
-                  data.message ||
-                  "Feedback submit हो गया है।"
-                )}
-
-              </span>`;
-
-
-            reviewForm.reset();
-
-
-            selectedReviewRating =
-              0;
-
-
-            document
-              .querySelectorAll(
-                "#starInput button"
-              )
-              .forEach(
-                star => {
-
-                  star.classList.remove(
-                    "selected"
-                  );
-
-                }
-              );
-
-
-            document
-              .getElementById(
-                "selectedRatingText"
-              )
-              .textContent =
-              "Rating चुनें";
-
-
-          } catch (error) {
-
-            console.error(
-              "SUBMIT REVIEW ERROR:",
-              error
-            );
-
-
-            message.innerHTML =
-              `<span class="review-error">
-
-                ❌ ${escapeHtml(
-                  error.message
-                )}
-
-              </span>`;
-
-
-          } finally {
-
-            submitButton.disabled =
-              false;
-
-
-            submitButton.textContent =
-              "⭐ Review Submit करें";
-
-          }
+          $("reviewMsg")
+            .textContent =
+            error.message;
 
         }
+
+      }
+    );
+
+
+  /* =====================================================
+     MODAL CLICK
+  ====================================================== */
+
+  $("successModal")
+    .addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          $("successModal")
+        ) {
+
+          $("successModal")
+            .classList
+            .add(
+              "hidden"
+            );
+
+        }
+
+      }
+    );
+
+
+  $("detailModal")
+    .addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          $("detailModal")
+        ) {
+
+          $("detailModal")
+            .classList
+            .add(
+              "hidden"
+            );
+
+        }
+
+      }
+    );
+
+
+  /* =====================================================
+     INITIALIZE
+  ====================================================== */
+
+  async function init() {
+
+    try {
+
+      config =
+        await apiJson(
+          "/api/config"
+        );
+
+
+      fillProducts();
+
+
+      await loadReviews();
+
+
+      if (
+        !config.razorpayEnabled
+      ) {
+
+        console.warn(
+          "Razorpay is not configured on server yet."
+        );
+
+      }
+
+    } catch (error) {
+
+      alert(
+        "Website configuration load नहीं हो पाई: " +
+        error.message
       );
 
     }
 
-
-    /* =====================================================
-       REVIEW DATE
-    ===================================================== */
-
-    function formatReviewDate(
-      value
-    ) {
-
-      if (!value) {
-        return "";
-      }
+  }
 
 
-      try {
+  init();
 
-        return new Date(value)
-          .toLocaleDateString(
-            "hi-IN",
-            {
-              day: "numeric",
-              month: "short",
-              year: "numeric"
-            }
-          );
+})();
 
-      } catch (error) {
-
-        return "";
-
-      }
-
-    }
-
-
-    /* =====================================================
-       LOAD REVIEWS
-    ===================================================== */
-
-    loadPublicReviews();
-
-  </script>
-
+</script>
 
 </body>
 
