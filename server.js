@@ -982,12 +982,28 @@ if (product.type === "kg") {
    PAYMENT VALIDATION
 ----------------------------------------------------- */
 
-if (paymentMethod !== "UPI") {
+if (
+  !cleanUtr
+) {
 
   return res.status(400).json({
 
     error:
-      "अभी केवल UPI payment उपलब्ध है।"
+      "कृपया पहले UPI payment करें और UTR / Reference Number डालें।"
+
+  });
+
+}
+
+
+if (
+  !/^\d{12}$/.test(cleanUtr)
+) {
+
+  return res.status(400).json({
+
+    error:
+      "कृपया सही 12 अंकों का UTR / Reference Number डालें।"
 
   });
 
