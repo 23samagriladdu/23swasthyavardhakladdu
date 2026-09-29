@@ -4,17 +4,15 @@ const express = require("express");
 const session = require("express-session");
 const pgSession = require("connect-pg-simple")(session);
 const path = require("path");
-const crypto = require("crypto");
 const { Pool } = require("pg");
 
 const app = express();
 
-const PORT = Number(process.env.PORT || 3000);
-const isProduction = process.env.NODE_ENV === "production";
-
 /* =========================================================
-   ENVIRONMENT VARIABLES
+   BASIC SETTINGS
 ========================================================= */
+
+const PORT = Number(process.env.PORT || 3000);
 
 const ADMIN_USERNAME =
   process.env.ADMIN_USERNAME || "admin";
@@ -22,134 +20,239 @@ const ADMIN_USERNAME =
 const ADMIN_PASSWORD =
   process.env.ADMIN_PASSWORD || "CHANGE_THIS_PASSWORD";
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET || "change-this-session-secret";
-
 const UPI_ID =
-  process.env.UPI_ID || "ramesh3maurya@okaxis";
+  process.env.UPI_ID || "YOUR-UPI-ID@upi";
 
 const UPI_NAME =
-  process.env.UPI_NAME || "23 स्वास्थ्यवर्धक सामान";
-
-const ORDER_EMAIL =
-  process.env.ORDER_EMAIL || "customer@example.com";
+  process.env.UPI_NAME || "23 Swasthyavardhak Samaan";
 
 /* =========================================================
-   SHIPROCKET
-========================================================= */
-
-const SHIPROCKET_EMAIL =
-  process.env.SHIPROCKET_EMAIL || "";
-
-const SHIPROCKET_PASSWORD =
-  process.env.SHIPROCKET_PASSWORD || "";
-
-const SHIPROCKET_PICKUP_LOCATION =
-  process.env.SHIPROCKET_PICKUP_LOCATION || "Home";
-
-/* =========================================================
-   RAZORPAY
-========================================================= */
-
-const RAZORPAY_KEY_ID =
-  process.env.RAZORPAY_KEY_ID || "";
-
-const RAZORPAY_KEY_SECRET =
-  process.env.RAZORPAY_KEY_SECRET || "";
-
-/* =========================================================
-   DATABASE
+   POSTGRESQL DATABASE
 ========================================================= */
 
 if (!process.env.DATABASE_URL) {
   console.error(
-    "DATABASE_URL environment variable is missing"
+    "ERROR: DATABASE_URL environment variable is missing."
   );
-
   process.exit(1);
 }
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 
-  ssl: isProduction
-    ? { rejectUnauthorized: false }
-    : false,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
+
+  max: 10,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000
+});
+
+pool.on("error", (error) => {
+  console.error(
+    "POSTGRES POOL ERROR:",
+    error
+  );
 });
 
 /* =========================================================
-   EXPRESS
+   DATABASE INITIALIZATION
 ========================================================= */
 
-app.set("trust proxy", 1);
+async function initializeDatabase() {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    /* -------------------------------------------------------
+       ORDERS TABLE
+    ------------------------------------------------------- */
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id SERIAL PRIMARY KEY,
+
+        order_no TEXT UNIQUE NOT NULL,
+
+        created_at TEXT NOT NULL,
+
+        customer_name TEXT NOT NULL,
+
+        phone TEXT NOT NULL,
+
+        address TEXT NOT NULL,
+
+        pincode TEXT NOT NULL,
+
+        city TEXT NOT NULL,
+
+        state TEXT NOT NULL,
+
+        country TEXT DEFAULT 'India',
+
+        product_id TEXT NOT NULL,
+
+        product TEXT NOT NULL,
+
+        price NUMERIC NOT NULL,
+
+        quantity NUMERIC NOT NULL,
+
+        delivery NUMERIC NOT NULL,
+
+        total NUMERIC NOT NULL,
+
+        payment_method TEXT,
+
+        payment_status TEXT DEFAULT 'pending',
+
+        utr TEXT,
+
+        order_status TEXT DEFAULT 'pending',
+
+        awb TEXT DEFAULT '',
+
+        shiprocket_status TEXT DEFAULT '',
+
+        cancellation_reason TEXT DEFAULT ''
+      )
+    `);
+
+    /* -------------------------------------------------------
+       REVIEWS TABLE
+    ------------------------------------------------------- */
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS reviews (
+        id SERIAL PRIMARY KEY,
+
+        name TEXT NOT NULL,
+
+        rating INTEGER NOT NULL,
+
+        review TEXT NOT NULL,
+
+        status TEXT NOT NULL DEFAULT 'pending',
+
+        created_at TEXT NOT NULL
+      )
+    `);
+
+    /* -------------------------------------------------------
+       INDEXES
+    ------------------------------------------------------- */
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_orders_phone
+      ON orders(phone)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_orders_order_no
+      ON orders(order_no)
+    `);
+
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_reviews_status
+      ON reviews(status)
+    `);
+
+    await client.query("COMMIT");
+
+    console.log(
+      "PostgreSQL database initialized successfully."
+    );
+
+  } catch (error) {
+
+    await client.query("ROLLBACK");
+
+    console.error(
+      "DATABASE INITIALIZATION ERROR:",
+      error
+    );
+
+    throw error;
+
+  } finally {
+
+    client.release();
+
+  }
+}
+
+/* =========================================================
+   MIDDLEWARE
+========================================================= */
 
 app.use(
   express.json({
-    limit: "1mb",
+    limit: "100kb"
   })
 );
 
 app.use(
   express.urlencoded({
     extended: true,
+    limit: "100kb"
   })
 );
 
 /* =========================================================
    SESSION
+   POSTGRESQL SESSION STORE
 ========================================================= */
+
+app.set("trust proxy", 1);
 
 app.use(
   session({
+
     store: new pgSession({
       pool,
       tableName: "user_sessions",
-      createTableIfMissing: true,
+      createTableIfMissing: true
     }),
 
-    secret: SESSION_SECRET,
+    secret:
+      process.env.SESSION_SECRET ||
+      "replace-this-session-secret",
 
     resave: false,
 
     saveUninitialized: false,
 
     cookie: {
-      httpOnly: true,
 
-      secure: isProduction,
+      httpOnly: true,
 
       sameSite: "lax",
 
+      secure:
+        process.env.NODE_ENV === "production",
+
       maxAge:
-        1000 *
-        60 *
-        60 *
-        24 *
-        7,
-    },
+        8 * 60 * 60 * 1000
+    }
   })
 );
-
-/* =========================================================
-   STATIC FILES
-   index.html / admin.html / images / style.css
-   root folder से serve होंगे
-========================================================= */
-
-app.use(express.static(__dirname));
 
 /* =========================================================
    PRODUCTS
 ========================================================= */
 
 const PRODUCTS = [
+
   {
     id: "10-dryfruits",
     name: "10 सामग्री - Only Dryfruits",
     price: 1600,
     weight: 1,
     type: "kg",
-    image: "laddu-main.png",
+    image: "laddu-main.png"
   },
 
   {
@@ -158,7 +261,7 @@ const PRODUCTS = [
     price: 1300,
     weight: 1,
     type: "kg",
-    image: "laddu-main.png",
+    image: "laddu-main.png"
   },
 
   {
@@ -167,7 +270,7 @@ const PRODUCTS = [
     price: 1600,
     weight: 1,
     type: "kg",
-    image: "laddu-main.png",
+    image: "laddu-main.png"
   },
 
   {
@@ -176,7 +279,7 @@ const PRODUCTS = [
     price: 600,
     weight: 1,
     type: "kg",
-    image: "laddu-main.png",
+    image: "laddu-main.png"
   },
 
   {
@@ -185,1365 +288,1045 @@ const PRODUCTS = [
     price: 600,
     weight: 1,
     type: "kg",
-    image: "besan.jpeg",
+    image: "besan.jpeg"
   },
 
   {
     id: "dry-fruit-laddu",
     name:
-      "23 सीड्स-ड्राई फ्रूट्स (0.5 किलो) + 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
+      "23 सीड्स-ड्राई फ्रूट्स (0.5 किलो), 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
     price: 1550,
     weight: 1,
     type: "kg",
-    image: "dry_fruit.jpeg",
+    image: "dry_fruit.jpeg"
   },
 
   {
     id: "mix-laddu-2",
     name:
-      "बेसन 0.4 + 23 Seeds-Dryfruit 0.3 + 10 Dryfruit 0.3 kg",
+      "बेसन (0.4 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.3 किलो), 10 ड्राई फ्रूट्स (0.3 किलो) — मिक्स लड्डू 1 किलो",
     price: 1110,
     weight: 1,
     type: "kg",
-    image: "mix_ladd-2.jpeg",
+    image: "mix_ladd-2.jpeg"
   },
 
   {
     id: "mix-laddu",
     name:
-      "बेसन 0.5 + 23 Seeds-Dryfruit 0.4 + 10 Dryfruit 0.2 kg",
+      "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.4 किलो), 10 ड्राई फ्रूट्स (0.2 किलो) — मिक्स लड्डू 1 किलो",
     price: 1010,
     weight: 1,
     type: "kg",
-    image: "mix_laddu-.jpeg",
+    image: "mix_laddu-.jpeg"
   },
 
   {
     id: "mix-laddu-3",
     name:
-      "बेसन 0.5 + 23 Seeds-Dryfruit 0.5 kg",
+      "बेसन (0.5 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
     price: 1050,
     weight: 1,
     type: "kg",
-    image: "mix_laddu-3.jpeg",
+    image: "mix_laddu-3.jpeg"
   },
 
   {
     id: "mix-laddu-4",
     name:
-      "बेसन 0.7 + 23 Seeds-Dryfruit 0.3 kg",
+      "बेसन (0.7 किलो), 23 सीड्स-ड्राई फ्रूट्स (0.3 किलो) — मिक्स लड्डू 1 किलो",
     price: 810,
     weight: 1,
     type: "kg",
-    image: "mix_laddu-4.jpeg",
+    image: "mix_laddu-4.jpeg"
   },
 
   {
     id: "mix-laddu-5",
     name:
-      "बेसन 0.5 + 10 Dryfruit 0.5 kg",
+      "बेसन (0.5 किलो), 10 ड्राई फ्रूट्स (0.5 किलो) — मिक्स लड्डू 1 किलो",
     price: 1100,
     weight: 1,
     type: "kg",
-    image: "mix_laddu-5.jpeg",
-  },
+    image: "mix_laddu-5.jpeg"
+  }
+
 ];
 
 /* =========================================================
-   PRODUCT HELPER
+   DELIVERY CALCULATION
 ========================================================= */
 
-function getProduct(productId) {
-  return PRODUCTS.find(
-    (product) => product.id === productId
-  );
-}
+function getDeliveryCharge(totalWeight) {
 
-/* =========================================================
-   DELIVERY CHARGE
+  const weight =
+    Number(totalWeight || 0);
 
-   1 kg तक = ₹100
-   2 kg तक = ₹200
-   ...
-   9 kg तक = ₹900
-   9 kg से ऊपर = ₹1000
-========================================================= */
-
-function getDeliveryCharge(quantity) {
-  const kg = Number(quantity);
-
-  if (!Number.isFinite(kg) || kg <= 0) {
+  if (
+    !Number.isFinite(weight) ||
+    weight <= 0
+  ) {
     return 0;
   }
 
-  if (kg <= 1) return 100;
-  if (kg <= 2) return 200;
-  if (kg <= 3) return 300;
-  if (kg <= 4) return 400;
-  if (kg <= 5) return 500;
-  if (kg <= 6) return 600;
-  if (kg <= 7) return 700;
-  if (kg <= 8) return 800;
-  if (kg <= 9) return 900;
+  if (weight <= 1) return 100;
+  if (weight <= 2) return 200;
+  if (weight <= 3) return 300;
+  if (weight <= 4) return 400;
+  if (weight <= 5) return 500;
+  if (weight <= 6) return 600;
+  if (weight <= 7) return 700;
+  if (weight <= 8) return 800;
+  if (weight <= 9) return 900;
 
   return 1000;
 }
 
 /* =========================================================
-   HELPERS
+   KG QUANTITY VALIDATION
 ========================================================= */
 
-function clean(value, max = 500) {
-  return String(value ?? "")
-    .trim()
-    .slice(0, max);
-}
+function isValidKgQuantity(quantity) {
 
-function cleanPhone(value) {
-  return String(value ?? "")
-    .replace(/\D/g, "")
-    .slice(-10);
-}
+  const qty =
+    Number(quantity);
 
-function validPincode(value) {
-  return /^\d{6}$/.test(
-    String(value ?? "").trim()
-  );
-}
+  if (!Number.isFinite(qty)) {
+    return false;
+  }
 
-function validQuantity(value) {
-  const quantity = Number(value);
-
-  return (
-    Number.isFinite(quantity) &&
-    quantity >= 0.5 &&
-    quantity <= 10 &&
-    Number.isInteger(quantity * 2)
-  );
-}
-
-function money(value) {
-  return Number(
-    Number(value).toFixed(2)
-  );
-}
-
-function generateOrderNo() {
-  const timestamp =
-    Date.now().toString().slice(-8);
-
-  const random =
-    Math.floor(
-      100 + Math.random() * 900
-    );
-
-  return `23L${timestamp}${random}`;
-}
-
-/* =========================================================
-   ADMIN AUTH
-========================================================= */
-
-function requireAdmin(req, res, next) {
   if (
-    req.session &&
-    req.session.isAdmin === true
+    qty < 0.5 ||
+    qty > 10
   ) {
-    return next();
+    return false;
   }
 
-  return res
-    .status(401)
-    .json({
-      error: "Admin login required",
-    });
+  return Number.isInteger(qty * 2);
 }
 
 /* =========================================================
-   RAZORPAY HELPERS
+   PACK QUANTITY VALIDATION
 ========================================================= */
 
-function razorpayAuth() {
-  return (
-    "Basic " +
-    Buffer.from(
-      `${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`
-    ).toString("base64")
-  );
-}
+function isValidPackQuantity(quantity) {
 
-async function razorpayRequest(
-  url,
-  options = {}
-) {
-  if (
-    !RAZORPAY_KEY_ID ||
-    !RAZORPAY_KEY_SECRET
-  ) {
-    throw new Error(
-      "Razorpay keys are not configured on the server."
-    );
-  }
-
-  const response = await fetch(url, {
-    ...options,
-
-    headers: {
-      Authorization: razorpayAuth(),
-
-      "Content-Type":
-        "application/json",
-
-      ...(options.headers || {}),
-    },
-  });
-
-  const text =
-    await response.text();
-
-  let data;
-
-  try {
-    data = JSON.parse(text);
-  } catch {
-    data = {
-      raw: text,
-    };
-  }
-
-  if (!response.ok) {
-    const message =
-      data?.error?.description ||
-      data?.message ||
-      "Razorpay request failed";
-
-    throw new Error(message);
-  }
-
-  return data;
-}
-
-/* =========================================================
-   CREATE RAZORPAY ORDER
-========================================================= */
-
-async function createRazorpayOrder(
-  amountPaise,
-  receipt
-) {
-  return razorpayRequest(
-    "https://api.razorpay.com/v1/orders",
-    {
-      method: "POST",
-
-      body: JSON.stringify({
-        amount: amountPaise,
-
-        currency: "INR",
-
-        receipt,
-
-        payment_capture: 1,
-      }),
-    }
-  );
-}
-
-/* =========================================================
-   GET RAZORPAY ORDER
-========================================================= */
-
-async function getRazorpayOrder(
-  orderId
-) {
-  return razorpayRequest(
-    `https://api.razorpay.com/v1/orders/${encodeURIComponent(
-      orderId
-    )}`,
-    {
-      method: "GET",
-    }
-  );
-}
-
-/* =========================================================
-   GET RAZORPAY PAYMENT
-========================================================= */
-
-async function getRazorpayPayment(
-  paymentId
-) {
-  return razorpayRequest(
-    `https://api.razorpay.com/v1/payments/${encodeURIComponent(
-      paymentId
-    )}`,
-    {
-      method: "GET",
-    }
-  );
-}
-
-/* =========================================================
-   VERIFY RAZORPAY SIGNATURE
-========================================================= */
-
-function verifyRazorpaySignature(
-  orderId,
-  paymentId,
-  signature
-) {
-  const expected =
-    crypto
-      .createHmac(
-        "sha256",
-        RAZORPAY_KEY_SECRET
-      )
-      .update(
-        `${orderId}|${paymentId}`
-      )
-      .digest("hex");
-
-  const a =
-    Buffer.from(
-      expected,
-      "utf8"
-    );
-
-  const b =
-    Buffer.from(
-      String(signature || ""),
-      "utf8"
-    );
+  const qty =
+    Number(quantity);
 
   return (
-    a.length === b.length &&
-    crypto.timingSafeEqual(a, b)
+    Number.isInteger(qty) &&
+    qty >= 1 &&
+    qty <= 50
   );
 }
 
 /* =========================================================
-   DATABASE INITIALIZATION
+   PRODUCT FINDER
 ========================================================= */
 
-async function initializeDatabase() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS orders (
-      id SERIAL PRIMARY KEY,
+function getProduct(productId) {
 
-      order_no TEXT UNIQUE NOT NULL,
-
-      created_at
-        TIMESTAMPTZ NOT NULL
-        DEFAULT NOW(),
-
-      name TEXT NOT NULL,
-
-      phone TEXT NOT NULL,
-
-      address TEXT NOT NULL,
-
-      pincode TEXT NOT NULL,
-
-      city TEXT NOT NULL,
-
-      state TEXT NOT NULL,
-
-      product_id TEXT NOT NULL,
-
-      product_name TEXT NOT NULL,
-
-      quantity NUMERIC(10,2) NOT NULL,
-
-      product_price NUMERIC(10,2) NOT NULL,
-
-      delivery NUMERIC(10,2) NOT NULL,
-
-      total NUMERIC(10,2) NOT NULL,
-
-      payment_method TEXT NOT NULL
-        DEFAULT 'UPI',
-
-      payment_status TEXT NOT NULL
-        DEFAULT 'pending',
-
-      utr TEXT,
-
-      razorpay_order_id TEXT,
-
-      razorpay_payment_id TEXT,
-
-      awb TEXT,
-
-      shiprocket_status TEXT,
-
-      order_status TEXT NOT NULL
-        DEFAULT 'confirmed',
-
-      cancellation_reason TEXT
-    );
-
-    CREATE TABLE IF NOT EXISTS reviews (
-      id SERIAL PRIMARY KEY,
-
-      name TEXT NOT NULL,
-
-      rating INTEGER NOT NULL
-        CHECK (rating BETWEEN 1 AND 5),
-
-      text TEXT NOT NULL,
-
-      status TEXT NOT NULL
-        DEFAULT 'pending',
-
-      created_at
-        TIMESTAMPTZ NOT NULL
-        DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS payment_intents (
-      id SERIAL PRIMARY KEY,
-
-      razorpay_order_id
-        TEXT UNIQUE NOT NULL,
-
-      name TEXT NOT NULL,
-
-      phone TEXT NOT NULL,
-
-      address TEXT NOT NULL,
-
-      pincode TEXT NOT NULL,
-
-      city TEXT NOT NULL,
-
-      state TEXT NOT NULL,
-
-      product_id TEXT NOT NULL,
-
-      product_name TEXT NOT NULL,
-
-      quantity NUMERIC(10,2) NOT NULL,
-
-      product_price NUMERIC(10,2) NOT NULL,
-
-      delivery NUMERIC(10,2) NOT NULL,
-
-      total NUMERIC(10,2) NOT NULL,
-
-      status TEXT NOT NULL
-        DEFAULT 'created',
-
-      razorpay_payment_id TEXT,
-
-      created_at
-        TIMESTAMPTZ NOT NULL
-        DEFAULT NOW()
-    );
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS razorpay_order_id TEXT;
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS razorpay_payment_id TEXT;
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS order_status TEXT
-      NOT NULL DEFAULT 'confirmed';
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS cancellation_reason TEXT;
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS awb TEXT;
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS shiprocket_status TEXT;
-
-    ALTER TABLE orders
-      ADD COLUMN IF NOT EXISTS utr TEXT;
-
-    CREATE INDEX IF NOT EXISTS
-      idx_orders_phone
-      ON orders(phone);
-
-    CREATE INDEX IF NOT EXISTS
-      idx_orders_order_no
-      ON orders(order_no);
-
-    CREATE INDEX IF NOT EXISTS
-      idx_reviews_status
-      ON reviews(status);
-
-    CREATE UNIQUE INDEX IF NOT EXISTS
-      idx_orders_razorpay_payment_id
-      ON orders(razorpay_payment_id)
-      WHERE razorpay_payment_id IS NOT NULL;
-  `);
-
-  console.log(
-    "PostgreSQL tables ready"
+  return PRODUCTS.find(
+    (p) =>
+      p.id === String(productId)
   );
 }
 
 /* =========================================================
-   WEBSITE ROUTES
-========================================================= */
-
-app.get("/", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "index.html"
-    )
-  );
-});
-
-app.get("/admin", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "admin.html"
-    )
-  );
-});
-
-app.get("/admin.html", (req, res) => {
-  res.sendFile(
-    path.join(
-      __dirname,
-      "admin.html"
-    )
-  );
-});
-
-/* =========================================================
-   CONFIG
+   CONFIG API
 ========================================================= */
 
 app.get(
   "/api/config",
   (req, res) => {
+
     res.json({
+
       upiId: UPI_ID,
 
       upiName: UPI_NAME,
 
       products: PRODUCTS,
 
-      deliveryRules:
-        "1kg तक ₹100, 2kg तक ₹200 ... 9kg तक ₹900, 9kg से ऊपर ₹1000",
+      deliveryRules: {
 
-      razorpayEnabled:
-        Boolean(
-          RAZORPAY_KEY_ID &&
-          RAZORPAY_KEY_SECRET
-        ),
+        upTo1Kg: 100,
+
+        upTo2Kg: 200,
+
+        upTo3Kg: 300,
+
+        upTo4Kg: 400,
+
+        upTo5Kg: 500,
+
+        upTo6Kg: 600,
+
+        upTo7Kg: 700,
+
+        upTo8Kg: 800,
+
+        upTo9Kg: 900,
+
+        above9Kg: 1000
+      }
+
     });
+
   }
 );
 
 /* =========================================================
-   PUBLIC REVIEWS
+   CREATE UNIQUE ORDER NUMBER
 ========================================================= */
 
-app.get(
-  "/api/reviews",
-  async (req, res) => {
-    try {
-      const result =
-        await pool.query(`
-          SELECT
-            id,
-            name,
-            rating,
-            text,
-            created_at
-          FROM reviews
-          WHERE status = 'approved'
-          ORDER BY created_at DESC
-          LIMIT 50
-        `);
+async function createOrderNumber() {
 
-      res.json(result.rows);
-    } catch (error) {
-      console.error(
-        "reviews",
-        error
-      );
+  let orderNo;
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Reviews load नहीं हो पाए",
-        });
-    }
-  }
-);
+  do {
 
-/* =========================================================
-   CREATE REVIEW
-========================================================= */
+    const random =
+      Math.floor(
+        Math.random() * 1000
+      )
+      .toString()
+      .padStart(3, "0");
 
-app.post(
-  "/api/reviews",
-  async (req, res) => {
-    try {
-      const name =
-        clean(
-          req.body.name,
-          80
-        );
+    orderNo =
+      "23L" +
+      (
+        Date.now().toString() +
+        random
+      ).slice(-9);
 
-      const text =
-        clean(
-          req.body.text,
-          1000
-        );
-
-      const rating =
-        Number(
-          req.body.rating
-        );
-
-      if (
-        !name ||
-        !text ||
-        !Number.isInteger(
-          rating
-        ) ||
-        rating < 1 ||
-        rating > 5
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Name, rating और review सही भरें",
-          });
-      }
-
-      const result =
-        await pool.query(
-          `
-          INSERT INTO reviews
-          (name, rating, text, status)
-          VALUES
-          ($1,$2,$3,'pending')
-          RETURNING id
-          `,
-          [
-            name,
-            rating,
-            text,
-          ]
-        );
-
-      res.json({
-        ok: true,
-
-        id:
-          result.rows[0].id,
-
-        message:
-          "Review भेज दिया गया है। Admin approval के बाद दिखाई देगा।",
-      });
-    } catch (error) {
-      console.error(
-        "review create",
-        error
-      );
-
-      res
-        .status(500)
-        .json({
-          error:
-            "Review save नहीं हो पाया",
-        });
-    }
-  }
-);
-
-/* =========================================================
-   CREATE RAZORPAY PAYMENT ORDER
-
-   यहां अभी सिर्फ payment order बनता है।
-   PostgreSQL में customer order अभी नहीं बनता।
-========================================================= */
-
-app.post(
-  "/api/payment/create-order",
-  async (req, res) => {
-    try {
-      if (
-        !RAZORPAY_KEY_ID ||
-        !RAZORPAY_KEY_SECRET
-      ) {
-        return res
-          .status(500)
-          .json({
-            error:
-              "Razorpay अभी configured नहीं है। Render Environment में RAZORPAY_KEY_ID और RAZORPAY_KEY_SECRET डालें।",
-          });
-      }
-
-      const name =
-        clean(
-          req.body.name,
-          100
-        );
-
-      const phone =
-        cleanPhone(
-          req.body.phone
-        );
-
-      const address =
-        clean(
-          req.body.address,
-          500
-        );
-
-      const city =
-        clean(
-          req.body.city,
-          100
-        );
-
-      const state =
-        clean(
-          req.body.state,
-          100
-        );
-
-      const pincode =
-        clean(
-          req.body.pincode,
-          6
-        );
-
-      const productId =
-        clean(
-          req.body.productId,
-          100
-        );
-
-      const quantity =
-        Number(
-          req.body.quantity
-        );
-
-      const product =
-        getProduct(productId);
-
-      if (
-        !name ||
-        !/^\d{10}$/.test(phone) ||
-        !address ||
-        !city ||
-        !state ||
-        !validPincode(
-          pincode
-        )
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "कृपया नाम, 10-digit mobile, पूरा address, city, state और 6-digit pincode सही भरें।",
-          });
-      }
-
-      if (!product) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Invalid product",
-          });
-      }
-
-      if (
-        !validQuantity(
-          quantity
-        )
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Quantity 0.5 से 10 kg तक, 0.5 kg के step में होनी चाहिए।",
-          });
-      }
-
-      const productAmount =
-        money(
-          product.price *
-            quantity
-        );
-
-      const delivery =
-        money(
-          getDeliveryCharge(
-            quantity
-          )
-        );
-
-      const total =
-        money(
-          productAmount +
-            delivery
-        );
-
-      const amountPaise =
-        Math.round(
-          total * 100
-        );
-
-      const receipt =
-        `23-${Date.now()}-${Math.floor(
-          Math.random() * 10000
-        )}`.slice(0, 40);
-
-      const rpOrder =
-        await createRazorpayOrder(
-          amountPaise,
-          receipt
-        );
-
+    const existing =
       await pool.query(
         `
-        INSERT INTO payment_intents
-        (
-          razorpay_order_id,
-          name,
-          phone,
-          address,
-          pincode,
-          city,
-          state,
-          product_id,
-          product_name,
-          quantity,
-          product_price,
-          delivery,
-          total,
-          status
-        )
-        VALUES
-        (
-          $1,$2,$3,$4,$5,$6,$7,
-          $8,$9,$10,$11,$12,$13,'created'
-        )
+        SELECT id
+        FROM orders
+        WHERE order_no = $1
         `,
-        [
-          rpOrder.id,
-          name,
-          phone,
-          address,
-          pincode,
-          city,
-          state,
-          product.id,
-          product.name,
-          quantity,
-          product.price,
-          delivery,
-          total,
-        ]
+        [orderNo]
       );
 
-      res.json({
-        ok: true,
+    if (
+      existing.rows.length === 0
+    ) {
 
-        keyId:
-          RAZORPAY_KEY_ID,
+      return orderNo;
 
-        razorpayOrderId:
-          rpOrder.id,
-
-        amount:
-          rpOrder.amount,
-
-        currency:
-          "INR",
-
-        total,
-
-        productName:
-          product.name,
-      });
-    } catch (error) {
-      console.error(
-        "Razorpay create order",
-        error
-      );
-
-      res
-        .status(500)
-        .json({
-          error:
-            error.message ||
-            "Payment order create नहीं हो पाया",
-        });
     }
-  }
-);
+
+  } while (true);
+}
 
 /* =========================================================
-   CREATE FINAL ORDER
+   SHIPROCKET TOKEN
+========================================================= */
 
-   IMPORTANT:
-   यहां Razorpay payment को server पर verify किया जाता है।
+let shiprocketToken = null;
+let shiprocketTokenTime = 0;
 
-   बिना:
-   - signature
-   - payment id
-   - captured status
-   - exact amount
+async function getShiprocketToken() {
 
-   order INSERT नहीं होगा।
+  const email =
+    process.env.SHIPROCKET_EMAIL;
+
+  const password =
+    process.env.SHIPROCKET_PASSWORD;
+
+  if (
+    !email ||
+    !password
+  ) {
+
+    return null;
+
+  }
+
+  if (
+    shiprocketToken &&
+    Date.now() -
+      shiprocketTokenTime <
+      24 * 60 * 60 * 1000
+  ) {
+
+    return shiprocketToken;
+
+  }
+
+  const response =
+    await fetch(
+      "https://apiv2.shiprocket.in/v1/external/auth/login",
+      {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+            email,
+            password
+          })
+
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (
+    !response.ok ||
+    !data.token
+  ) {
+
+    throw new Error(
+      data.message ||
+      "Shiprocket login failed"
+    );
+
+  }
+
+  shiprocketToken =
+    data.token;
+
+  shiprocketTokenTime =
+    Date.now();
+
+  return shiprocketToken;
+}
+
+/* =========================================================
+   CREATE SHIPROCKET ORDER
+========================================================= */
+
+async function createShiprocketOrder(
+  order
+) {
+
+  const pickupLocation =
+    process.env.SHIPROCKET_PICKUP_LOCATION;
+
+  if (
+    !process.env.SHIPROCKET_EMAIL ||
+    !process.env.SHIPROCKET_PASSWORD ||
+    !pickupLocation
+  ) {
+
+    return {
+
+      success: false,
+
+      skipped: true,
+
+      message:
+        "Shiprocket environment variables not configured"
+
+    };
+
+  }
+
+  const token =
+    await getShiprocketToken();
+
+  const product =
+    getProduct(
+      order.product_id
+    );
+
+  const totalWeight =
+    product
+      ? (
+          product.type === "kg"
+            ? Number(order.quantity)
+            : Number(product.weight) *
+              Number(order.quantity)
+        )
+      : Number(order.quantity);
+
+  const shiprocketBody = {
+
+    order_id:
+      order.order_no,
+
+    order_date:
+      order.created_at,
+
+    pickup_location:
+      pickupLocation,
+
+    billing_customer_name:
+      order.customer_name,
+
+    billing_last_name:
+      "",
+
+    billing_address:
+      order.address,
+
+    billing_address_2:
+      "",
+
+    billing_city:
+      order.city,
+
+    billing_pincode:
+      Number(order.pincode),
+
+    billing_state:
+      order.state,
+
+    billing_country:
+      "India",
+
+    billing_email:
+      process.env.ORDER_EMAIL ||
+      "customer@example.com",
+
+    billing_phone:
+      Number(order.phone),
+
+    shipping_is_billing:
+      true,
+
+    shipping_customer_name:
+      order.customer_name,
+
+    shipping_last_name:
+      "",
+
+    shipping_address:
+      order.address,
+
+    shipping_address_2:
+      "",
+
+    shipping_city:
+      order.city,
+
+    shipping_pincode:
+      Number(order.pincode),
+
+    shipping_country:
+      "India",
+
+    shipping_state:
+      order.state,
+
+    shipping_email:
+      process.env.ORDER_EMAIL ||
+      "customer@example.com",
+
+    shipping_phone:
+      Number(order.phone),
+
+    order_items: [
+
+      {
+
+        name:
+          order.product,
+
+        sku:
+          order.product_id ||
+          order.order_no,
+
+        units:
+          Number(order.quantity),
+
+        selling_price:
+          Number(order.price),
+
+        discount:
+          0,
+
+        tax:
+          0,
+
+        hsn:
+          ""
+      }
+
+    ],
+
+    payment_method:
+      "Prepaid",
+
+    shipping_charges:
+      Number(order.delivery),
+
+    giftwrap_charges:
+      0,
+
+    transaction_charges:
+      0,
+
+    total_discount:
+      0,
+
+    sub_total:
+      Number(order.price) *
+      Number(order.quantity),
+
+    length:
+      20,
+
+    breadth:
+      20,
+
+    height:
+      10,
+
+    weight:
+      Number(totalWeight)
+  };
+
+  const response =
+    await fetch(
+      "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+      {
+
+        method: "POST",
+
+        headers: {
+
+          "Content-Type":
+            "application/json",
+
+          Authorization:
+            `Bearer ${token}`
+        },
+
+        body:
+          JSON.stringify(
+            shiprocketBody
+          )
+      }
+    );
+
+  const data =
+    await response.json();
+
+  if (
+    !response.ok
+  ) {
+
+    throw new Error(
+      data.message ||
+      JSON.stringify(data)
+    );
+
+  }
+
+  return {
+
+    success: true,
+
+    data
+
+  };
+}
+
+/* =========================================================
+   CREATE CUSTOMER ORDER
 ========================================================= */
 
 app.post(
   "/api/orders",
   async (req, res) => {
-    const razorpayOrderId =
-      clean(
-        req.body.razorpay_order_id,
-        100
-      );
-
-    const razorpayPaymentId =
-      clean(
-        req.body.razorpay_payment_id,
-        100
-      );
-
-    const razorpaySignature =
-      clean(
-        req.body.razorpay_signature,
-        200
-      );
-
-    if (
-      !razorpayOrderId ||
-      !razorpayPaymentId ||
-      !razorpaySignature
-    ) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Verified Razorpay payment के बिना order create नहीं हो सकता।",
-        });
-    }
-
-    let client = null;
 
     try {
-      if (
-        !RAZORPAY_KEY_ID ||
-        !RAZORPAY_KEY_SECRET
-      ) {
-        return res
-          .status(500)
-          .json({
-            error:
-              "Razorpay server configuration missing",
-          });
+
+      const {
+        name,
+        phone,
+        address,
+        city,
+        state,
+        pincode,
+        productId,
+        quantity,
+        paymentMethod,
+        utr
+      } = req.body;
+
+      const cleanName =
+        String(name || "")
+          .trim();
+
+      const cleanPhone =
+        String(phone || "")
+          .replace(/\D/g, "");
+
+      const cleanAddress =
+        String(address || "")
+          .trim();
+
+      const cleanCity =
+        String(city || "")
+          .trim();
+
+      const cleanState =
+        String(state || "")
+          .trim();
+
+      const cleanPincode =
+        String(pincode || "")
+          .replace(/\D/g, "");
+
+      const cleanUtr =
+        String(utr || "")
+          .trim();
+
+      const product =
+        getProduct(productId);
+
+      const qty =
+        Number(quantity);
+
+      /* ---------------------------------------------------
+         VALIDATION
+      --------------------------------------------------- */
+
+      if (!cleanName) {
+
+        return res.status(400).json({
+          error:
+            "कृपया नाम डालें।"
+        });
+
       }
 
-      /* -----------------------------------------
-         PAYMENT INTENT FIND
-      ----------------------------------------- */
-
-      const intentResult =
-        await pool.query(
-          `
-          SELECT *
-          FROM payment_intents
-          WHERE razorpay_order_id=$1
-          LIMIT 1
-          `,
-          [
-            razorpayOrderId,
-          ]
-        );
-
       if (
-        !intentResult.rows.length
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Payment order server पर नहीं मिला। Order create नहीं किया गया।",
-          });
-      }
-
-      const intent =
-        intentResult.rows[0];
-
-      /* -----------------------------------------
-         DUPLICATE CHECK
-      ----------------------------------------- */
-
-      if (
-        intent.status ===
-        "paid"
-      ) {
-        const existing =
-          await pool.query(
-            `
-            SELECT
-              order_no,
-              total
-            FROM orders
-            WHERE razorpay_payment_id=$1
-            LIMIT 1
-            `,
-            [
-              razorpayPaymentId,
-            ]
-          );
-
-        if (
-          existing.rows.length
-        ) {
-          return res.json({
-            ok: true,
-
-            alreadyProcessed:
-              true,
-
-            ...existing.rows[0],
-          });
-        }
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Payment पहले ही process हो चुका है।",
-          });
-      }
-
-      /* -----------------------------------------
-         SIGNATURE VERIFY
-      ----------------------------------------- */
-
-      if (
-        !verifyRazorpaySignature(
-          razorpayOrderId,
-          razorpayPaymentId,
-          razorpaySignature
+        !/^\d{10}$/.test(
+          cleanPhone
         )
       ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Payment signature verification failed. Order create नहीं किया गया।",
-          });
-      }
 
-      /* -----------------------------------------
-         RAZORPAY ORDER VERIFY
-      ----------------------------------------- */
-
-      const rpOrder =
-        await getRazorpayOrder(
-          razorpayOrderId
-        );
-
-      /* -----------------------------------------
-         RAZORPAY PAYMENT VERIFY
-      ----------------------------------------- */
-
-      const rpPayment =
-        await getRazorpayPayment(
-          razorpayPaymentId
-        );
-
-      const expectedAmount =
-        Math.round(
-          Number(
-            intent.total
-          ) * 100
-        );
-
-      /* -----------------------------------------
-         AMOUNT / CURRENCY / ORDER VERIFY
-      ----------------------------------------- */
-
-      if (
-        rpOrder.id !==
-          razorpayOrderId ||
-        Number(
-          rpOrder.amount
-        ) !== expectedAmount ||
-        rpOrder.currency !==
-          "INR"
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Payment amount/order verification failed. Order create नहीं किया गया।",
-          });
-      }
-
-      /* -----------------------------------------
-         PAYMENT CAPTURE VERIFY
-      ----------------------------------------- */
-
-      if (
-        rpPayment.order_id !==
-          razorpayOrderId ||
-        Number(
-          rpPayment.amount
-        ) !== expectedAmount ||
-        rpPayment.currency !==
-          "INR" ||
-        rpPayment.status !==
-          "captured"
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Payment captured नहीं है या amount match नहीं करता। Order create नहीं किया गया।",
-          });
-      }
-
-      /* -----------------------------------------
-         DATABASE TRANSACTION
-      ----------------------------------------- */
-
-      client =
-        await pool.connect();
-
-      await client.query(
-        "BEGIN"
-      );
-
-      /* -----------------------------------------
-         DUPLICATE PAYMENT CHECK AGAIN
-      ----------------------------------------- */
-
-      const duplicate =
-        await client.query(
-          `
-          SELECT
-            order_no,
-            total
-          FROM orders
-          WHERE razorpay_payment_id=$1
-          LIMIT 1
-          FOR UPDATE
-          `,
-          [
-            razorpayPaymentId,
-          ]
-        );
-
-      if (
-        duplicate.rows.length
-      ) {
-        await client.query(
-          "COMMIT"
-        );
-
-        return res.json({
-          ok: true,
-
-          alreadyProcessed:
-            true,
-
-          ...duplicate.rows[0],
+        return res.status(400).json({
+          error:
+            "कृपया 10 अंकों का सही मोबाइल नंबर डालें।"
         });
+
       }
 
-      /* -----------------------------------------
-         GENERATE ORDER NUMBER
-      ----------------------------------------- */
+      if (!cleanAddress) {
+
+        return res.status(400).json({
+          error:
+            "कृपया पूरा पता डालें।"
+        });
+
+      }
+
+      if (!cleanCity) {
+
+        return res.status(400).json({
+          error:
+            "कृपया शहर का नाम डालें।"
+        });
+
+      }
+
+      if (!cleanState) {
+
+        return res.status(400).json({
+          error:
+            "कृपया राज्य का नाम डालें।"
+        });
+
+      }
+
+      if (
+        !/^\d{6}$/.test(
+          cleanPincode
+        )
+      ) {
+
+        return res.status(400).json({
+          error:
+            "कृपया 6 अंकों का सही पिनकोड डालें।"
+        });
+
+      }
+
+      if (!product) {
+
+        return res.status(400).json({
+          error:
+            "कृपया सही product चुनें।"
+        });
+
+      }
+
+      if (
+        product.type === "kg"
+      ) {
+
+        if (
+          !isValidKgQuantity(qty)
+        ) {
+
+          return res.status(400).json({
+            error:
+              "Kg मात्रा 0.5 Kg से 10 Kg तक होनी चाहिए और 0.5 Kg के अंतर में होनी चाहिए।"
+          });
+
+        }
+
+      } else {
+
+        if (
+          !isValidPackQuantity(qty)
+        ) {
+
+          return res.status(400).json({
+            error:
+              "Pack की संख्या 1 से 50 तक होनी चाहिए।"
+          });
+
+        }
+
+      }
+
+      /* ---------------------------------------------------
+         PAYMENT VALIDATION
+      --------------------------------------------------- */
+
+      if (!cleanUtr) {
+
+        return res.status(400).json({
+
+          error:
+            "कृपया पहले UPI payment करें और UTR / Reference Number डालें।"
+
+        });
+
+      }
+
+      if (
+        !/^\d{12}$/.test(
+          cleanUtr
+        )
+      ) {
+
+        return res.status(400).json({
+
+          error:
+            "कृपया सही 12 अंकों का UTR / Reference Number डालें।"
+
+        });
+
+      }
+
+      /* ---------------------------------------------------
+         PRICE
+      --------------------------------------------------- */
+
+      const safePayment =
+        "UPI";
+
+      const productTotal =
+        Number(product.price) *
+        qty;
+
+      const totalWeight =
+        product.type === "kg"
+          ? qty
+          : Number(product.weight) *
+            qty;
+
+      const delivery =
+        getDeliveryCharge(
+          totalWeight
+        );
+
+      const total =
+        productTotal +
+        delivery;
 
       const orderNo =
-        generateOrderNo();
+        await createOrderNumber();
 
-      /* -----------------------------------------
+      const createdAt =
+        new Date().toISOString();
+
+      const paymentStatus =
+        "submitted";
+
+      /* ---------------------------------------------------
          SAVE ORDER
+      --------------------------------------------------- */
 
-         IMPORTANT:
-         payment_status = paid
-      ----------------------------------------- */
-
-      const insert =
-        await client.query(
+      const insertResult =
+        await pool.query(
           `
-          INSERT INTO orders
-          (
+          INSERT INTO orders (
+
             order_no,
-            name,
+
+            created_at,
+
+            customer_name,
+
             phone,
+
             address,
+
             pincode,
+
             city,
+
             state,
+
+            country,
+
             product_id,
-            product_name,
+
+            product,
+
+            price,
+
             quantity,
-            product_price,
+
             delivery,
+
             total,
+
             payment_method,
+
             payment_status,
+
             utr,
-            razorpay_order_id,
-            razorpay_payment_id,
-            order_status,
-            shiprocket_status
+
+            order_status
+
           )
-          VALUES
-          (
-            $1,$2,$3,$4,$5,$6,$7,
-            $8,$9,$10,$11,$12,$13,
-            'UPI',
-            'paid',
+          VALUES (
+
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8,
+            $9,
+            $10,
+            $11,
+            $12,
+            $13,
             $14,
             $15,
             $16,
-            'confirmed',
-            'pending'
+            $17,
+            $18,
+            $19
+
           )
+
           RETURNING *
           `,
           [
+
             orderNo,
 
-            intent.name,
+            createdAt,
 
-            intent.phone,
+            cleanName,
 
-            intent.address,
+            cleanPhone,
 
-            intent.pincode,
+            cleanAddress,
 
-            intent.city,
+            cleanPincode,
 
-            intent.state,
+            cleanCity,
 
-            intent.product_id,
+            cleanState,
 
-            intent.product_name,
+            "India",
 
-            intent.quantity,
+            product.id,
 
-            intent.product_price,
+            product.name,
 
-            intent.delivery,
+            Number(product.price),
 
-            intent.total,
+            qty,
 
-            rpPayment.acquirer_data
-              ?.rrn ||
-              rpPayment.vpa ||
-              "",
+            delivery,
 
-            razorpayOrderId,
+            total,
 
-            razorpayPaymentId,
+            safePayment,
+
+            paymentStatus,
+
+            cleanUtr,
+
+            "pending"
+
           ]
         );
 
-      /* -----------------------------------------
-         PAYMENT INTENT MARK PAID
-      ----------------------------------------- */
-
-      await client.query(
-        `
-        UPDATE payment_intents
-        SET
-          status='paid',
-          razorpay_payment_id=$1
-        WHERE
-          razorpay_order_id=$2
-        `,
-        [
-          razorpayPaymentId,
-          razorpayOrderId,
-        ]
-      );
-
-      await client.query(
-        "COMMIT"
-      );
-
       const savedOrder =
-        insert.rows[0];
+        insertResult.rows[0];
 
-      /* -----------------------------------------
+      /* ---------------------------------------------------
          SHIPROCKET
+      --------------------------------------------------- */
 
-         Payment verify होने के बाद ही।
-      ----------------------------------------- */
+      try {
 
-      createShiprocketOrder(
-        savedOrder
-      ).catch(
-        (error) =>
-          console.error(
-            "Shiprocket after paid order:",
-            error
-          )
-      );
-
-      return res.json({
-        ok: true,
-
-        orderNo:
-          savedOrder.order_no,
-
-        total:
-          Number(
-            savedOrder.total
-          ),
-
-        paymentStatus:
-          "paid",
-
-        paymentId:
-          razorpayPaymentId,
-
-        message:
-          "Payment verified और order confirmed.",
-      });
-    } catch (error) {
-      if (client) {
-        try {
-          await client.query(
-            "ROLLBACK"
+        const shiprocketResult =
+          await createShiprocketOrder(
+            savedOrder
           );
-        } catch {}
+
+        if (
+          shiprocketResult &&
+          shiprocketResult.success
+        ) {
+
+          const shipData =
+            shiprocketResult.data ||
+            {};
+
+          const awb =
+            shipData.awb_code ||
+            "";
+
+          await pool.query(
+            `
+            UPDATE orders
+
+            SET
+              awb = $1,
+              shiprocket_status = $2
+
+            WHERE id = $3
+            `,
+            [
+
+              awb,
+
+              "created",
+
+              savedOrder.id
+
+            ]
+          );
+
+        } else {
+
+          await pool.query(
+            `
+            UPDATE orders
+
+            SET shiprocket_status = $1
+
+            WHERE id = $2
+            `,
+            [
+
+              shiprocketResult &&
+              shiprocketResult.message
+                ? shiprocketResult.message
+                : "skipped",
+
+              savedOrder.id
+
+            ]
+          );
+
+        }
+
+      } catch (shiprocketError) {
+
+        console.error(
+          "SHIPROCKET ORDER ERROR:",
+          shiprocketError
+        );
+
+        await pool.query(
+          `
+          UPDATE orders
+
+          SET shiprocket_status = $1
+
+          WHERE id = $2
+          `,
+          [
+
+            "ERROR: " +
+              shiprocketError.message,
+
+            savedOrder.id
+
+          ]
+        );
+
       }
 
+      /* ---------------------------------------------------
+         RESPONSE
+      --------------------------------------------------- */
+
+      return res.status(201).json({
+
+        success: true,
+
+        message:
+          "Order successfully submit हो गया।",
+
+        order: {
+
+          id:
+            savedOrder.id,
+
+          orderNo:
+            savedOrder.order_no,
+
+          total:
+            Number(savedOrder.total),
+
+          paymentStatus:
+            savedOrder.payment_status,
+
+          orderStatus:
+            savedOrder.order_status,
+
+          utr:
+            savedOrder.utr
+
+        }
+
+      });
+
+    } catch (error) {
+
       console.error(
-        "order create",
+        "CREATE ORDER ERROR:",
         error
       );
 
-      return res
-        .status(500)
-        .json({
-          error:
-            "Payment verified हुआ लेकिन order save करते समय server error आया। कृपया payment ID के साथ support से संपर्क करें।",
-        });
-    } finally {
-      if (client) {
-        client.release();
-      }
+      return res.status(500).json({
+
+        error:
+          "Order submit करते समय server error आया।"
+
+      });
+
     }
+
   }
 );
 
@@ -1552,25 +1335,25 @@ app.post(
 ========================================================= */
 
 app.get(
-  "/api/orders",
+  "/api/orders/history/:phone",
   async (req, res) => {
+
     try {
+
       const phone =
-        cleanPhone(
-          req.query.phone
-        );
+        String(
+          req.params.phone || ""
+        ).replace(/\D/g, "");
 
       if (
-        !/^\d{10}$/.test(
-          phone
-        )
+        !/^\d{10}$/.test(phone)
       ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Valid 10-digit phone required",
-          });
+
+        return res.status(400).json({
+          error:
+            "सही 10 अंकों का मोबाइल नंबर डालें।"
+        });
+
       }
 
       const result =
@@ -1580,128 +1363,116 @@ app.get(
             id,
             order_no,
             created_at,
-            name,
+            customer_name,
             phone,
             address,
             pincode,
             city,
             state,
             product_id,
-            product_name,
+            product,
+            price,
             quantity,
-            product_price,
             delivery,
             total,
             payment_method,
             payment_status,
-            razorpay_payment_id,
+            utr,
+            order_status,
             awb,
             shiprocket_status,
-            order_status,
             cancellation_reason
+
           FROM orders
-          WHERE phone=$1
-          ORDER BY created_at DESC
-          LIMIT 50
+
+          WHERE phone = $1
+
+          ORDER BY id DESC
           `,
           [phone]
         );
 
-      res.json(
-        result.rows
-      );
+      res.json({
+        success: true,
+        orders: result.rows
+      });
+
     } catch (error) {
+
       console.error(
-        "order history",
+        "ORDER HISTORY ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Order history load नहीं हुई",
-        });
+      res.status(500).json({
+        error:
+          "Order history load नहीं हो सकी।"
+      });
+
     }
+
   }
 );
 
 /* =========================================================
-   CUSTOMER ORDER DETAILS
+   ORDER DETAILS
 ========================================================= */
 
 app.get(
   "/api/orders/:orderNo",
   async (req, res) => {
+
     try {
+
       const orderNo =
-        clean(
-          req.params.orderNo,
-          100
-        );
-
-      const phone =
-        cleanPhone(
-          req.query.phone
-        );
-
-      if (
-        !orderNo ||
-        !/^\d{10}$/.test(
-          phone
-        )
-      ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Order number और phone required",
-          });
-      }
+        String(
+          req.params.orderNo || ""
+        ).trim();
 
       const result =
         await pool.query(
           `
           SELECT *
+
           FROM orders
-          WHERE
-            order_no=$1
-            AND phone=$2
+
+          WHERE order_no = $1
+
           LIMIT 1
           `,
-          [
-            orderNo,
-            phone,
-          ]
+          [orderNo]
         );
 
       if (
-        !result.rows.length
+        result.rows.length === 0
       ) {
-        return res
-          .status(404)
-          .json({
-            error:
-              "Order नहीं मिला",
-          });
+
+        return res.status(404).json({
+          error:
+            "Order नहीं मिला।"
+        });
+
       }
 
-      res.json(
-        result.rows[0]
-      );
+      res.json({
+        success: true,
+        order: result.rows[0]
+      });
+
     } catch (error) {
+
       console.error(
-        "order details",
+        "ORDER DETAILS ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Order details load नहीं हुई",
-        });
+      res.status(500).json({
+        error:
+          "Order details load नहीं हो सकी।"
+      });
+
     }
+
   }
 );
 
@@ -1712,362 +1483,310 @@ app.get(
 app.post(
   "/api/orders/:orderNo/cancel",
   async (req, res) => {
-    try {
-      const orderNo =
-        clean(
-          req.params.orderNo,
-          100
-        );
 
-      const phone =
-        cleanPhone(
-          req.body.phone
-        );
+    try {
+
+      const orderNo =
+        String(
+          req.params.orderNo || ""
+        ).trim();
 
       const reason =
-        clean(
-          req.body.reason ||
-            "Customer requested cancellation",
-          500
-        );
+        String(
+          req.body.reason || ""
+        ).trim();
 
       const result =
         await pool.query(
           `
-          UPDATE orders
-          SET
-            order_status='cancelled',
-            cancellation_reason=$1
-          WHERE
-            order_no=$2
-            AND phone=$3
-            AND order_status
-              NOT IN
-              ('cancelled','delivered')
-          RETURNING
-            order_no,
-            order_status
+          SELECT *
+
+          FROM orders
+
+          WHERE order_no = $1
+
+          LIMIT 1
           `,
-          [
-            reason,
-            orderNo,
-            phone,
-          ]
+          [orderNo]
         );
 
       if (
-        !result.rows.length
+        result.rows.length === 0
       ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Order cancel नहीं हो सकता या order नहीं मिला",
-          });
+
+        return res.status(404).json({
+          error:
+            "Order नहीं मिला।"
+        });
+
       }
 
-      res.json({
-        ok: true,
+      const order =
+        result.rows[0];
 
-        ...result.rows[0],
+      if (
+        [
+          "cancelled",
+          "shipped",
+          "delivered"
+        ].includes(
+          String(
+            order.order_status
+          ).toLowerCase()
+        )
+      ) {
+
+        return res.status(400).json({
+          error:
+            "यह order अब cancel नहीं किया जा सकता।"
+        });
+
+      }
+
+      await pool.query(
+        `
+        UPDATE orders
+
+        SET
+
+          order_status = 'cancelled',
+
+          cancellation_reason = $1
+
+        WHERE order_no = $2
+        `,
+        [
+          reason ||
+            "Customer requested cancellation",
+
+          orderNo
+        ]
+      );
+
+      res.json({
+
+        success: true,
+
+        message:
+          "Order cancel कर दिया गया।"
+
       });
+
     } catch (error) {
+
       console.error(
-        "cancel",
+        "CANCEL ORDER ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Order cancel नहीं हो पाया",
-        });
+      res.status(500).json({
+        error:
+          "Order cancel नहीं हो सका।"
+      });
+
     }
+
   }
 );
 
 /* =========================================================
-   SHIPROCKET
+   PUBLIC REVIEWS
 ========================================================= */
 
-async function createShiprocketOrder(
-  order
-) {
-  if (
-    !SHIPROCKET_EMAIL ||
-    !SHIPROCKET_PASSWORD
-  ) {
-    console.log(
-      "Shiprocket credentials missing; paid order saved without Shiprocket submission."
-    );
+app.get(
+  "/api/reviews",
+  async (req, res) => {
 
-    return null;
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            id,
+            name,
+            rating,
+            review,
+            created_at
+
+          FROM reviews
+
+          WHERE status = 'approved'
+
+          ORDER BY id DESC
+          `
+        );
+
+      res.json({
+        success: true,
+        reviews: result.rows
+      });
+
+    } catch (error) {
+
+      console.error(
+        "PUBLIC REVIEWS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Reviews load नहीं हो सके।"
+      });
+
+    }
+
   }
+);
 
-  try {
-    /* -----------------------------------------
-       LOGIN
-    ----------------------------------------- */
+/* =========================================================
+   CREATE REVIEW
+========================================================= */
 
-    const loginResponse =
-      await fetch(
-        "https://apiv2.shiprocket.in/v1/external/auth/login",
-        {
-          method: "POST",
+app.post(
+  "/api/reviews",
+  async (req, res) => {
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+    try {
 
-          body: JSON.stringify({
-            email:
-              SHIPROCKET_EMAIL,
+      const name =
+        String(
+          req.body.name || ""
+        ).trim();
 
-            password:
-              SHIPROCKET_PASSWORD,
-          }),
-        }
-      );
+      const review =
+        String(
+          req.body.review || ""
+        ).trim();
 
-    const loginData =
-      await loginResponse.json();
-
-    if (
-      !loginResponse.ok ||
-      !loginData.token
-    ) {
-      throw new Error(
-        loginData.message ||
-          "Shiprocket login failed"
-      );
-    }
-
-    /* -----------------------------------------
-       CREATE ORDER
-
-       Customer का saved address
-       ही Shiprocket को भेजा जाएगा।
-    ----------------------------------------- */
-
-    const body = {
-      order_id:
-        order.order_no,
-
-      order_date:
-        new Date(
-          order.created_at ||
-            Date.now()
-        )
-          .toISOString()
-          .slice(0, 19)
-          .replace(
-            "T",
-            " "
-          ),
-
-      pickup_location:
-        SHIPROCKET_PICKUP_LOCATION,
-
-      channel_id:
-        process.env
-          .SHIPROCKET_CHANNEL_ID ||
-        "",
-
-      comment:
-        "23 Swasthyavardhak Laddu - UPI paid order",
-
-      billing_customer_name:
-        order.name,
-
-      billing_last_name:
-        "",
-
-      billing_address:
-        order.address,
-
-      billing_address_2:
-        "",
-
-      billing_city:
-        order.city,
-
-      billing_pincode:
-        order.pincode,
-
-      billing_state:
-        order.state,
-
-      billing_country:
-        "India",
-
-      billing_email:
-        ORDER_EMAIL,
-
-      billing_phone:
-        order.phone,
-
-      shipping_is_billing:
-        true,
-
-      shipping_customer_name:
-        order.name,
-
-      shipping_last_name:
-        "",
-
-      shipping_address:
-        order.address,
-
-      shipping_address_2:
-        "",
-
-      shipping_city:
-        order.city,
-
-      shipping_pincode:
-        order.pincode,
-
-      shipping_country:
-        "India",
-
-      shipping_state:
-        order.state,
-
-      shipping_email:
-        ORDER_EMAIL,
-
-      shipping_phone:
-        order.phone,
-
-      order_items: [
-        {
-          name:
-            order.product_name,
-
-          sku:
-            order.product_id,
-
-          units:
-            Number(
-              order.quantity
-            ),
-
-          selling_price:
-            Number(
-              order.product_price
-            ),
-
-          discount: 0,
-
-          tax: 0,
-
-          hsn: "",
-        },
-      ],
-
-      payment_method:
-        "Prepaid",
-
-      sub_total:
+      const rating =
         Number(
-          order.product_price
-        ) *
-        Number(
-          order.quantity
-        ),
+          req.body.rating
+        );
 
-      length: 20,
+      if (!name) {
 
-      breadth: 20,
+        return res.status(400).json({
+          error:
+            "कृपया नाम डालें।"
+        });
 
-      height: 10,
+      }
 
-      weight:
-        Number(
-          order.quantity
-        ),
-    };
+      if (
+        !Number.isInteger(rating) ||
+        rating < 1 ||
+        rating > 5
+      ) {
 
-    const createResponse =
-      await fetch(
-        "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
-        {
-          method: "POST",
+        return res.status(400).json({
+          error:
+            "Rating 1 से 5 stars के बीच होनी चाहिए।"
+        });
 
-          headers: {
-            Authorization:
-              `Bearer ${loginData.token}`,
+      }
 
-            "Content-Type":
-              "application/json",
-          },
+      if (!review) {
 
-          body:
-            JSON.stringify(body),
-        }
-      );
+        return res.status(400).json({
+          error:
+            "कृपया review लिखें।"
+        });
 
-    const createData =
-      await createResponse.json();
+      }
 
-    if (
-      !createResponse.ok
-    ) {
-      throw new Error(
-        createData.message ||
-          "Shiprocket order create failed"
-      );
-    }
-
-    await pool.query(
-      `
-      UPDATE orders
-      SET
-        awb=$1,
-        shiprocket_status=$2
-      WHERE order_no=$3
-      `,
-      [
-        createData.awb_code ||
-          createData.awb ||
-          null,
-
-        createData.status ||
-          "created",
-
-        order.order_no,
-      ]
-    );
-
-    return createData;
-  } catch (error) {
-    await pool
-      .query(
+      await pool.query(
         `
-        UPDATE orders
-        SET
-          shiprocket_status=$1
-        WHERE order_no=$2
+        INSERT INTO reviews (
+
+          name,
+
+          rating,
+
+          review,
+
+          status,
+
+          created_at
+
+        )
+
+        VALUES (
+
+          $1,
+
+          $2,
+
+          $3,
+
+          'pending',
+
+          $4
+
+        )
         `,
         [
-          `error: ${String(
-            error.message
-          ).slice(0, 250)}`,
 
-          order.order_no,
+          name,
+
+          rating,
+
+          review,
+
+          new Date().toISOString()
+
         ]
-      )
-      .catch(() => {});
+      );
 
-    console.error(
-      "Shiprocket create",
-      error
-    );
+      res.status(201).json({
 
-    return null;
+        success: true,
+
+        message:
+          "Review submit हो गया। Admin approval के बाद दिखाई देगा।"
+
+      });
+
+    } catch (error) {
+
+      console.error(
+        "CREATE REVIEW ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Review submit नहीं हो सका।"
+      });
+
+    }
+
   }
+);
+
+/* =========================================================
+   ADMIN AUTH
+========================================================= */
+
+function requireAdmin(
+  req,
+  res,
+  next
+) {
+
+  if (
+    req.session &&
+    req.session.isAdmin === true
+  ) {
+
+    return next();
+
+  }
+
+  return res.status(401).json({
+    error:
+      "Admin login required."
+  });
 }
 
 /* =========================================================
@@ -2077,15 +1796,15 @@ async function createShiprocketOrder(
 app.post(
   "/api/admin/login",
   (req, res) => {
+
     const username =
-      clean(
-        req.body.username,
-        100
+      String(
+        req.body.username || ""
       );
 
     const password =
       String(
-        req.body.password ?? ""
+        req.body.password || ""
       );
 
     if (
@@ -2094,23 +1813,23 @@ app.post(
       password ===
         ADMIN_PASSWORD
     ) {
+
       req.session.isAdmin =
         true;
 
       return res.json({
-        ok: true,
-
+        success: true,
         message:
-          "Login successful",
+          "Admin login successful."
       });
+
     }
 
-    return res
-      .status(401)
-      .json({
-        error:
-          "Invalid username or password",
-      });
+    return res.status(401).json({
+      error:
+        "Username या password गलत है।"
+    });
+
   }
 );
 
@@ -2120,31 +1839,49 @@ app.post(
 
 app.post(
   "/api/admin/logout",
+  requireAdmin,
   (req, res) => {
+
     req.session.destroy(
-      () => {
+      (error) => {
+
+        if (error) {
+
+          return res.status(500).json({
+            error:
+              "Logout नहीं हो सका।"
+          });
+
+        }
+
         res.json({
-          ok: true,
+          success: true
         });
+
       }
     );
+
   }
 );
 
 /* =========================================================
-   ADMIN ME
+   ADMIN CHECK
 ========================================================= */
 
 app.get(
   "/api/admin/me",
-  requireAdmin,
   (req, res) => {
-    res.json({
-      ok: true,
 
-      username:
-        ADMIN_USERNAME,
+    res.json({
+
+      loggedIn:
+        !!(
+          req.session &&
+          req.session.isAdmin === true
+        )
+
     });
+
   }
 );
 
@@ -2156,31 +1893,39 @@ app.get(
   "/api/admin/orders",
   requireAdmin,
   async (req, res) => {
-    try {
-      const result =
-        await pool.query(`
-          SELECT *
-          FROM orders
-          ORDER BY created_at DESC
-          LIMIT 500
-        `);
 
-      res.json(
-        result.rows
-      );
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT *
+
+          FROM orders
+
+          ORDER BY id DESC
+          `
+        );
+
+      res.json({
+        success: true,
+        orders: result.rows
+      });
+
     } catch (error) {
+
       console.error(
-        "admin orders",
+        "ADMIN ORDERS ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Orders load नहीं हुए",
-        });
+      res.status(500).json({
+        error:
+          "Orders load नहीं हो सके।"
+      });
+
     }
+
   }
 );
 
@@ -2192,124 +1937,196 @@ app.patch(
   "/api/admin/orders/:id",
   requireAdmin,
   async (req, res) => {
-    try {
-      const id =
-        Number(
-          req.params.id
-        );
 
-      const allowedStatuses = [
-        "confirmed",
-        "processing",
-        "shipped",
-        "delivered",
-        "cancelled",
-      ];
+    try {
+
+      const id =
+        Number(req.params.id);
 
       const orderStatus =
-        clean(
-          req.body.order_status ||
-            req.body.status,
-          30
-        );
+        String(
+          req.body.order_status || ""
+        ).trim();
+
+      const paymentStatus =
+        String(
+          req.body.payment_status || ""
+        ).trim();
 
       const shiprocketStatus =
-        clean(
-          req.body.shiprocket_status,
-          100
-        );
+        String(
+          req.body.shiprocket_status || ""
+        ).trim();
 
       const awb =
-        clean(
-          req.body.awb,
-          100
-        );
+        String(
+          req.body.awb || ""
+        ).trim();
 
       if (
-        !Number.isInteger(
-          id
-        )
+        !Number.isInteger(id)
       ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Invalid order id",
-          });
+
+        return res.status(400).json({
+          error:
+            "Invalid order ID."
+        });
+
       }
 
       const result =
         await pool.query(
           `
           UPDATE orders
+
           SET
+
             order_status =
               COALESCE(
-                NULLIF($1,''),
+                NULLIF($1, ''),
                 order_status
+              ),
+
+            payment_status =
+              COALESCE(
+                NULLIF($2, ''),
+                payment_status
               ),
 
             shiprocket_status =
               COALESCE(
-                NULLIF($2,''),
+                NULLIF($3, ''),
                 shiprocket_status
               ),
 
             awb =
               COALESCE(
-                NULLIF($3,''),
+                NULLIF($4, ''),
                 awb
               )
 
-          WHERE id=$4
+          WHERE id = $5
 
           RETURNING *
           `,
           [
-            allowedStatuses.includes(
-              orderStatus
-            )
-              ? orderStatus
-              : "",
+
+            orderStatus,
+
+            paymentStatus,
 
             shiprocketStatus,
 
             awb,
 
-            id,
+            id
+
           ]
         );
 
       if (
-        !result.rows.length
+        result.rows.length === 0
       ) {
-        return res
-          .status(404)
-          .json({
-            error:
-              "Order not found",
-          });
+
+        return res.status(404).json({
+          error:
+            "Order नहीं मिला।"
+        });
+
       }
 
       res.json({
-        ok: true,
+
+        success: true,
 
         order:
-          result.rows[0],
+          result.rows[0]
+
       });
+
     } catch (error) {
+
       console.error(
-        "admin order update",
+        "ADMIN UPDATE ORDER ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Order update नहीं हुआ",
-        });
+      res.status(500).json({
+        error:
+          "Order update नहीं हो सका।"
+      });
+
     }
+
+  }
+);
+
+/* =========================================================
+   ADMIN DELETE ORDER
+========================================================= */
+
+app.delete(
+  "/api/admin/orders/:id",
+  requireAdmin,
+  async (req, res) => {
+
+    try {
+
+      const id =
+        Number(req.params.id);
+
+      if (
+        !Number.isInteger(id)
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Invalid order ID."
+        });
+
+      }
+
+      const result =
+        await pool.query(
+          `
+          DELETE FROM orders
+
+          WHERE id = $1
+
+          RETURNING id
+          `,
+          [id]
+        );
+
+      if (
+        result.rows.length === 0
+      ) {
+
+        return res.status(404).json({
+          error:
+            "Order नहीं मिला।"
+        });
+
+      }
+
+      res.json({
+        success: true
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ADMIN DELETE ORDER ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Order delete नहीं हो सका।"
+      });
+
+    }
+
   }
 );
 
@@ -2321,216 +2138,273 @@ app.get(
   "/api/admin/reviews",
   requireAdmin,
   async (req, res) => {
-    try {
-      const result =
-        await pool.query(`
-          SELECT *
-          FROM reviews
-          ORDER BY created_at DESC
-        `);
 
-      res.json(
-        result.rows
-      );
+    try {
+
+      const result =
+        await pool.query(
+          `
+          SELECT *
+
+          FROM reviews
+
+          ORDER BY id DESC
+          `
+        );
+
+      res.json({
+        success: true,
+        reviews: result.rows
+      });
+
     } catch (error) {
+
       console.error(
-        "admin reviews",
+        "ADMIN REVIEWS ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Reviews load नहीं हुए",
-        });
+      res.status(500).json({
+        error:
+          "Reviews load नहीं हो सके।"
+      });
+
     }
+
   }
 );
 
 /* =========================================================
-   ADMIN REVIEW UPDATE
+   ADMIN UPDATE REVIEW
 ========================================================= */
 
 app.patch(
   "/api/admin/reviews/:id",
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const id =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       const status =
-        clean(
-          req.body.status,
-          20
-        );
+        String(
+          req.body.status || ""
+        ).trim();
 
       if (
-        !Number.isInteger(
-          id
-        ) ||
+        !Number.isInteger(id)
+      ) {
+
+        return res.status(400).json({
+          error:
+            "Invalid review ID."
+        });
+
+      }
+
+      if (
         ![
           "pending",
           "approved",
-          "hidden",
+          "hidden"
         ].includes(status)
       ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Invalid review update",
-          });
+
+        return res.status(400).json({
+          error:
+            "Invalid review status."
+        });
+
       }
 
       const result =
         await pool.query(
           `
           UPDATE reviews
-          SET status=$1
-          WHERE id=$2
+
+          SET status = $1
+
+          WHERE id = $2
+
           RETURNING *
           `,
           [
             status,
-            id,
+            id
           ]
         );
 
       if (
-        !result.rows.length
+        result.rows.length === 0
       ) {
-        return res
-          .status(404)
-          .json({
-            error:
-              "Review not found",
-          });
+
+        return res.status(404).json({
+          error:
+            "Review नहीं मिला।"
+        });
+
       }
 
       res.json({
-        ok: true,
+
+        success: true,
 
         review:
-          result.rows[0],
+          result.rows[0]
+
       });
+
     } catch (error) {
+
       console.error(
-        "admin review update",
+        "ADMIN UPDATE REVIEW ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Review update नहीं हुआ",
-        });
+      res.status(500).json({
+        error:
+          "Review update नहीं हो सका।"
+      });
+
     }
+
   }
 );
 
 /* =========================================================
-   ADMIN REVIEW DELETE
+   ADMIN DELETE REVIEW
 ========================================================= */
 
 app.delete(
   "/api/admin/reviews/:id",
   requireAdmin,
   async (req, res) => {
+
     try {
+
       const id =
-        Number(
-          req.params.id
-        );
+        Number(req.params.id);
 
       if (
-        !Number.isInteger(
-          id
-        )
+        !Number.isInteger(id)
       ) {
-        return res
-          .status(400)
-          .json({
-            error:
-              "Invalid review id",
-          });
+
+        return res.status(400).json({
+          error:
+            "Invalid review ID."
+        });
+
       }
 
       const result =
         await pool.query(
           `
           DELETE FROM reviews
-          WHERE id=$1
+
+          WHERE id = $1
+
           RETURNING id
           `,
           [id]
         );
 
       if (
-        !result.rows.length
+        result.rows.length === 0
       ) {
-        return res
-          .status(404)
-          .json({
-            error:
-              "Review not found",
-          });
+
+        return res.status(404).json({
+          error:
+            "Review नहीं मिला।"
+        });
+
       }
 
       res.json({
-        ok: true,
+        success: true
       });
+
     } catch (error) {
+
       console.error(
-        "admin review delete",
+        "ADMIN DELETE REVIEW ERROR:",
         error
       );
 
-      res
-        .status(500)
-        .json({
-          error:
-            "Review delete नहीं हुआ",
-        });
+      res.status(500).json({
+        error:
+          "Review delete नहीं हो सका।"
+      });
+
     }
+
   }
 );
 
 /* =========================================================
-   HEALTH CHECK
+   STATIC FILES
+========================================================= */
+
+app.use(
+  express.static(
+    path.join(
+      __dirname,
+      "public"
+    )
+  )
+);
+
+/* =========================================================
+   ADMIN PAGE
 ========================================================= */
 
 app.get(
-  "/health",
-  async (req, res) => {
-    try {
-      await pool.query(
-        "SELECT 1"
-      );
+  "/admin",
+  (req, res) => {
 
-      res.json({
-        ok: true,
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "admin.html"
+      )
+    );
 
-        database:
-          "connected",
+  }
+);
 
-        razorpay:
-          Boolean(
-            RAZORPAY_KEY_ID &&
-            RAZORPAY_KEY_SECRET
-          ),
-      });
-    } catch {
-      res
-        .status(500)
-        .json({
-          ok: false,
-        });
-    }
+/* =========================================================
+   ROOT PAGE
+========================================================= */
+
+app.get(
+  "/",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "public",
+        "index.html"
+      )
+    );
+
+  }
+);
+
+/* =========================================================
+   404
+========================================================= */
+
+app.use(
+  (req, res) => {
+
+    res.status(404).json({
+      error:
+        "Page / API route नहीं मिला।"
+    });
+
   }
 );
 
@@ -2540,21 +2414,27 @@ app.get(
 
 initializeDatabase()
   .then(() => {
+
     app.listen(
       PORT,
       "0.0.0.0",
       () => {
+
         console.log(
           `23 Swasthyavardhak Laddu running on port ${PORT}`
         );
+
       }
     );
+
   })
   .catch((error) => {
+
     console.error(
-      "Database initialization failed:",
+      "SERVER START ERROR:",
       error
     );
 
     process.exit(1);
+
   });
